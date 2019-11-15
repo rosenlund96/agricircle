@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -85,12 +86,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Fabric.with(fabric);
 
 
+        if(!UsrController.getCookie().equals("")){
+            Toast.makeText(this, "Cookie eksisterer",
+                    Toast.LENGTH_LONG).show();
+        }
 
 
 
 
 
 
+    }
+
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+        if(!LoadPreferences("Cookie").equals("")){
+            cookie = LoadPreferences("Cookie");
+            UsrController.setCookie(cookie);
+            User user = UsrController.getUser();
+            Intent i = new Intent(MainActivity.this, MainScreenActivity.class);
+            //ryd backstack
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.putExtra("Cookie", cookie);
+            i.putExtra("User", user);
+
+            startActivity(i);
+            finish();
+        }
     }
 
     private String LoadPreferences(String key) {
@@ -159,6 +184,13 @@ public void init(){
     }
 
 
+    private void SavePreferences(String key, String value) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
 
 
 
@@ -178,6 +210,7 @@ public void init(){
             UsrController.login(this.mail.getText().toString(),this.pass.getText().toString(),currentLocale.getCountry(), this);
             while(true){
                 String cookie = UsrController.getCookie();
+                SavePreferences("Cookie", cookie);
                 User user = UsrController.user;
                 int status = UsrController.getLoginstatus();
                 String error = UsrController.getLoginError();
@@ -192,6 +225,7 @@ public void init(){
                     i.putExtra("User", user);
                     System.out.println("Bruger sendt med: "+ user.getName());
                     startActivity(i);
+                    finish();
                     break;
                 }
                 else if( status == 1){

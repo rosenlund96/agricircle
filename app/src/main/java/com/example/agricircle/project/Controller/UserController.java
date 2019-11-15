@@ -73,6 +73,7 @@ public class UserController implements Serializable {
         weatherList = new ArrayList<>();
         OkHttpClient okHttpClient;
         if(cookie == null){
+            cookie = "";
             okHttpClient = new OkHttpClient.Builder().build();
             createUser();
             apolloClient = ApolloClient.builder()
@@ -103,6 +104,8 @@ public class UserController implements Serializable {
 
 
     }
+
+
 
     public List<Activity> getActivities(){
         return this.activities;
@@ -139,6 +142,10 @@ public class UserController implements Serializable {
     }
     public String getCookie(){
         return this.cookie;
+    }
+    public void setCookie(String cookie){
+        this.cookie = cookie;
+        init();
     }
     public boolean getFieldsLoaded() {return this.fieldsLoaded;}
 
