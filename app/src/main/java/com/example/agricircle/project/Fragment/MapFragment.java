@@ -42,6 +42,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.squareup.picasso.Picasso;
@@ -67,6 +68,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private ImageView weatherImage, imgx,imgy;
     private View myView;
     private List<Polygon> polygons;
+    private List<Marker> mapMarkers;
     private List<Activity> activitites;
     private String activePolygon;
     private LinearLayout infoLayout, locationlayout;
@@ -152,6 +154,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         weatherImage.setLayoutParams(parms);
         userprofile.setOnClickListener(this);
         polygons= new ArrayList<>();
+        mapMarkers = new ArrayList<>();
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         mapFrag.setRetainInstance(true);
@@ -227,7 +230,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
         else if(v == locationbutton){
             mGoogleMap.setMyLocationEnabled(true);
-
+            removeMarkersFromMap();
+            DrawPolygonsOnMap();
             locationlayout.setVisibility(View.INVISIBLE);
         }
     }
@@ -376,6 +380,13 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 if(mGoogleMap.getCameraPosition().zoom < 12.5){
                     Toast.makeText(getActivity(),"Zoomlevel er under 12.5",
                             Toast.LENGTH_LONG).show();
+                    DrawMarkersOnMap();
+                }
+                else if(mGoogleMap.getCameraPosition().zoom >12.6){
+                    if(mapMarkers.size()>0){
+                        removeMarkersFromMap();
+                    }
+
                 }
             }
         });
@@ -452,8 +463,32 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
     }
 
-    public void DrawMarkersOnMap(boolean draw){
+    public void DrawMarkersOnMap(){
 
+if(main.controller.getFields().size()> mapMarkers.size()){
+    for(int i = 0; i<main.controller.getUser().getFields().size();i++){
+        Field field = main.controller.getUser().getFields().get(i);
+        MarkerOptions markeroptions = new MarkerOptions()
+                .position(field.getCenterpoint().getCoordinates().get(0))
+                .title(field.getDisplay_name());
+
+        Marker marker = mGoogleMap.addMarker(markeroptions);
+        mapMarkers.add(marker);
+
+
+
+
+    }
+}
+
+
+
+    }
+
+    public void removeMarkersFromMap(){
+        for(int i = 0; i<mapMarkers.size(); i++){
+            mapMarkers.get(i).remove();
+        }
     }
 
     private void removePolygonsFromMap(){
