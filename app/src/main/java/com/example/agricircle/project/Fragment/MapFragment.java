@@ -55,28 +55,28 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
-    GoogleMap mGoogleMap;
-    SupportMapFragment mapFrag;
-    LocationRequest mLocationRequest;
-    boolean request;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
-    MainScreenActivity main;
-    public Button userprofile,fields, weather,locationbutton;
-    ImageView weatherImage, imgx,imgy;
-    View myView;
-    List<Polygon> polygons;
-    List<Activity> activitites;
-    String activePolygon;
-    LinearLayout infoLayout, locationlayout;
+    private GoogleMap mGoogleMap;
+    private SupportMapFragment mapFrag;
+    private LocationRequest mLocationRequest;
+    private boolean request;
+    private GoogleApiClient mGoogleApiClient;
+    private Location mLastLocation;
+    private Marker mCurrLocationMarker;
+    private MainScreenActivity main;
+    private Button userprofile,fields, weather,locationbutton;
+    private ImageView weatherImage, imgx,imgy;
+    private View myView;
+    private List<Polygon> polygons;
+    private List<Activity> activitites;
+    private String activePolygon;
+    private LinearLayout infoLayout, locationlayout;
     private TextView infoFieldName, infoFieldSurface, productx,producty, activitytypex,activitytypey, locationtext;
-    List<String> parameters;
+    private List<String> parameters;
     boolean polygonsDrawed;
-    Display display;
-    LatLng latLng;
-    int width,height;
-    double heightconstant, widthconstant;
+    private Display display;
+    private LatLng latLng;
+    private int width,height;
+    private double heightconstant, widthconstant;
     public MapFragment() {
 
     }
@@ -119,28 +119,28 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         heightconstant = 0.0147;
         request = false;
         myView = inflater.inflate(R.layout.mainview, container, false);
-        locationbutton = (Button) myView.findViewById(R.id.enablelocation);
+        locationbutton = myView.findViewById(R.id.enablelocation);
         locationbutton.setText(getResources().getString(R.string.myLocation));
         locationbutton.setOnClickListener(this);
-        locationtext = (TextView) myView.findViewById(R.id.locationtext);
+        locationtext =  myView.findViewById(R.id.locationtext);
         locationtext.setText(getResources().getString(R.string.locationtext));
-        locationlayout = (LinearLayout) myView.findViewById(R.id.locationlayout);
+        locationlayout =  myView.findViewById(R.id.locationlayout);
         locationlayout.setVisibility(View.INVISIBLE);
         //locationbutton.setVisibility(View.INVISIBLE);
-        fields = (Button) myView.findViewById(R.id.googlemaps_list);
-        userprofile = (Button) myView.findViewById(R.id.googlemaps_settings);
-        infoLayout = (LinearLayout) myView.findViewById(R.id.infolayout);
-        infoFieldName = (TextView) myView.findViewById(R.id.mapFieldName);
-        infoFieldSurface = (TextView) myView.findViewById(R.id.mapSurface);
-        productx = (TextView) myView.findViewById(R.id.productx);
-        producty = (TextView) myView.findViewById(R.id.producty);
-        activitytypex = (TextView) myView.findViewById(R.id.activitytypex);
-        activitytypey = (TextView) myView.findViewById(R.id.activitytypey);
-        imgx = (ImageView) myView.findViewById(R.id.imgx);
-        imgy = (ImageView) myView.findViewById(R.id.imgy);
+        fields =  myView.findViewById(R.id.googlemaps_list);
+        userprofile =  myView.findViewById(R.id.googlemaps_settings);
+        infoLayout =  myView.findViewById(R.id.infolayout);
+        infoFieldName =  myView.findViewById(R.id.mapFieldName);
+        infoFieldSurface =  myView.findViewById(R.id.mapSurface);
+        productx =  myView.findViewById(R.id.productx);
+        producty =  myView.findViewById(R.id.producty);
+        activitytypex =  myView.findViewById(R.id.activitytypex);
+        activitytypey =  myView.findViewById(R.id.activitytypey);
+        imgx =  myView.findViewById(R.id.imgx);
+        imgy =  myView.findViewById(R.id.imgy);
         fields.setOnClickListener(this);
-        weatherImage = (ImageView) myView.findViewById(R.id.weatherimage);
-        weather = (Button) myView.findViewById(R.id.weatherbutton);
+        weatherImage =  myView.findViewById(R.id.weatherimage);
+        weather =  myView.findViewById(R.id.weatherbutton);
         weather.setOnClickListener(this);
         display = getActivity().getWindowManager().getDefaultDisplay();
         width = display.getWidth();
@@ -159,7 +159,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         return myView;
     }
 
-    public void initialize(){
+    private void initialize(){
     main = MainScreenActivity.getInstance();
     activitites = main.controller.getActivities();
     String units = LoadPreferences("unit");
@@ -276,7 +276,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
 
     }
-    public void opdaterVejr(LatLng lokation){
+    private void opdaterVejr(LatLng lokation){
         String unit = LoadPreferences("unit");
         if(unit.equals("Metric")){
             main.controller.getWeather(lokation,"mix",getCurrentTime(),0,1, Arrays.asList(getResources().getStringArray(R.array.Metric)));
@@ -420,7 +420,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         });
     }
 
-    public List<Activity> sortActivities(Field field){
+    private List<Activity> sortActivities(Field field){
         List<Activity> temp = new ArrayList<>();
         for(int i = 0; i<activitites.size();i++){
             if(activitites.get(i).getField_id() == field.getId()){
@@ -430,7 +430,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         return temp;
     }
 
-    public String getCropName(int id){
+    private String getCropName(int id){
         for (int i = 0; i<main.controller.cropsList.size();i++){
             if(main.controller.cropsList.get(i).getCrop_id() == id){
                 return main.controller.cropsList.get(i).getName();
@@ -439,7 +439,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         return "N/A";
     }
 
-    public void DrawPloygonsOnMap(){
+    private void DrawPloygonsOnMap(){
         for(int i = 0; i<main.controller.getUser().getFields().size();i++){
             Polygon polygon = mGoogleMap.addPolygon(DrawPolygon(main.controller.getUser().getFields().get(i)));
             polygon.setStrokeColor(Color.argb(255,0,128,255));
@@ -456,7 +456,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
     }
 
-    public void removePolygonsFromMap(){
+    private void removePolygonsFromMap(){
         for (int i = 0; i < polygons.size(); i++){
             //System.out.println("Polygon fjernet: " + polygons.get(i).getId());
             polygons.get(i).remove();
@@ -467,14 +467,14 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
     }
 
-    public String getCurrentTime(){
+    private String getCurrentTime(){
 
 
         String date = android.text.format.DateFormat.format("yyyy-MM-ddTHH:mm", new java.util.Date()).toString();
         return date;
     }
 
-    public void clearPolygonColors(){
+    private void clearPolygonColors(){
         for (int i = 0; i < polygons.size(); i++){
 
             polygons.get(i).setStrokeColor(Color.argb(255,0,128,255));
@@ -519,7 +519,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         editor.commit();
     }
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     //Tilføj flyt kamera efter accept
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -561,7 +561,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     }
 
 
-    public Field getRightField(List<LatLng> points){
+    private Field getRightField(List<LatLng> points){
         Field field = null;
         List<LatLng> newList = points;
         newList.remove(points.size()-1);
@@ -581,7 +581,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         return null;
     }
 
-    public PolygonOptions DrawPolygon(Field field){
+    private PolygonOptions DrawPolygon(Field field){
         PolygonOptions rectOptions = new PolygonOptions();
         for(int i = 0; i<field.getCoordinates().getNumOfCoordinates(); i++){
             rectOptions.add(field.getCoordinates().getCoordinates().get(i));

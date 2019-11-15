@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,7 +21,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
-import com.example.agricircle.project.Controller.GraphQLController;
 import com.example.agricircle.project.Controller.UserController;
 import com.example.agricircle.project.Entities.User;
 import com.example.agricircle.project.GraphQL.ClientBackEnd;
@@ -37,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public Button login, register;
     public EditText mail,pass;
     public TextView createUser;
-    public GraphQLController controller;
+
     String cookie = null;
     boolean permission;
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
@@ -57,13 +55,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         permission = false;
 
-        createUser = (TextView) findViewById(R.id.createUserText);
+        createUser = findViewById(R.id.createUserText);
         createUser.setOnClickListener(this);
         createUser.setFocusable(false);
-        login = (Button) findViewById(R.id.button2);
+        login = findViewById(R.id.button2);
         login.setOnClickListener(this);
-        mail = (EditText) findViewById(R.id.email);
-        pass = (EditText) findViewById(R.id.pass);
+        mail = findViewById(R.id.email);
+        pass =  findViewById(R.id.pass);
 
 
         currentLocale = getResources().getConfiguration().locale;
@@ -104,30 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-    public class Login extends AsyncTask<String, Void, String>{
 
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-
-
-                Intent i = new Intent(MainActivity.this, MainScreenActivity.class);
-
-            i.putExtra("Controller", controller);
-                startActivity(i);
-
-
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-
-
-            return null;
-        }
-    }
 
 
 public void init(){
