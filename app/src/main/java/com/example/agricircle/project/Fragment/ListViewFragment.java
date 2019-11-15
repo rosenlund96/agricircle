@@ -33,6 +33,8 @@ public class ListViewFragment extends Fragment implements TabLayout.OnTabSelecte
         return myView;
     }
 
+    
+
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
 

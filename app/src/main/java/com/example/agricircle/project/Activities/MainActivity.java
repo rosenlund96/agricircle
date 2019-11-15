@@ -186,6 +186,8 @@ public void init(){
                     //System.out.println("Cookie blev hentet!");
 
                     Intent i = new Intent(MainActivity.this, MainScreenActivity.class);
+                    //ryd backstack
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     i.putExtra("Cookie", cookie);
                     i.putExtra("User", user);
                     System.out.println("Bruger sendt med: "+ user.getName());
