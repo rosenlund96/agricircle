@@ -342,7 +342,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
         }
 
-            DrawPloygonsOnMap();
+            DrawPolygonsOnMap();
 
 
 
@@ -439,7 +439,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         return "N/A";
     }
 
-    private void DrawPloygonsOnMap(){
+    private void DrawPolygonsOnMap(){
         for(int i = 0; i<main.controller.getUser().getFields().size();i++){
             Polygon polygon = mGoogleMap.addPolygon(DrawPolygon(main.controller.getUser().getFields().get(i)));
             polygon.setStrokeColor(Color.argb(255,0,128,255));
