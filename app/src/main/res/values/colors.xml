@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4EA47F</color>
+    <color name="colorPrimaryDark">#3F8567</color>
+    <color name="colorAccent">#77baa0</color>
+    <color name="black">#3c3c3c</color>
+    <color name="white">#FFFFFF</color>
+    <color name="ellipse_2_color">#eeeeee</color>
+    <color name="field">#f3f3f3</color>
+    <color name="menu">#e3e3e3</color>
+    <color name="header">#303030</color>
+    <color name="Dominant">#e94848</color>
+    <color name="Influential">#ed7c21</color>
+    <color name="Stable">#67c34f</color>
+    <color name="Compliant">#5384b7</color>
+    <color name="Baggrundsfarve">#3c4152</color>
+    <color name="StandardKnapFarve">#D6D7D7</color>
+    <color name="selected">#ffa400</color>
+
+</resources>

@@ -1,0 +1,13 @@
+query getCrops($companyid: Int! $year: Int!){
+crops(options: {companyId:$companyid year:$year}){
+crop_id
+name
+photo_url
+field_ids
+}
+
+
+
+
+
+}

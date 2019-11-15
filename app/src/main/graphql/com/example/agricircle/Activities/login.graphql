@@ -1,0 +1,13 @@
+mutation LoginInput($user: String! $pass: String! $locale: String!){
+login(
+options:
+{
+email:$user
+password:$pass
+locale: $locale
+})
+{
+cookie
+}
+
+}

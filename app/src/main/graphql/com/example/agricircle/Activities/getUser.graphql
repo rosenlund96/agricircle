@@ -1,0 +1,12 @@
+query getUser {
+  user {
+  name
+  slug
+  avatarUrl
+  dateFormat
+  decimalSeparator
+  language
+  planningYears
+  features
+}
+}

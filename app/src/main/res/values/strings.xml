@@ -1,0 +1,75 @@
+<resources>
+    <string name="app_name" translatable="false">AgriCircle</string>
+     <string-array name="languages">
+
+         <item>English</item>
+         <item>German</item>
+         <item>Danish</item>
+
+     </string-array>
+
+    <string-array name="maptypes">
+
+        <item>Normal</item>
+        <item>Hybrid</item>
+        <item>Sattelite</item>
+
+    </string-array>
+
+    <string name="email">E-mail</string>
+    <string name="password">Password</string>
+    <string name="login">Log in</string>
+    <string name="loadingWeather">Loading weather</string>
+    <string name="maptype">MapType</string>
+    <string name="language">Language</string>
+    <string name="logout">Log out</string>
+    <string name="modalTitle">Please Confirm</string>
+    <string name="modalText">Are you sure, you want to logout from Agricircle?</string>
+    <string name="buttonLogout">Logout</string>
+    <string name="buttonCancel">Cancel</string>
+    <string name="buttonOK">OK</string>
+    <string name="languageUpdated">Language Updated</string>
+    <string name="today">Today</string>
+    <string name="fivedays">5 Days</string>
+    <string name="fourteendays">14 Days</string>
+    <string name="activities">Activities</string>
+    <string name="fieldlist">Field List</string>
+    <string name="usercreated">Your user account was created. Please visit the agricircle website to reset your password and login.</string>
+    <string name="usercreatedTitle">Account created</string>
+    <string name="gotosite">Forgot password?</string>
+    <string name="gotologon">Login</string>
+    <string name="wronglogin">Wrong email or password</string>
+    <string name="permissiontitle">Location Permission Needed</string>
+    <string name="permissiontext">This app needs the Location permission, please accept to use location functionality</string>
+    <string name="locationtext">Free roam active. Press button to return to your location</string>
+    <string name="myLocation">My Location</string>
+
+    <string-array name="Metric">
+
+
+        <item>t_2m:C</item>
+        <item>t_max_2m_3h:C</item>
+        <item>t_min_2m_3h:C</item>
+        <item>precip_6h:mm</item>
+        <item>wind_speed_10m:kmh"</item>
+        <item>wind_dir_10m:d"</item>
+
+
+
+    </string-array>
+    <string-array name="Imperial">
+
+
+        <item>t_2m:F</item>
+        <item>t_max_2m_3h:F</item>
+        <item>t_min_2m_3h:F</item>
+        <item>precip_6h:mm</item>
+        <item>wind_speed_10m:mph"</item>
+        <item>wind_dir_10m:d"</item>
+
+    </string-array>
+
+
+
+
+</resources>

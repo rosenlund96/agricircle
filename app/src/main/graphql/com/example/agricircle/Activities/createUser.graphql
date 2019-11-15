@@ -1,0 +1,27 @@
+mutation createUser($firstname: String! $lastname: String! $email:String! $title:String! $phonenumber:String! $companyname:String! $companyadress:String! $companystate:String! $companypostalcode:String! $companycity:String! $language:String! $companycountrycode:String! $sourcechannel:String! $subscriptiontype:String!){
+createUser(options:{
+first_name:$firstname
+last_name: $lastname
+email:$email
+title: $title
+phone_number: $phonenumber
+company_name: $companyname
+company_street_address: $companyadress
+company_state_name:$companystate
+company_postal_code:$companypostalcode
+company_city:$companycity
+language:$language
+company_country_code:$companycountrycode
+source_channel:$sourcechannel
+subscription_type:$subscriptiontype
+pricing_plan:"field_management"
+
+hectars:"1"}){
+token
+cookie
+message
+localize_message
+code
+
+}
+}

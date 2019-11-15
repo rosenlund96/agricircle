@@ -1,0 +1,597 @@
+package com.example.agricircle.project.Fragment;
+
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
+import android.os.Build;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.agricircle.project.Activities.MainScreenActivity;
+import com.example.agricircle.project.Entities.Activity;
+import com.example.agricircle.project.Entities.Field;
+import com.example.agricircle.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class MapFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback,
+
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
+    GoogleMap mGoogleMap;
+    SupportMapFragment mapFrag;
+    LocationRequest mLocationRequest;
+    boolean request;
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    Marker mCurrLocationMarker;
+    MainScreenActivity main;
+    public Button userprofile,fields, weather,locationbutton;
+    ImageView weatherImage, imgx,imgy;
+    View myView;
+    List<Polygon> polygons;
+    List<Activity> activitites;
+    String activePolygon;
+    LinearLayout infoLayout, locationlayout;
+    private TextView infoFieldName, infoFieldSurface, productx,producty, activitytypex,activitytypey, locationtext;
+    List<String> parameters;
+    boolean polygonsDrawed;
+    Display display;
+    LatLng latLng;
+    int width,height;
+    double heightconstant, widthconstant;
+    public MapFragment() {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("On Resume kaldt");
+        weather.setText(R.string.loadingWeather);
+        //opdaterVejr(latLng);
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationRequest, this);
+
+        }
+
+
+
+        clearPolygonColors();
+        //String[] latlong =  LoadPreferences("CurrentCameraPosition").split(",");
+        //System.out.println("Hentet: " + latlong.toString());
+        //double latitude = Double.parseDouble(latlong[0].substring(10,26));
+        //double longitude = Double.parseDouble(latlong[1].substring(0,16));
+
+        //LatLng temp = new LatLng(latitude,longitude);
+        //if(mGoogleMap != null){
+         //   mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,15));
+        //}
+
+
+
+
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        activePolygon = "";
+        widthconstant = 0.4;
+        heightconstant = 0.0147;
+        request = false;
+        myView = inflater.inflate(R.layout.mainview, container, false);
+        locationbutton = (Button) myView.findViewById(R.id.enablelocation);
+        locationbutton.setText(getResources().getString(R.string.myLocation));
+        locationbutton.setOnClickListener(this);
+        locationtext = (TextView) myView.findViewById(R.id.locationtext);
+        locationtext.setText(getResources().getString(R.string.locationtext));
+        locationlayout = (LinearLayout) myView.findViewById(R.id.locationlayout);
+        locationlayout.setVisibility(View.INVISIBLE);
+        //locationbutton.setVisibility(View.INVISIBLE);
+        fields = (Button) myView.findViewById(R.id.googlemaps_list);
+        userprofile = (Button) myView.findViewById(R.id.googlemaps_settings);
+        infoLayout = (LinearLayout) myView.findViewById(R.id.infolayout);
+        infoFieldName = (TextView) myView.findViewById(R.id.mapFieldName);
+        infoFieldSurface = (TextView) myView.findViewById(R.id.mapSurface);
+        productx = (TextView) myView.findViewById(R.id.productx);
+        producty = (TextView) myView.findViewById(R.id.producty);
+        activitytypex = (TextView) myView.findViewById(R.id.activitytypex);
+        activitytypey = (TextView) myView.findViewById(R.id.activitytypey);
+        imgx = (ImageView) myView.findViewById(R.id.imgx);
+        imgy = (ImageView) myView.findViewById(R.id.imgy);
+        fields.setOnClickListener(this);
+        weatherImage = (ImageView) myView.findViewById(R.id.weatherimage);
+        weather = (Button) myView.findViewById(R.id.weatherbutton);
+        weather.setOnClickListener(this);
+        display = getActivity().getWindowManager().getDefaultDisplay();
+        width = display.getWidth();
+        height = display.getHeight();
+        weather.setWidth((int) (width * widthconstant));
+        weather.setHeight((int) (height * heightconstant));
+        locationbutton.setWidth((int)(height * 0.5));
+        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int)(height*0.04),(int)(height * 0.04));
+        weatherImage.setLayoutParams(parms);
+        userprofile.setOnClickListener(this);
+        polygons= new ArrayList<>();
+        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFrag.getMapAsync(this);
+        mapFrag.setRetainInstance(true);
+        initialize();
+        return myView;
+    }
+
+    public void initialize(){
+    main = MainScreenActivity.getInstance();
+    activitites = main.controller.getActivities();
+    String units = LoadPreferences("unit");
+    if(units.equals("")){
+        SavePreferences("unit","Metric");
+    }
+    //2109 fahrenheit 2103 celcius
+    weather.setText(R.string.loadingWeather);
+
+
+
+    //weather.setText("10" + " \u2103");
+
+
+
+
+
+
+
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
+
+        //SavePreferences("CurrentCameraPosition",mGoogleMap.getCameraPosition().target.toString());
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == fields){
+
+
+            this.getFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.article_fragment
+                            , new ListViewFragment())
+                    .commit();
+
+
+
+
+        }
+        else if(v == userprofile){
+            removePolygonsFromMap();
+            this.getFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.article_fragment
+                            , new UserFragment())
+                    .commit();
+        }
+        else if(v == weather){
+            removePolygonsFromMap();
+            this.getFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.article_fragment
+                            , new WeatherFragment())
+                    .commit();
+        }
+        else if(v == locationbutton){
+            mGoogleMap.setMyLocationEnabled(true);
+
+            locationlayout.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        System.out.println("OnConnected kaldt");
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+        if(request == true){
+
+        }
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location)
+    {
+        mLastLocation = location;
+        if (mCurrLocationMarker != null) {
+            mCurrLocationMarker.remove();
+        }
+
+        //Place current location marker
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        opdaterVejr(latLng);
+
+        //move map camera
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+
+    }
+    public void opdaterVejr(LatLng lokation){
+        String unit = LoadPreferences("unit");
+        if(unit.equals("Metric")){
+            main.controller.getWeather(lokation,"mix",getCurrentTime(),0,1, Arrays.asList(getResources().getStringArray(R.array.Metric)));
+        }
+        else if(unit.equals("Imperial")){
+            main.controller.getWeather(lokation,"mix",getCurrentTime(),0,1, Arrays.asList(getResources().getStringArray(R.array.Imperial)));
+        }
+
+        while(true){
+            if(main.controller.weatherList.size() > 0){
+                //System.out.println("Vejrdata hentet - Temp: " + main.controller.weatherItem.t_2m_C );
+                if(unit.equals("Metric")){
+                    weather.setText(main.controller.weatherList.get(0).t_2m_C+"\u2103");
+                }
+                else if(unit.equals("Imperial")){
+                    weather.setText(main.controller.weatherList.get(0).t_2m_C+"\u2109");
+                }
+
+                break;
+            }
+        }
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap)
+    {
+        mGoogleMap=googleMap;
+        String map = LoadPreferences("Map");
+        if(map.equals("Normal")){
+            mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+        else if(map.equals("Sattelite")){
+            mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        }
+        else if(map.equals("Hybrid")){
+            mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        }
+
+        polygons.clear();
+        //Initialize Google Play Services
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                //Location Permission already granted
+                buildGoogleApiClient();
+                mGoogleMap.setMyLocationEnabled(true);
+                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+            } else {
+                //Request Location Permission
+
+                checkLocationPermission();
+            }
+        }
+        else {
+            buildGoogleApiClient();
+            mGoogleMap.setMyLocationEnabled(false);
+            mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+
+
+        }
+
+            DrawPloygonsOnMap();
+
+
+
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+               clearPolygonColors();
+               infoLayout.setVisibility(View.INVISIBLE);
+
+               mGoogleMap.setMyLocationEnabled(true);
+            }
+        });
+        //Hvis brugeren rykker kortet rundt
+        mGoogleMap.setOnCameraMoveStartedListener(new GoogleMap.OnCameraMoveStartedListener() {
+            @Override
+            public void onCameraMoveStarted(int i) {
+                if(i == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE){
+
+                    mGoogleMap.setMyLocationEnabled(false);
+                    infoLayout.setVisibility(View.INVISIBLE);
+                    locationlayout.setVisibility(View.VISIBLE);
+                    clearPolygonColors();
+                }
+
+            }
+        });
+        mGoogleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+            @Override
+            public void onCameraMove() {
+
+                if(mGoogleMap.getCameraPosition().zoom < 12.5){
+                    Toast.makeText(getActivity(),"Zoomlevel er under 12.5",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        mGoogleMap.setOnPolygonClickListener(new GoogleMap.OnPolygonClickListener() {
+            @Override
+            public void onPolygonClick(Polygon polygon) {
+                Field field = getRightField(polygon.getPoints());
+                List<Activity> tempList = sortActivities(field);
+                clearPolygonColors();
+                locationlayout.setVisibility(View.INVISIBLE);
+                polygon.setStrokeColor(Color.argb(255,255,51,51));
+                polygon.setFillColor(Color.argb(160,255,51,51));
+                mGoogleMap.setMyLocationEnabled(false);
+                LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0025,field.getCenterpoint().getCoordinates().get(0).longitude);
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,15));
+                infoFieldName.setText(field.getDisplay_name());
+                infoFieldSurface.setText(field.getSurface() +"ha");
+                if(!tempList.get(0).getUrl().equals("")){
+                    Picasso.get().load(tempList.get(0).getUrl()).into(imgx);
+                }
+                else {
+                    imgx.setImageDrawable(getContext().getDrawable(R.drawable.questionmark));
+                }
+                if(!tempList.get(1).getUrl().equals("")){
+                    Picasso.get().load(tempList.get(1).getUrl()).into(imgy);
+                }
+                else{
+                    imgy.setImageDrawable(getContext().getDrawable(R.drawable.questionmark));
+                }
+                productx.setText(getCropName(tempList.get(0).getCrop_id()));
+                producty.setText(getCropName(tempList.get(1).getCrop_id()));
+                activitytypex.setText(tempList.get(0).getActivityType());
+                activitytypey.setText(tempList.get(1).getActivityType());
+                infoLayout.setVisibility(View.VISIBLE);
+
+
+
+
+                //Toast.makeText(getActivity(), "Polygon: " + field.getDisplay_name(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    public List<Activity> sortActivities(Field field){
+        List<Activity> temp = new ArrayList<>();
+        for(int i = 0; i<activitites.size();i++){
+            if(activitites.get(i).getField_id() == field.getId()){
+                temp.add(activitites.get(i));
+            }
+        }
+        return temp;
+    }
+
+    public String getCropName(int id){
+        for (int i = 0; i<main.controller.cropsList.size();i++){
+            if(main.controller.cropsList.get(i).getCrop_id() == id){
+                return main.controller.cropsList.get(i).getName();
+            }
+        }
+        return "N/A";
+    }
+
+    public void DrawPloygonsOnMap(){
+        for(int i = 0; i<main.controller.getUser().getFields().size();i++){
+            Polygon polygon = mGoogleMap.addPolygon(DrawPolygon(main.controller.getUser().getFields().get(i)));
+            polygon.setStrokeColor(Color.argb(255,0,128,255));
+            polygon.setFillColor(Color.argb(160,0,128,255));
+            polygon.setClickable(true);
+            polygons.add(polygon);
+
+            //System.out.println("Polygon "+polygon.getPoints());
+
+        }
+    }
+
+    public void DrawMarkersOnMap(boolean draw){
+
+    }
+
+    public void removePolygonsFromMap(){
+        for (int i = 0; i < polygons.size(); i++){
+            //System.out.println("Polygon fjernet: " + polygons.get(i).getId());
+            polygons.get(i).remove();
+            polygons.get(i).remove();
+
+
+
+        }
+    }
+
+    public String getCurrentTime(){
+
+
+        String date = android.text.format.DateFormat.format("yyyy-MM-ddTHH:mm", new java.util.Date()).toString();
+        return date;
+    }
+
+    public void clearPolygonColors(){
+        for (int i = 0; i < polygons.size(); i++){
+
+            polygons.get(i).setStrokeColor(Color.argb(255,0,128,255));
+            polygons.get(i).setFillColor(Color.argb(160,0,128,255));
+
+
+        }
+    }
+
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        System.out.println("OnRequestPermissionResult kaldt");
+        buildGoogleApiClient();
+        mGoogleMap.setMyLocationEnabled(true);
+        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+        request = true;
+    }
+
+    private String LoadPreferences(String key) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        String result = sharedPreferences.getString(key, "");
+        return result;
+
+    }
+
+    private void SavePreferences(String key, String value) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    //Tilføj flyt kamera efter accept
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Location Permission Needed")
+                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                requestPermissions(
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                requestPermissions(
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION );
+
+            }
+        }
+
+
+    }
+
+
+    public Field getRightField(List<LatLng> points){
+        Field field = null;
+        List<LatLng> newList = points;
+        newList.remove(points.size()-1);
+
+        for(int i = 0; i<main.controller.getUser().getFields().size();i++){
+            if(newList.equals(main.controller.getUser().getFields().get(i).getCoordinates().getCoordinates())){
+                System.out.println("Korrekt field fundet!");
+                field = main.controller.getUser().getFields().get(i);
+                return field;
+            }
+            else{
+                System.out.println("Field ikke fundet på bruger");
+
+            }
+        }
+
+        return null;
+    }
+
+    public PolygonOptions DrawPolygon(Field field){
+        PolygonOptions rectOptions = new PolygonOptions();
+        for(int i = 0; i<field.getCoordinates().getNumOfCoordinates(); i++){
+            rectOptions.add(field.getCoordinates().getCoordinates().get(i));
+
+        }
+        rectOptions.add(field.getCoordinates().getCoordinates().get(0));
+        rectOptions.strokeColor(Color.argb(255,0,128,255));
+        rectOptions.fillColor(Color.argb(160,0,128,255));
+
+        return rectOptions;
+    }
+
+}

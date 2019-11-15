@@ -1,0 +1,10 @@
+query getAllCrops{
+  allCrops(options: {name: ""}){
+  collection{
+  id
+  name
+  image_url
+  autumn
+}
+}
+}
