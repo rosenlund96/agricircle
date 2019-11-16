@@ -130,15 +130,15 @@ public class MainScreenActivity extends AppCompatActivity
                     while(true){
                         if(user != null){
                             controller.setUser(user);
-                            controller.getCompanies();
+                            //controller.getCompanies();
                             setUserSettings();
-                            System.out.println("Bruger hentet");
+                            //System.out.println("Bruger hentet");
                             currentState = STATE.LOADCOMPANIES;
                             break;
                         }
                     }
                 case LOADCOMPANIES:
-
+                    Boolean getCompaniesCalled = false;
                     progressDialog.setMessage("Henter Virksomheder");
 
                     while(true){
@@ -148,10 +148,18 @@ public class MainScreenActivity extends AppCompatActivity
                             currentState = STATE.LOADCROPS;
                             break;
                         }
+                        else if(controller.getUser().getCompanies().isEmpty() && !getCompaniesCalled){
+                            controller.getCompanies();
+                            getCompaniesCalled = true;
+                        }
                     }
 
 
                 case LOADCROPS:
+                    System.out.println("Antal Virksomheder");
+                    for(int i = 0; i<controller.getUser().getCompanies().size();i++){
+                        System.out.println("Virksomhed "+i+1+" "+controller.getUser().getCompanies().get(i).getName());
+                    }
                     controller.getCrops(controller.getUser().getCompanies().get(0).getId(),2019);
                     progressDialog.setMessage("Henter Crops");
                     while(true){

@@ -51,6 +51,7 @@ public class UserController implements Serializable {
     public boolean fieldsLoaded;
     public List<Crop> cropsList = new ArrayList<>();
     public List<Field> fieldsList = new ArrayList<>();
+    public List<Company> companiesList = new ArrayList<>();
     public List<Activity> activities = new ArrayList<>();
     public List<String> activitytypes = new ArrayList<>();
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
@@ -438,6 +439,7 @@ public class UserController implements Serializable {
 
 
     public void getCompanies(){
+        companiesList.clear();
 
         GetCompaniesQuery companies = GetCompaniesQuery.builder().build();
 
@@ -445,15 +447,16 @@ public class UserController implements Serializable {
             @Override
             public void onResponse(@NotNull Response<GetCompaniesQuery.Data> response) {
                 if(!response.hasErrors()){
+                    System.out.println(response.data().companies());
                    for(int i = 0; i < response.data().companies().size();i++){
                        GetCompaniesQuery.Company data = response.data().companies().get(i);
                        Company company = new Company(data.id(),data.name(),data.access(),data.owner_photo_url(),data.default_());
-                       if(!user.getCompanies().contains(company)){
-                           user.addCompany(company);
+                       if(!checkObjectExists(company.getId())){
+                           companiesList.add(company);
                        }
 
                    }
-
+                    user.companies = companiesList;
                     System.out.println("Antal virksomheder: " + user.getCompanies().size());
                 }
                 else {
@@ -466,6 +469,16 @@ public class UserController implements Serializable {
                 System.out.println(e.getCause());
             }
         });
+    }
+    public boolean checkObjectExists(int key){
+        boolean value = false;
+
+        for(int i = 0; i<companiesList.size();i++){
+            if(companiesList.get(i).getId() == key) {
+                value = true;
+            }
+        }
+        return value;
     }
 
 
@@ -565,13 +578,24 @@ public class UserController implements Serializable {
 
 
         apolloClient.query(query).enqueue(new ApolloCall.Callback<GetUserQuery.Data>() {
+
+
+            @Override
+            public void onStatusEvent(@NotNull ApolloCall.StatusEvent event) {
+                super.onStatusEvent(event);
+                if(event == ApolloCall.StatusEvent.COMPLETED){
+                    //System.out.println("Bruger hentet, virksomheder hentes");
+                    //getCompanies();
+                }
+            }
+
             @Override
             public void onResponse(@NotNull Response<GetUserQuery.Data> response) {
                 if(response.hasErrors()){
                     System.out.println("Der opstod en fejl ved hentning af bruger: "+response.hasErrors());
                 }
                 else {
-                    System.out.println("Bruger hentet: "+response.data().user().name());
+                    //System.out.println("Bruger hentet: "+response.data().user().name());
                     GetUserQuery.User user = response.data().user();
                     User temp = new User();
                     temp.setName(user.name());
