@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,8 +49,11 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class MapFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback,
@@ -74,7 +79,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private LinearLayout infoLayout, locationlayout;
     private TextView infoFieldName, infoFieldSurface, productx,producty, activitytypex,activitytypey, locationtext;
     private List<String> parameters;
-    boolean polygonsDrawed;
+    private boolean firstUpdate;
     private Display display;
     private LatLng latLng;
     private int width,height;
@@ -120,6 +125,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         widthconstant = 0.4;
         heightconstant = 0.0147;
         request = false;
+        firstUpdate = false;
         myView = inflater.inflate(R.layout.mainview, container, false);
         locationbutton = myView.findViewById(R.id.enablelocation);
         locationbutton.setText(getResources().getString(R.string.myLocation));
@@ -161,6 +167,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         initialize();
         return myView;
     }
+
+
 
     private void initialize(){
     main = MainScreenActivity.getInstance();
@@ -248,9 +256,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
-        if(request == true){
 
-        }
 
     }
 
@@ -274,36 +280,13 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
         //Place current location marker
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        opdaterVejr(latLng);
+
 
         //move map camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
 
     }
-    private void opdaterVejr(LatLng lokation){
-        String unit = LoadPreferences("unit");
-        if(unit.equals("Metric")){
-            main.controller.getWeather(lokation,"mix",getCurrentTime(),0,1, Arrays.asList(getResources().getStringArray(R.array.Metric)));
-        }
-        else if(unit.equals("Imperial")){
-            main.controller.getWeather(lokation,"mix",getCurrentTime(),0,1, Arrays.asList(getResources().getStringArray(R.array.Imperial)));
-        }
 
-        while(true){
-            if(main.controller.weatherList.size() > 0){
-                //System.out.println("Vejrdata hentet - Temp: " + main.controller.weatherItem.t_2m_C );
-                if(unit.equals("Metric")){
-                    weather.setText(main.controller.weatherList.get(0).t_2m_C+"\u2103");
-                }
-                else if(unit.equals("Imperial")){
-                    weather.setText(main.controller.weatherList.get(0).t_2m_C+"\u2109");
-                }
-
-                break;
-            }
-        }
-
-    }
 
     @Override
     public void onMapReady(GoogleMap googleMap)
@@ -347,6 +330,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
 
             DrawPolygonsOnMap();
+            //opdaterVejr(mGoogleMap.getCameraPosition().target);
+        //new UpdateWeather().execute(mGoogleMap.getCameraPosition().target);
+
 
 
 
@@ -373,14 +359,26 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
             }
         });
+        mGoogleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+            @Override
+            public void onCameraIdle() {
+
+                new UpdateWeather().execute(mGoogleMap.getCameraPosition().target);
+            }
+        });
         mGoogleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
             @Override
             public void onCameraMove() {
+                //opdaterVejr(mGoogleMap.getCameraPosition().target);
+
 
                 if(mGoogleMap.getCameraPosition().zoom < 12.5){
                     Toast.makeText(getActivity(),"Zoomlevel er under 12.5",
                             Toast.LENGTH_LONG).show();
-                    DrawMarkersOnMap();
+                    if(mapMarkers.isEmpty()){
+                        DrawMarkersOnMap();
+                    }
+
                 }
                 else if(mGoogleMap.getCameraPosition().zoom >12.6){
                     if(mapMarkers.size()>0){
@@ -463,7 +461,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
     }
 
-    public void DrawMarkersOnMap(){
+    public void DrawMarkersOnMap()
+
+    {
 
 if(main.controller.getFields().size()> mapMarkers.size()){
     for(int i = 0; i<main.controller.getUser().getFields().size();i++){
@@ -485,6 +485,53 @@ if(main.controller.getFields().size()> mapMarkers.size()){
 
     }
 
+    private class UpdateWeather extends AsyncTask<LatLng, Void, Void> {
+
+        String unit = LoadPreferences("unit");
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+                while(true) {
+                    if (main.controller.weatherList.size() > 0) {
+
+                        if (unit.equals("Metric")) {
+                            weather.setText(main.controller.weatherList.get(0).t_2m_C + "\u2103");
+                        } else if (unit.equals("Imperial")) {
+                            weather.setText(main.controller.weatherList.get(0).t_2m_C + "\u2109");
+                        }
+                        firstUpdate = true;
+                        break;
+                    }
+                }
+
+
+
+        }
+
+        @Override
+        protected Void doInBackground(LatLng... latLngs) {
+            LatLng location = latLngs[0];
+
+
+
+
+
+            if(unit.equals("Metric")){
+                main.controller.getWeather(location,"mix",getCurrentTime("yyyy-MM-ddTHH:mm"),0,1, Arrays.asList(getResources().getStringArray(R.array.Metric)));
+            }
+            else if(unit.equals("Imperial")){
+                main.controller.getWeather(location,"mix",getCurrentTime("yyyy-MM-ddTHH:mm"),0,1, Arrays.asList(getResources().getStringArray(R.array.Imperial)));
+            }
+
+
+
+            return null;
+        }
+    }
+
+
     public void removeMarkersFromMap(){
         for(int i = 0; i<mapMarkers.size(); i++){
             mapMarkers.get(i).remove();
@@ -502,12 +549,13 @@ if(main.controller.getFields().size()> mapMarkers.size()){
         }
     }
 
-    private String getCurrentTime(){
+    private String getCurrentTime(String format){
 
 
-        String date = android.text.format.DateFormat.format("yyyy-MM-ddTHH:mm", new java.util.Date()).toString();
+        String date = android.text.format.DateFormat.format(format, new java.util.Date()).toString();
         return date;
     }
+
 
     private void clearPolygonColors(){
         for (int i = 0; i < polygons.size(); i++){
@@ -541,6 +589,7 @@ if(main.controller.getFields().size()> mapMarkers.size()){
     }
 
     private String LoadPreferences(String key) {
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         String result = sharedPreferences.getString(key, "");
         return result;

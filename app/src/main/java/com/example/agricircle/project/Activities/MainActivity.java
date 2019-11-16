@@ -1,10 +1,13 @@
 package com.example.agricircle.project.Activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -98,10 +101,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private boolean checkNetwork(){
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
+
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
+        if(checkNetwork()){
+
 
         if(!LoadPreferences("Cookie").equals("")){
             cookie = LoadPreferences("Cookie");
@@ -115,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             startActivity(i);
             finish();
+        }
         }
     }
 
@@ -131,6 +147,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 public void init(){
+    if(!checkNetwork()){
+        new AlertDialog.Builder(this)
+                .setTitle("No Internet")
+                .setMessage(getResources().getString(R.string.permissiontext))
+                .setPositiveButton(getResources().getText(R.string.buttonOK), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //Prompt the user once explanation has been shown
+                        ActivityCompat.requestPermissions(MainActivity.this,
+                                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                MY_PERMISSIONS_REQUEST_LOCATION );
+                    }
+                })
+                .create()
+                .show();
+    }
+
     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)

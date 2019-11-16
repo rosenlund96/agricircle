@@ -456,6 +456,9 @@ public class UserController implements Serializable {
 
                     System.out.println("Antal virksomheder: " + user.getCompanies().size());
                 }
+                else {
+                    System.out.println("Fejl ved hentning af virksomheder: "+response.errors());
+                }
             }
 
             @Override
