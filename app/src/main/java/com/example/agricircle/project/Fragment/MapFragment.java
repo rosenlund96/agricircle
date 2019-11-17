@@ -197,7 +197,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     public void onPause() {
         super.onPause();
 
-
+        removeMarkersFromMap();
+        removePolygonsFromMap();
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
@@ -221,7 +222,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
         }
         else if(v == userprofile){
-            removePolygonsFromMap();
+
             this.getFragmentManager().beginTransaction()
                     .addToBackStack(null)
                     .replace(R.id.article_fragment
@@ -229,7 +230,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                     .commit();
         }
         else if(v == weather){
-            removePolygonsFromMap();
+
             this.getFragmentManager().beginTransaction()
                     .addToBackStack(null)
                     .replace(R.id.article_fragment
@@ -341,8 +342,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             public void onMapClick(LatLng latLng) {
                clearPolygonColors();
                infoLayout.setVisibility(View.INVISIBLE);
+               locationlayout.setVisibility(View.VISIBLE);
 
-               mGoogleMap.setMyLocationEnabled(true);
+
             }
         });
         //Hvis brugeren rykker kortet rundt
@@ -364,19 +366,14 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             public void onCameraIdle() {
 
                 new UpdateWeather().execute(mGoogleMap.getCameraPosition().target);
-            }
-        });
-        mGoogleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
-            @Override
-            public void onCameraMove() {
-                //opdaterVejr(mGoogleMap.getCameraPosition().target);
-
-
+                Toast.makeText(getActivity(),String.valueOf(mGoogleMap.getCameraPosition().zoom),
+                        Toast.LENGTH_LONG).show();
                 if(mGoogleMap.getCameraPosition().zoom < 12.5){
-                    Toast.makeText(getActivity(),"Zoomlevel er under 12.5",
-                            Toast.LENGTH_LONG).show();
+
                     if(mapMarkers.isEmpty()){
                         DrawMarkersOnMap();
+
+
                     }
 
                 }
@@ -388,6 +385,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 }
             }
         });
+
         mGoogleMap.setOnPolygonClickListener(new GoogleMap.OnPolygonClickListener() {
             @Override
             public void onPolygonClick(Polygon polygon) {
@@ -398,7 +396,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 polygon.setStrokeColor(Color.argb(255,255,51,51));
                 polygon.setFillColor(Color.argb(160,255,51,51));
                 mGoogleMap.setMyLocationEnabled(false);
-                LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0025,field.getCenterpoint().getCoordinates().get(0).longitude);
+                LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0045,field.getCenterpoint().getCoordinates().get(0).longitude);
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,15));
                 infoFieldName.setText(field.getDisplay_name());
                 infoFieldSurface.setText(field.getSurface() +"ha");
@@ -533,20 +531,24 @@ if(main.controller.getFields().size()> mapMarkers.size()){
 
 
     public void removeMarkersFromMap(){
+        System.out.println("MapMarkers størrelse: " + mapMarkers.size());
         for(int i = 0; i<mapMarkers.size(); i++){
             mapMarkers.get(i).remove();
         }
+        mapMarkers.clear();
+        System.out.println("MapMarkers størrelse: " + mapMarkers.size());
     }
 
     private void removePolygonsFromMap(){
         for (int i = 0; i < polygons.size(); i++){
             //System.out.println("Polygon fjernet: " + polygons.get(i).getId());
             polygons.get(i).remove();
-            polygons.get(i).remove();
+
 
 
 
         }
+        polygons.clear();
     }
 
     private String getCurrentTime(String format){
@@ -582,6 +584,7 @@ if(main.controller.getFields().size()> mapMarkers.size()){
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         System.out.println("OnRequestPermissionResult kaldt");
+
         buildGoogleApiClient();
         mGoogleMap.setMyLocationEnabled(true);
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);

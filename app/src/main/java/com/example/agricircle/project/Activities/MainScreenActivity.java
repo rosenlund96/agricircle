@@ -36,12 +36,7 @@ import java.util.List;
 public class MainScreenActivity extends AppCompatActivity
          {
 
-    GoogleMap mGoogleMap;
-    SupportMapFragment mapFrag;
-    LocationRequest mLocationRequest;
-    GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
+
     public UserController controller;
 
 
@@ -156,11 +151,13 @@ public class MainScreenActivity extends AppCompatActivity
 
 
                 case LOADCROPS:
-                    System.out.println("Antal Virksomheder");
+
                     for(int i = 0; i<controller.getUser().getCompanies().size();i++){
-                        System.out.println("Virksomhed "+i+1+" "+controller.getUser().getCompanies().get(i).getName());
+                        System.out.println("Virksomhed "+(i+1)+" "+controller.getUser().getCompanies().get(i).getName());
                     }
-                    controller.getCrops(controller.getUser().getCompanies().get(0).getId(),2019);
+                    System.out.println("Henter crops for: " +controller.getUser().getCompanies().get(0).getName());
+                    //controller.getCrops(controller.getUser().getCompanies().get(0).getId(),2019);
+                    controller.getCrops(controller.user.getPrimaryCompany(),2019);
                     progressDialog.setMessage("Henter Crops");
                     while(true){
                         if(controller.cropsList.size() > 0){

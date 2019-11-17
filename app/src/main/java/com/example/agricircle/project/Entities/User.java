@@ -13,6 +13,7 @@ public class User implements Serializable {
     public boolean loggedIn;
     public List<Field> fields;
     public List<Company> companies;
+    public int primaryCompany;
 
     public String getLanguage() {
         return language;
@@ -27,6 +28,12 @@ public class User implements Serializable {
 
 
 
+    public int getPrimaryCompany(){
+        return this.primaryCompany;
+    }
+    public void setPrimaryCompany(int id){
+        this.primaryCompany = id;
+    }
     public void setLanguage(String language) {
         this.language = language;
     }

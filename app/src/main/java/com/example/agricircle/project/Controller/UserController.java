@@ -64,6 +64,7 @@ public class UserController implements Serializable {
 
 
 
+
     public UserController(String cookie) {
         this.cookie = cookie;
         init();
@@ -456,7 +457,9 @@ public class UserController implements Serializable {
                        }
 
                    }
+
                     user.companies = companiesList;
+                   user.setPrimaryCompany(companiesList.get(0).getId());
                     System.out.println("Antal virksomheder: " + user.getCompanies().size());
                 }
                 else {
