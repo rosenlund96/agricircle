@@ -1,0 +1,10 @@
+query getCompanies{
+  companies{
+  id
+  name
+  access
+  owner_photo_url
+  default
+
+}
+}

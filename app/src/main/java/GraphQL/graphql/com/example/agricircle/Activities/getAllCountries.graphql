@@ -1,0 +1,11 @@
+query countries {
+  countries{
+  name
+  regions
+  translations
+}
+
+
+
+
+}

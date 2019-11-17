@@ -1,0 +1,18 @@
+query getFields{
+  fields(options: {companyId:2434}){
+  id
+  name
+
+  company_id
+  secret_url
+  crop_id
+  crop_name
+  fertilizer_enabled
+  surface
+  rotations
+  shape
+  center_point
+
+
+}
+}

@@ -1,0 +1,11 @@
+query getWeather($lat: Float! $lng: Float! $model: String! $startdate: String! $hoursrange: Float! $hoursinterval: Int! $parameters: [String!]!){
+weather(options: {lat:$lat, lng:$lng, model:$model start_datetime:$startdate, hours_range:$hoursrange, hours_interval:$hoursinterval parameters:$parameters}){
+status
+dateGenerated
+
+jobIds
+data
+}
+
+
+}
