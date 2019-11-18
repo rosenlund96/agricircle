@@ -33,6 +33,7 @@ import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Field;
 import com.example.agricircle.R;
+import com.example.agricircle.project.Entities.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -47,6 +48,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -94,6 +96,12 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         System.out.println("On Resume kaldt");
         weather.setText(R.string.loadingWeather);
         //opdaterVejr(latLng);
+        if(main.controller.getUser().fields.isEmpty()){
+            Gson gson = new Gson();
+            String json = LoadPreferences("User");
+            User user = gson.fromJson(json, User.class);
+            main.controller.setUser(user);
+        }
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
 
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationRequest, this);
@@ -103,6 +111,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
 
         clearPolygonColors();
+
         //String[] latlong =  LoadPreferences("CurrentCameraPosition").split(",");
         //System.out.println("Hentet: " + latlong.toString());
         //double latitude = Double.parseDouble(latlong[0].substring(10,26));
@@ -366,8 +375,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             public void onCameraIdle() {
 
                 new UpdateWeather().execute(mGoogleMap.getCameraPosition().target);
-                Toast.makeText(getActivity(),String.valueOf(mGoogleMap.getCameraPosition().zoom),
-                        Toast.LENGTH_LONG).show();
+
                 if(mGoogleMap.getCameraPosition().zoom < 12.5){
 
                     if(mapMarkers.isEmpty()){
@@ -447,6 +455,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     }
 
     private void DrawPolygonsOnMap(){
+        System.out.println("DrawPolygons Kaldt, tegner " + main.controller.getFields().size());
         for(int i = 0; i<main.controller.getUser().getFields().size();i++){
             Polygon polygon = mGoogleMap.addPolygon(DrawPolygon(main.controller.getUser().getFields().get(i)));
             polygon.setStrokeColor(Color.argb(255,0,128,255));

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -18,9 +19,10 @@ import com.example.agricircle.R;
 
 import java.util.List;
 
-public class FieldListFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class FieldListFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener{
     private ListView results;
     private List<Field> fields;
+    private Button newField;
     View myView;
 
     public FieldListFragment(){
@@ -33,6 +35,8 @@ public class FieldListFragment extends Fragment implements AdapterView.OnItemCli
         results = (ListView) myView.findViewById(R.id.Results);
         results.setAdapter(new FieldAdaptor(getContext(),fields));
         results.setOnItemClickListener(this);
+        newField = myView.findViewById(R.id.drawnewfield);
+        newField.setOnClickListener(this);
 
 
 
@@ -47,5 +51,14 @@ public class FieldListFragment extends Fragment implements AdapterView.OnItemCli
     public void initialize(){
         fields = MainScreenActivity.getInstance().controller.getUser().getFields();
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        this.getFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.article_fragment
+                        , new DrawNewFieldFragment())
+                .commit();
     }
 }

@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //ryd backstack
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.putExtra("Cookie", cookie);
-            i.putExtra("User", user);
+            i.putExtra("UserObject", user);
 
             startActivity(i);
             finish();

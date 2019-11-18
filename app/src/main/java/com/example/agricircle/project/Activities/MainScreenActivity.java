@@ -108,10 +108,13 @@ public class MainScreenActivity extends AppCompatActivity
                  String json = LoadPreferences("User");
                  User user = gson.fromJson(json, User.class);
                  String cookie = LoadPreferences("Cookie");
-                 if((cookie != null) && (user.getName() != null)){
+                 if((cookie != null) && (user != null)){
                      System.out.println("Offlinedata bruges");
+
                      this.controller = new UserController(cookie);
                      this.controller.setUser(user);
+                     controller.createDummyData(user.fields,user.cropsList);
+
                      fragmentManager.beginTransaction()
                              //.addToBackStack(null)
                              .replace(R.id.article_fragment
@@ -164,9 +167,11 @@ public class MainScreenActivity extends AppCompatActivity
                                  }
 
                              case LOADUSER:
-                                 user = (User) i.getSerializableExtra("User");
+                                 Boolean usercalled = false;
+
                                  progressDialog.setMessage("Henter Bruger");
                                  while(true){
+                                     user = controller.getUser();
                                      if(user != null){
                                          controller.setUser(user);
                                          //controller.getCompanies();
@@ -174,6 +179,10 @@ public class MainScreenActivity extends AppCompatActivity
                                          //System.out.println("Bruger hentet");
                                          currentState = STATE.LOADCOMPANIES;
                                          break;
+                                     }
+                                     else if(!usercalled){
+                                         usercalled = true;
+                                         controller.getUserDB();
                                      }
                                  }
                              case LOADCOMPANIES:
@@ -362,7 +371,7 @@ public class MainScreenActivity extends AppCompatActivity
         super.onPause();
 
         Gson gson = new Gson();
-
+        System.out.println("Onpause blev kaldt");
         String json = gson.toJson(controller.getUser());
         SavePreferences("User",json);
         SavePreferences("Cookie",controller.cookie);
