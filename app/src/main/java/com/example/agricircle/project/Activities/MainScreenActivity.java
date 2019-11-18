@@ -31,6 +31,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,10 @@ public class MainScreenActivity extends AppCompatActivity
                 R.style.AppCompatAlertDialogStyle);
 
         //loadAssets();
-        new LoadAssetsAsync().execute();
+
+
+
+
 
 
 
@@ -97,7 +101,34 @@ public class MainScreenActivity extends AppCompatActivity
 
     }
 
-    public static MainScreenActivity getInstance() {
+             @Override
+             protected void onResume() {
+                 super.onResume();
+                 Gson gson = new Gson();
+                 String json = LoadPreferences("User");
+                 User user = gson.fromJson(json, User.class);
+                 String cookie = LoadPreferences("Cookie");
+                 if((cookie != null) && (user.getName() != null)){
+                     System.out.println("Offlinedata bruges");
+                     this.controller = new UserController(cookie);
+                     this.controller.setUser(user);
+                     fragmentManager.beginTransaction()
+                             //.addToBackStack(null)
+                             .replace(R.id.article_fragment
+                                     , new MapFragment(),"MAP")
+
+                             .commit();
+                 }
+
+                if(controller == null){
+                    System.out.println("Data hentes på ny");
+                    new LoadAssetsAsync().execute();
+                }
+
+                 //Tjek at alt data eksisterer og om der er netværksforbindelse.
+             }
+
+             public static MainScreenActivity getInstance() {
         return sMainScreenActivity;
     }
 
@@ -164,12 +195,6 @@ public class MainScreenActivity extends AppCompatActivity
 
 
                              case LOADCROPS:
-
-                                 for(int i = 0; i<controller.getUser().getCompanies().size();i++){
-                                     System.out.println("Virksomhed "+(i+1)+" "+controller.getUser().getCompanies().get(i).getName());
-                                 }
-                                 System.out.println("Henter crops for: " +controller.getUser().getCompanies().get(0).getName());
-                                 //controller.getCrops(controller.getUser().getCompanies().get(0).getId(),2019);
                                  controller.getCrops(controller.user.getPrimaryCompany(),2019);
                                  progressDialog.setMessage("Henter Crops");
                                  while(true){
@@ -335,6 +360,13 @@ public class MainScreenActivity extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
+
+        Gson gson = new Gson();
+
+        String json = gson.toJson(controller.getUser());
+        SavePreferences("User",json);
+        SavePreferences("Cookie",controller.cookie);
+        //SavePreferences("Controller",json);
 
         //stop location updates when Activity is no longer active
 

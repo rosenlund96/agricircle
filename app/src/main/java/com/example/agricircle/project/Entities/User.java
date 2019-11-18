@@ -13,6 +13,7 @@ public class User implements Serializable {
     public boolean loggedIn;
     public List<Field> fields;
     public List<Company> companies;
+    public List<Crop> cropsList;
     public int primaryCompany;
 
     public String getLanguage() {
@@ -27,6 +28,12 @@ public class User implements Serializable {
     }
 
 
+    public List<Crop> getCropsList(){
+        return this.cropsList;
+    }
+    public void setCropsList(List<Crop> crops){
+        this.cropsList = crops;
+    }
 
     public int getPrimaryCompany(){
         return this.primaryCompany;
@@ -62,13 +69,7 @@ public class User implements Serializable {
         this.slug = slug;
     }
 
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
 
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
 
     public User() {
         this.fields = new ArrayList<>();

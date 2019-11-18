@@ -2,6 +2,8 @@ package com.example.agricircle.project.Controller;
 
 import android.content.Context;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -58,8 +60,8 @@ public class UserController implements Serializable {
     ApolloClient apolloClient;
     int loginStatus;
     String loginError;
-    String cookie;
-    public Weather weatherItem;
+    public String cookie;
+
     public ArrayList<Weather> weatherList;
 
 
@@ -68,6 +70,7 @@ public class UserController implements Serializable {
     public UserController(String cookie) {
         this.cookie = cookie;
         init();
+        System.out.println("Ny usercontroller oprettet: " + cookie);
 
     }
 
@@ -239,7 +242,7 @@ public class UserController implements Serializable {
             cropsList.clear();
 
 
-            GetCropsQuery crops = GetCropsQuery.builder()
+            final GetCropsQuery crops = GetCropsQuery.builder()
                     .companyid(companyid)
                     .year(year)
                     .build();
@@ -257,6 +260,7 @@ public class UserController implements Serializable {
                     }
 
                 }
+                    user.setCropsList(cropsList);
                 }
 
                 @Override
@@ -482,6 +486,17 @@ public class UserController implements Serializable {
             }
         }
         return value;
+    }
+
+    public boolean checkInternetConnection(Context context){
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        System.out.println("Current conectivitystatus: " + isConnected);
+        return isConnected;
     }
 
 

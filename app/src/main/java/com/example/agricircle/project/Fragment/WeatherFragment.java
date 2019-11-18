@@ -48,7 +48,7 @@ import java.util.Random;
 public class WeatherFragment extends Fragment implements TabLayout.OnTabSelectedListener{
    Button weather1, weather2, weather3;
    TabLayout tabs;
-   TextView test;
+   TextView offlineText;
    View myView;
    CombinedChart mChart;
    Random r;
@@ -68,7 +68,7 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
         tabs = (TabLayout) myView.findViewById(R.id.tabLayout);
         tabs.setOnTabSelectedListener(this);
         mChart =(CombinedChart) myView.findViewById(R.id.weatherchart);
-
+        offlineText = myView.findViewById(R.id.offlinetext);
         vejrData = new ArrayList<>();
         r = new Random();
         mChart.getDescription().setEnabled(false);
@@ -189,21 +189,31 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
     }
 
     public void updateWeather(int hoursrange, int hoursinterval, int elementer){
-        mChart.clear();
-        mChart.setTouchEnabled(true);
 
-        mChart.getDescription().setEnabled(false);
-        mChart.setBackgroundColor(Color.WHITE);
-        mChart.setDrawGridBackground(false);
-        mChart.setDrawBarShadow(false);
-        mChart.setHighlightFullBarEnabled(false);
-        mChart.getAxisRight().setDrawLabels(false);
-        mChart.animateX(500);
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        if(main.controller.checkInternetConnection(getContext())){
+            mChart.setVisibility(View.VISIBLE);
+            offlineText.setVisibility(View.INVISIBLE);
+            mChart.clear();
+            mChart.setTouchEnabled(true);
 
-        LatLng temp = new LatLng(55.731659,12.363490);
-        opdaterVejr(temp, hoursrange,hoursinterval, elementer);
+            mChart.getDescription().setEnabled(false);
+            mChart.setBackgroundColor(Color.WHITE);
+            mChart.setDrawGridBackground(false);
+            mChart.setDrawBarShadow(false);
+            mChart.setHighlightFullBarEnabled(false);
+            mChart.getAxisRight().setDrawLabels(false);
+            mChart.animateX(500);
+            XAxis xAxis = mChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+            LatLng temp = new LatLng(55.731659,12.363490);
+            opdaterVejr(temp, hoursrange,hoursinterval, elementer);
+        }
+        else{
+            mChart.setVisibility(View.INVISIBLE);
+            offlineText.setVisibility(View.VISIBLE);
+        }
+
 
 
 
