@@ -394,6 +394,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             }
         });
 
+
+
         mGoogleMap.setOnPolygonClickListener(new GoogleMap.OnPolygonClickListener() {
             @Override
             public void onPolygonClick(Polygon polygon) {

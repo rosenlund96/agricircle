@@ -43,6 +43,15 @@
     <string name="permissiontext">This app needs the Location permission, please accept to use location functionality</string>
     <string name="locationtext">Free roam active. Press button to return to your location</string>
     <string name="myLocation">My Location</string>
+    <string name="modalDrawTitle">Markers found!</string>
+    <string name="modalDrawText">Markers found, do you wish to draw a polygon from the markers or to delete them?</string>
+    <string name="modalDrawButton">Draw polygon</string>
+    <string name="modalDrawDelete">Delete markers</string>
+    <string name="createField">Create Field</string>
+    <string name="Draw">Draw</string>
+    <string name="drawMode">Drawmode active!</string>
+    <string name="notEnoughMarkers">Not enough markers!</string>
+    <string name="notEnoughMarkersText">Only 2 markers were found, please delete them and start over again.</string>
 
     <string-array name="Metric">
 

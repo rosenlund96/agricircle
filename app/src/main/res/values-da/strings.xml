@@ -35,4 +35,11 @@
         <item>Dansk</item>
 
     </string-array>
+    <string name="modalDrawButton">Tegn polygon</string>
+    <string name="modalDrawDelete">Slet markører</string>
+    <string name="modalDrawText">Markører fundet, ønsker du at tegne en polygon ud fra disse, eller at starte forfra?</string>
+    <string name="modalDrawTitle">Markører fundet!</string>
+    <string name="createField">Opret Mark</string>
+    <string name="drawMode">Tegnetilstand aktiv!</string>
+    <string name="Draw">Tegn</string>
 </resources>

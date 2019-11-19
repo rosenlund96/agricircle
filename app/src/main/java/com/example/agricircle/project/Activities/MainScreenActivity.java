@@ -4,33 +4,20 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.location.Location;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
-import android.view.View;
-import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.agricircle.project.Controller.UserController;
 import com.example.agricircle.project.Entities.Crop;
-import com.example.agricircle.project.Entities.Field;
 import com.example.agricircle.project.Entities.User;
 import com.example.agricircle.project.Fragment.MapFragment;
 import com.example.agricircle.R;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -51,6 +38,7 @@ public class MainScreenActivity extends AppCompatActivity
     Intent i;
     ProgressDialog progressDialog;
     Boolean polygonsDrawed;
+    public PlacesClient placesClient;
     private static MainScreenActivity sMainScreenActivity;
     private FragmentManager fragmentManager;
 
@@ -353,6 +341,7 @@ public class MainScreenActivity extends AppCompatActivity
         }
 
     }
+
 
     public void setUserSettings(){
         if(LoadPreferences("FirstLogin").equals("")){

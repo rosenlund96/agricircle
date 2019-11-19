@@ -1,5 +1,6 @@
 package com.example.agricircle.project.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.agricircle.project.Activities.DrawNewFieldActivity;
+import com.example.agricircle.project.Activities.MainActivity;
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Field;
 import com.example.agricircle.project.Util.FieldAdaptor;
@@ -55,10 +58,9 @@ public class FieldListFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onClick(View v) {
-        this.getFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.article_fragment
-                        , new DrawNewFieldFragment())
-                .commit();
+        Intent i = new Intent(getContext(), DrawNewFieldActivity.class);
+
+
+        startActivity(i);
     }
 }
