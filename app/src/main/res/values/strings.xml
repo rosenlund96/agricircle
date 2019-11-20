@@ -52,6 +52,9 @@
     <string name="drawMode">Drawmode active!</string>
     <string name="notEnoughMarkers">Not enough markers!</string>
     <string name="notEnoughMarkersText">Only 2 markers were found, please delete them and start over again.</string>
+    <string name="required">Required</string>
+    <string name="emailalreadypresent">Email already in system</string>
+    <string name="emailregex">Please enter an emailadress</string>
 
     <string-array name="Metric">
 

@@ -6,12 +6,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.agricircle.project.Controller.UserController;
+import com.example.agricircle.project.Entities.User;
 import com.example.agricircle.project.Fragment.RegisterFrag1;
 import com.example.agricircle.R;
 
 public class RegisterActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     String fornavn, efternavn, telefon, email, title;
+    public UserController controller;
     private static RegisterActivity sRegisterActivity;
 
     public String getFornavn() {
@@ -60,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_user);
+        controller = new UserController(null);
         this.fornavn = "";
         this.efternavn = "";
         this.telefon = "";

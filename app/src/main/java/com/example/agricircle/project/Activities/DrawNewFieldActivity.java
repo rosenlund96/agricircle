@@ -52,7 +52,7 @@ import java.util.List;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class DrawNewFieldActivity extends FragmentActivity implements OnMapReadyCallback {
-    private Polygon polygon;
+    public Polygon polygon;
     private GoogleMap mMap;
     PlacesClient placesClient;
     Dialog myDialog;
@@ -65,7 +65,7 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
     AutocompleteSupportFragment autocompleteFragment;
     private FragmentManager fragmentManager;
     private LinearLayout userinput;
-
+    private static DrawNewFieldActivity sDrawNewFieldActivity;
     private static final String TAG = "MapsActivity";
 
     @Override
@@ -75,6 +75,7 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
         drawmode = false;
         mapMarkers = new ArrayList<>();
         myDialog = new Dialog(this);
+        sDrawNewFieldActivity = this;
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -147,6 +148,14 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
+    }
+
+    public static DrawNewFieldActivity getInstance() {
+        return sDrawNewFieldActivity;
+    }
+
+    public Polygon getPolygon(){
+        return this.polygon;
     }
 
 

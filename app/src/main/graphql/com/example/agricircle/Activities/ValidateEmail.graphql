@@ -1,0 +1,6 @@
+mutation checkEmail($email: String! $locale: String!){
+validateEmail(options: {email: $email, locale: $locale}){
+code
+message
+}
+}

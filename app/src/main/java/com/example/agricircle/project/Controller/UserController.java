@@ -13,6 +13,7 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 
+import com.example.agricircle.Activities.CheckEmailMutation;
 import com.example.agricircle.project.CreateUserMutation;
 import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Company;
@@ -60,6 +61,7 @@ public class UserController implements Serializable {
     ApolloClient apolloClient;
     int loginStatus;
     String loginError;
+    public int emailvalidate;
     public String cookie;
 
     public ArrayList<Weather> weatherList;
@@ -332,6 +334,39 @@ public class UserController implements Serializable {
         });
         return fieldsList;
 
+
+    }
+
+    public int ValidateEmail(String email){
+        emailvalidate = 0;
+        CheckEmailMutation validate = CheckEmailMutation.builder()
+                .email(email)
+                .locale("EN")
+                .build();
+
+        apolloClient.mutate(validate).enqueue(new ApolloCall.Callback<CheckEmailMutation.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<CheckEmailMutation.Data> response) {
+                if(!response.hasErrors()){
+                    System.out.println("Status for validering: " + response.data().validateEmail().code());
+                    emailvalidate = 2;
+
+                }
+                else{
+                    System.out.println("Fejl ved email validering: " +response.errors().get(0));
+                    emailvalidate = 1;
+
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+                System.out.println("Fejl ved kald af validering");
+            }
+        });
+
+        return emailvalidate;
 
     }
 

@@ -1,6 +1,9 @@
 package com.example.agricircle.project.Fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.agricircle.project.Activities.RegisterActivity;
 import com.example.agricircle.R;
+import com.google.android.gms.maps.model.LatLng;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class RegisterFrag1 extends Fragment implements View.OnClickListener {
@@ -23,6 +27,7 @@ public class RegisterFrag1 extends Fragment implements View.OnClickListener {
     Button next;
     EditText navn, efternavn, telefon, email;
     RegisterActivity main;
+    boolean returnvalue;
 
 
 
@@ -56,28 +61,44 @@ public class RegisterFrag1 extends Fragment implements View.OnClickListener {
     }
 
     public boolean checkInputs(){
-       boolean returnvalue = false;
+       returnvalue = false;
         if(title.getText().toString().matches("")){
-            title.setError("Felt skal udfyldes");
+            title.setError(getResources().getString(R.string.required));
             returnvalue = true;
         }
         if(navn.getText().toString().matches("")){
-            navn.setError("Felt skal udfyldes");
+            navn.setError(getResources().getString(R.string.required));
             returnvalue = true;
         }
         if(efternavn.getText().toString().matches("")){
-            efternavn.setError("Felt skal udfyldes");
+            efternavn.setError(getResources().getString(R.string.required));
             returnvalue = true;
         }
         if(telefon.getText().toString().matches("")){
-            telefon.setError("Felt skal udfyldes");
+            telefon.setError(getResources().getString(R.string.required));
             returnvalue = true;
         }
-        if(email.getText().toString().matches("")){
-            email.setError("Felt skal udfyldes");
+        if(!isValidEmail(email.getText().toString())){
             returnvalue = true;
+            email.setError(getResources().getString(R.string.emailregex));
         }
+
+
         return returnvalue;
+    }
+
+    public static boolean isValidEmail(CharSequence target) {
+        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
+    }
+
+    private class validateEmail extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... strings) {
+            main.controller.ValidateEmail(strings[0]);
+            return null;
+        }
+
+
     }
 
 
@@ -97,7 +118,22 @@ public class RegisterFrag1 extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         if(v == next){
             if(!checkInputs()){
-                nextFrag();
+                new validateEmail().execute(email.getText().toString());
+                while(true){
+                    if(main.controller.emailvalidate == 1){
+                        System.out.println("Email eksisterer");
+                        email.setError(getResources().getString(R.string.emailalreadypresent));
+                        break;
+                    }
+                    else if(main.controller.emailvalidate == 2){
+
+                        System.out.println("Email eksisterer ikke");
+                        main.controller.emailvalidate = 0;
+                        nextFrag();
+                        break;
+
+                    }
+                }
             }
 
         }

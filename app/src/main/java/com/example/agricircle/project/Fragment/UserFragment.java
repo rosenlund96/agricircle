@@ -201,6 +201,8 @@ public void logout(){
         @Override
         public void onClick(View v) {
             myDialog.dismiss();
+            SavePreferences("Cookie", "");
+            main.controller.cookie = "";
             getActivity().finish();
             startActivity(new Intent(getContext(), MainActivity.class));
 
