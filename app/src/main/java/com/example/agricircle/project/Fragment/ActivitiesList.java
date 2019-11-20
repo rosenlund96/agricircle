@@ -1,6 +1,7 @@
 package com.example.agricircle.project.Fragment;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,25 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
         results = (ListView) myView.findViewById(R.id.activitylist);
         results.setAdapter(new ActivityAdaptor(getContext(),activities));
         results.setOnItemClickListener(this);
+        myView.setFocusableInTouchMode(true);
+        myView.requestFocus();
+        myView.setOnKeyListener( new View.OnKeyListener()
+        {
+            @Override
+            public boolean onKey( View v, int keyCode, KeyEvent event )
+            {
+                if( keyCode == KeyEvent.KEYCODE_BACK )
+                {
+                    getFragmentManager().beginTransaction()
+                            .addToBackStack(null)
+                            .replace(R.id.article_fragment
+                                    , new MapFragment())
+                            .commit();
+                    return true;
+                }
+                return false;
+            }
+        } );
 
 
 

@@ -2,6 +2,7 @@ package com.example.agricircle.project.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,25 @@ public class FieldListFragment extends Fragment implements AdapterView.OnItemCli
         results.setOnItemClickListener(this);
         newField = myView.findViewById(R.id.drawnewfield);
         newField.setOnClickListener(this);
+        myView.setFocusableInTouchMode(true);
+        myView.requestFocus();
+        myView.setOnKeyListener( new View.OnKeyListener()
+        {
+            @Override
+            public boolean onKey( View v, int keyCode, KeyEvent event )
+            {
+                if( keyCode == KeyEvent.KEYCODE_BACK )
+                {
+                    getFragmentManager().beginTransaction()
+                            .addToBackStack(null)
+                            .replace(R.id.article_fragment
+                                    , new MapFragment())
+                            .commit();
+                    return true;
+                }
+                return false;
+            }
+        } );
 
 
 
@@ -55,6 +75,9 @@ public class FieldListFragment extends Fragment implements AdapterView.OnItemCli
         fields = MainScreenActivity.getInstance().controller.getUser().getFields();
 
     }
+
+
+
 
     @Override
     public void onClick(View v) {
