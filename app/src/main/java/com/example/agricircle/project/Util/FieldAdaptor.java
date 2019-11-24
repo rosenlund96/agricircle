@@ -51,9 +51,9 @@ public class FieldAdaptor extends BaseAdapter {
         if(convertView == null){
             convertView = mInflater.inflate(R.layout.fields_adaptor, parent, false);
             holder = new ViewHolder();
-            holder.name = (TextView) convertView.findViewById(R.id.fieldName);
+
             holder.owner = (TextView) convertView.findViewById(R.id.fieldOwner);
-            holder.size = (TextView) convertView.findViewById(R.id.FieldSize);
+            holder.size = (TextView) convertView.findViewById(R.id.fieldSize);
             holder.image = (ImageView) convertView.findViewById(R.id.fieldPic);
 
 
@@ -62,7 +62,7 @@ public class FieldAdaptor extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.name.setText("Field Name: " + results.get(position).getDisplay_name());
+
         holder.owner.setText(results.get(position).getDisplay_name());
         holder.size.setText("Surface: " +Double.toString(results.get(position).getSurface()) + " HA");
 

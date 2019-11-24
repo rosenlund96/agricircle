@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         String language = LoadPreferences("Language");
-        graphql = new ClientBackEnd();
+
         UsrController = new UserController(null);
 
         System.out.println("Sprog hentet: " + language);

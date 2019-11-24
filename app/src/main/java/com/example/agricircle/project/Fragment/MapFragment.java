@@ -49,7 +49,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.gson.Gson;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -219,7 +222,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     public void onClick(View v) {
         if (v == fields){
 
-
+            //new testsoilsampling().execute();
             this.getFragmentManager().beginTransaction()
                     .addToBackStack(null)
                     .replace(R.id.article_fragment
@@ -406,8 +409,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 polygon.setStrokeColor(Color.argb(255,255,51,51));
                 polygon.setFillColor(Color.argb(160,255,51,51));
                 mGoogleMap.setMyLocationEnabled(false);
-                LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0045,field.getCenterpoint().getCoordinates().get(0).longitude);
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,15));
+                LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0020,field.getCenterpoint().getCoordinates().get(0).longitude);
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
                 infoFieldName.setText(field.getDisplay_name());
                 infoFieldSurface.setText(field.getSurface() +"ha");
                 if(!tempList.get(0).getUrl().equals("")){
@@ -492,6 +495,20 @@ if(main.controller.getFields().size()> mapMarkers.size()){
 
 
 
+    }
+
+    private class testsoilsampling extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                main.controller.createSoilSampling();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (UnirestException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     private class UpdateWeather extends AsyncTask<LatLng, Void, Void> {

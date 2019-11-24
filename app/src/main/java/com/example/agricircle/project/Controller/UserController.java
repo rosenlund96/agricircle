@@ -28,14 +28,17 @@ import com.example.agricircle.project.GetCropsQuery;
 import com.example.agricircle.project.GetFieldsQuery;
 import com.example.agricircle.project.GetUserQuery;
 import com.example.agricircle.project.GetWeatherQuery;
+import com.example.agricircle.project.GraphQL.ClientBackEnd;
 import com.example.agricircle.project.LoginInputMutation;
 import com.google.android.gms.maps.model.LatLng;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 
 
 import java.io.IOException;
@@ -369,6 +372,14 @@ public class UserController implements Serializable {
         return emailvalidate;
 
     }
+
+    public void createSoilSampling() throws JSONException, UnirestException {
+        ClientBackEnd test = new ClientBackEnd(this.cookie);
+        test.createSoilSamplingPath();
+    }
+
+
+
 
     public void getWeather(LatLng coordinate, String model, String startdate, int hoursrange, int hoursinterval, List<String> parameters){
         weatherList.clear();

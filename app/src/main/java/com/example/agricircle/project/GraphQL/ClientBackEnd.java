@@ -14,148 +14,85 @@ import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.GetUserQuery;
 import com.example.agricircle.project.LoginInputMutation;
 
-import org.jetbrains.annotations.NotNull;
+import com.google.gson.Gson;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class ClientBackEnd {
 
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
-    ApolloClient apolloClient;
-    Boolean loginStatus;
+
     String cookie;
 
-
-
-
-
-    public ClientBackEnd() {
-init(null);
-
+    public ClientBackEnd(String cookie) {
+        this.cookie = cookie;
     }
 
-    public void init(String cookie){
-        OkHttpClient okHttpClient;
-        if(cookie == null){
-            okHttpClient = new OkHttpClient.Builder().build();
+    public void createSoilSamplingPath() throws JSONException, UnirestException {
+        JSONArray res = getGraphQl("CreateSamplingPath",
+                "[{\"query\":\"mutation createSoilPath{createSoilSamplingPath(soilSamplingJobId:153 soilSamplingInput: {minZoneSize:1 samplesPerZone:50 numZonesToSample:5}){errors{message}soilSampling}}\\n\",\"variables\":null,\"operationName\":\"createSoilPath\"}]");
+    }
+
+    /**
+     * Henter et antal GraphQL objekter fra serveren
+     *
+     * @param beskrivelse Tekst
+     * @param query
+     * @return JSON-objekt med data
+     */
+    private JSONArray getGraphQl(String beskrivelse, String query) throws UnirestException, JSONException {
+
+        HttpResponse<String> response = Unirest.post("https://core.agricircle.com/graphql")
+                .header("x-cookie", cookie)
+                .header("content-type", "application/json")
+                .body(query)
+                .asString();
+
+        System.out.println("\n\nAction: " + beskrivelse);
+        //System.out.println(response.getHeaders());
+        System.out.println("Response code: " + response.getCode() );
+        System.out.println("-----------------------------------");
+        //System.out.println(response.getBody());
+        if (response.getCode() != 200) throw new IllegalArgumentException("Fik fejl i svar");
+
+        JSONArray spmjsonarr = new JSONArray(query);
+        JSONArray svarjsonarr = new JSONArray(response.getBody());
+        for (int i = 0; i < spmjsonarr.length(); i++) {
+            JSONObject qjson = spmjsonarr.getJSONObject(i);
+            String gqlq = qjson.getString("query");
+            System.out.println("Spørger efter:\n" + qjson.toString(2));
+            System.out.println(gqlq.replaceAll("\\n", "\n"));
+
+            System.out.println(svarjsonarr.getJSONObject(i).toString(4));
         }
-        else{
-            okHttpClient = createOkHttpWithValidToken(cookie);
-        }
-
-
-
-
-        apolloClient = ApolloClient.builder()
-                .serverUrl(BASE_URL)
-                .okHttpClient(okHttpClient)
-
-                .build();
-        loginStatus = false;
-
-
-    }
-    public boolean checkLogin(){
-        return loginStatus;
+        return svarjsonarr;
     }
 
-    private OkHttpClient createOkHttpWithValidToken(final String cookie) {
-        return new OkHttpClient.Builder()
-                .addNetworkInterceptor(new Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        return chain.proceed(chain.request().newBuilder().header("x-cookie", cookie).build());
-                    }
-                }).build();
 
 
-    }
-
-    public void login(String email, String password, final Context context){
-
-        LoginInputMutation login = LoginInputMutation.builder()
-                                    .user(email)
-                                    .pass(password)
-                                    .build();
-        //System.out.println("Mail: " + login.variables().user() + " Pass: " + login.variables().pass() );
-
-        apolloClient.mutate(login).enqueue(new ApolloCall.Callback<LoginInputMutation.Data>() {
-
-            @Override
-            public void onResponse(@NotNull Response<LoginInputMutation.Data> response) {
-                if(!response.hasErrors()){
-                    cookie = response.data().login().cookie().get(2);
-                    //cookie="_AgriCircle_subdomain_session=SmlEZzEzMlR0YitqSnVkMndHem9Ddlhmb0drR3g5Q0pwdGJVUnBMWGZtRzdiNFRtcE5vdXp2b2J2ZkFkRlVDVStHTlg1ZlZUdVM0cTZGOXRxKy9mMEdjMG04MkVUZGczK2dRK3JsOTdKYjRGVm1JNDlNVFRHTzVrcWRRcmtJc1J0NWR6bmdXM2VxcVVacVpCS1VrYWNZK2VXR2NidXpEbUdzNDNnamhnVnhVPS0tVStNbDFqblZ5U1EzYzkwSTN6UnFiZz09--15f97196700b3eeab76d6e1a18517790c3798152;";
-                    init(cookie);
-                    System.out.println("Cookie: " + cookie);
-                    //getUser();
-                    loginStatus = true;
 
 
-                    Handler mainHandler = new Handler(Looper.getMainLooper());
-
-                    Runnable myRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-
-                            Intent i = new Intent(context, MainScreenActivity.class);
-                            i.putExtra("cookie", cookie);
-
-                            context.startActivity(i);
-
-                        } // This is your code
-                    };
-                    mainHandler.post(myRunnable);
 
 
-                }
-                else {
-                    System.out.println(response.errors());
-                    loginStatus = false;
-                }
 
 
-            }
-
-            @Override
-            public void onFailure(@NotNull ApolloException e) {
-                Log.e(TAG, e.getMessage(), e);
-                System.out.println("En fejl er opstået ved login: " + e.getCause());
-                loginStatus = false;
-
-            }
-        });
-
-    }
-
-    public void getUser(){
-
-        GetUserQuery query = GetUserQuery.builder()
-                            .build();
 
 
-        apolloClient.query(query).enqueue(new ApolloCall.Callback<GetUserQuery.Data>() {
-            @Override
-            public void onResponse(@NotNull Response<GetUserQuery.Data> response) {
-                if(response.hasErrors()){
-                    System.out.println(response.errors());
-                }
-                else {
-                    System.out.println(response.data().user().name());
-                }
 
-            }
 
-            @Override
-            public void onFailure(@NotNull ApolloException e) {
 
-            }
-        });
 
-    }
 }
+
+
+
+

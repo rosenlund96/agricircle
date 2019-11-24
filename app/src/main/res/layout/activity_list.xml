@@ -6,5 +6,26 @@
     <ListView
         android:id="@+id/activitylist"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="10"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/newactivity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="60dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/weather_button"
+            android:text="Create new activity"
+            android:textColor="@color/white" />
+    </LinearLayout>
 </LinearLayout>
