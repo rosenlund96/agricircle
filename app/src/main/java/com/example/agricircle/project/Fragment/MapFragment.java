@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -43,7 +44,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
@@ -74,7 +79,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private Location mLastLocation;
     private Marker mCurrLocationMarker;
     private MainScreenActivity main;
-    private Button userprofile,fields, weather,locationbutton;
+    private Button userprofile,fields, weather,locationbutton, soilzones;
     private ImageView weatherImage, imgx,imgy;
     private View myView;
     private List<Polygon> polygons;
@@ -85,10 +90,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private TextView infoFieldName, infoFieldSurface, productx,producty, activitytypex,activitytypey, locationtext;
     private List<String> parameters;
     private boolean firstUpdate, fieldPresent;
-    private Field field;
+    private Field field, activeField;
     private Display display;
     private LatLng latLng;
     private int width,height;
+    GroundOverlay soilzone;
     private double heightconstant, widthconstant;
     public MapFragment() {
 
@@ -153,7 +159,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         firstUpdate = false;
         fieldPresent = false;
         field = null;
+        activeField = null;
+        soilzone = null;
         myView = inflater.inflate(R.layout.mainview, container, false);
+        soilzones = myView.findViewById(R.id.soilbutton);
+        soilzones.setOnClickListener(this);
         locationbutton = myView.findViewById(R.id.enablelocation);
         locationbutton.setText(getResources().getString(R.string.myLocation));
         locationbutton.setOnClickListener(this);
@@ -270,7 +280,122 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             DrawPolygonsOnMap();
             locationlayout.setVisibility(View.INVISIBLE);
         }
+        else if(v == soilzones){
+
+
+
+            System.out.println("Prøver at tegne soilzone");
+            if(soilzone == null && activeField != null){
+                System.out.println("Soilzone tegnes");
+                int pic = getRightSoilZone(activeField);
+                LatLngBounds bounds = getCorrectBBox(activeField);
+                if (pic != 0 && bounds != null){
+
+                    GroundOverlayOptions newarkMap = new GroundOverlayOptions()
+                            .image(BitmapDescriptorFactory.fromResource(pic))
+                            .anchor(0, 1)
+                            .positionFromBounds(bounds);
+                    soilzone = mGoogleMap.addGroundOverlay(newarkMap);
+                }
+                for(int i = 0; i< polygons.size();i++){
+                    if(polygons.get(i).getPoints().get(0).equals(activeField.getCoordinates().getCoordinates().get(0))){
+                        polygons.get(i).setFillColor(Color.argb(0,0,0,0));
+                    }
+                }
+
+
+            }
+            else if(soilzone != null){
+                soilzone.remove();
+                soilzone = null;
+            }
+
+
+
+        }
     }
+
+    public int getRightSoilZone(Field field){
+        int pic = 0;
+        if(field.getId() == 30673){
+            pic = R.drawable.soilzone_1;
+        }
+        else if(field.getId() == 30781){
+            pic = R.drawable.soilzone_3;
+        }
+        else if(field.getId() == 30782){
+            pic = R.drawable.soilzone_4;
+        }
+        else if(field.getId() == 30953){
+            pic =R.drawable.soilzone_5;
+        }
+        else if(field.getId() == 30779){
+            pic = R.drawable.soilzone_2;
+        }
+        else if(field.getId() == 30780){
+            pic = R.drawable.soilzone_6;
+        }
+        else if(field.getId() == 33545){
+            pic = 0;
+        }
+        return pic;
+    }
+
+    public LatLngBounds getCorrectBBox(Field field){
+        LatLngBounds bounds = null;
+        if(field.getId() == 30673){
+            LatLngBounds newarkBounds = new LatLngBounds(
+                    new LatLng( 55.73106725319385,12.394530773162844),       // South west corner
+                    new LatLng( 55.73359238138601,12.398951053619387));      // North east corner
+            bounds = newarkBounds;
+        }
+        else if(field.getId() == 30781){
+            LatLngBounds newarkBounds = new LatLngBounds(
+                    new LatLng(47.4745266175175 ,8.480908870697023),       // South west corner
+                    new LatLng( 47.477467145274844,8.484020233154299));      // North east corner
+            bounds = newarkBounds;
+        }
+        else if(field.getId() == 30782){
+            LatLngBounds newarkBounds = new LatLngBounds(
+                    new LatLng( 47.46569316736088,8.46425771713257),       // South west corner
+                    new LatLng( 47.4715750468759,8.470480442047121));      // North east corner
+            bounds = newarkBounds;
+        }
+        else if(field.getId() == 30953){
+            LatLngBounds newarkBounds = new LatLngBounds(
+                    new LatLng(55.67148004424462 , 12.301779985427858),       // South west corner
+                    new LatLng(55.676386602523266 ,12.308002710342409));      // North east corner
+            bounds = newarkBounds;
+        }
+        else if(field.getId() == 30779){
+            LatLngBounds newarkBounds = new LatLngBounds(
+                    new LatLng(55.73182239238012 ,12.394487857818605),       // South west corner
+                    new LatLng( 55.736721380609424,12.400710582733156));      // North east corner
+            
+            bounds = newarkBounds;
+
+
+        }
+        else if(field.getId() == 33545){
+            bounds = null;
+        }
+        else if(field.getId() == 30780){
+            //Spanish field
+            LatLngBounds newarkBounds = new LatLngBounds(
+                    new LatLng( 47.47376154571218,8.493182659149172),       // South west corner
+                    new LatLng( 47.47670211628221,8.496294021606447));      // North east corner
+            bounds = newarkBounds;
+        }
+
+
+
+
+        return bounds;
+    }
+
+
+
+
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -355,7 +480,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                                 System.out.println("Polygon fundet");
                             }
                         }
-
+                        activeField = field;
                         LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0020,field.getCenterpoint().getCoordinates().get(0).longitude);
                         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
                         List<Activity> tempList = sortActivities(field);
@@ -416,6 +541,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                clearPolygonColors();
                infoLayout.setVisibility(View.INVISIBLE);
                locationlayout.setVisibility(View.VISIBLE);
+               activeField = null;
+               if(soilzone != null){
+                   soilzone.remove();
+                   soilzone = null;
+               }
 
 
             }
@@ -463,17 +593,18 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mGoogleMap.setOnPolygonClickListener(new GoogleMap.OnPolygonClickListener() {
             @Override
             public void onPolygonClick(Polygon polygon) {
-                Field field = getRightField(polygon.getPoints());
-                List<Activity> tempList = sortActivities(field);
+                activeField = getRightField(polygon.getPoints());
+                List<Activity> tempList = sortActivities(activeField);
                 clearPolygonColors();
                 locationlayout.setVisibility(View.INVISIBLE);
+
                 polygon.setStrokeColor(Color.argb(255,255,51,51));
                 polygon.setFillColor(Color.argb(160,255,51,51));
                 mGoogleMap.setMyLocationEnabled(false);
-                LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0020,field.getCenterpoint().getCoordinates().get(0).longitude);
+                LatLng temp = new LatLng(activeField.getCenterpoint().getCoordinates().get(0).latitude-0.0020,activeField.getCenterpoint().getCoordinates().get(0).longitude);
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
-                infoFieldName.setText(field.getDisplay_name());
-                infoFieldSurface.setText(field.getSurface() +"ha");
+                infoFieldName.setText(activeField.getDisplay_name());
+                infoFieldSurface.setText(activeField.getSurface() +"ha");
                 if(!tempList.get(0).getUrl().equals("")){
                     Picasso.get().load(tempList.get(0).getUrl()).into(imgx);
                 }
