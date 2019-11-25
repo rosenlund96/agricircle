@@ -410,7 +410,8 @@ public class UserController implements Serializable {
                         double windspeed =  Double.parseDouble(weatherobj.getAsJsonArray().get(4).getAsJsonObject().get("coordinates").getAsJsonArray().get(0).getAsJsonObject().get("dates").getAsJsonArray().get(i).getAsJsonObject().get("value").toString());
                         double winddirection = Double.parseDouble(weatherobj.getAsJsonArray().get(5).getAsJsonObject().get("coordinates").getAsJsonArray().get(0).getAsJsonObject().get("dates").getAsJsonArray().get(i).getAsJsonObject().get("value").toString());
                         String date = weatherobj.getAsJsonArray().get(5).getAsJsonObject().get("coordinates").getAsJsonArray().get(0).getAsJsonObject().get("dates").getAsJsonArray().get(i).getAsJsonObject().get("date").toString();
-                        weatherdata = new Weather(temp_nu,max_temp,min_temp,rain,windspeed,winddirection,date);
+                        int weatherSymbol = Integer.parseInt(weatherobj.getAsJsonArray().get(6).getAsJsonObject().get("coordinates").getAsJsonArray().get(0).getAsJsonObject().get("dates").getAsJsonArray().get(i).getAsJsonObject().get("value").toString());
+                        weatherdata = new Weather(temp_nu,max_temp,min_temp,rain,windspeed,winddirection,date, weatherSymbol);
 
 
 

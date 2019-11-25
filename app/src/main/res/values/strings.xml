@@ -59,26 +59,28 @@
     <string-array name="Metric">
 
 
-        <item>weather_symbol_1h:idx</item>
+
         <item>t_2m:C</item>
         <item>t_max_2m_3h:C</item>
         <item>t_min_2m_3h:C</item>
         <item>precip_6h:mm</item>
         <item>wind_speed_10m:kmh"</item>
         <item>wind_dir_10m:d"</item>
+        <item>weather_symbol_1h:idx</item>
 
 
 
     </string-array>
     <string-array name="Imperial">
 
-        <item>weather_symbol_1h:idx</item>
+
         <item>t_2m:F</item>
         <item>t_max_2m_3h:F</item>
         <item>t_min_2m_3h:F</item>
         <item>precip_6h:mm</item>
         <item>wind_speed_10m:mph"</item>
         <item>wind_dir_10m:d"</item>
+        <item>weather_symbol_1h:idx</item>
 
     </string-array>
 

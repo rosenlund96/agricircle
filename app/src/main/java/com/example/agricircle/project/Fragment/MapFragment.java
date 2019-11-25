@@ -168,8 +168,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         weather.setWidth((int) (width * widthconstant));
         weather.setHeight((int) (height * heightconstant));
         locationbutton.setWidth((int)(height * 0.5));
-        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int)(height*0.04),(int)(height * 0.04));
-        weatherImage.setLayoutParams(parms);
+        //LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int)(height*0.04),(int)(height * 0.04));
+        //weatherImage.setLayoutParams(parms);
         userprofile.setOnClickListener(this);
         polygons= new ArrayList<>();
         mapMarkers = new ArrayList<>();
@@ -524,8 +524,14 @@ if(main.controller.getFields().size()> mapMarkers.size()){
 
                         if (unit.equals("Metric")) {
                             weather.setText(main.controller.weatherList.get(0).t_2m_C + "\u2103");
+                            weatherImage.setImageDrawable(main.controller.weatherList.get(0).getWeatherSymbol(getContext()));
+                            LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int)(height*0.035),(int)(height * 0.035));
+                            weatherImage.setLayoutParams(parms);
                         } else if (unit.equals("Imperial")) {
                             weather.setText(main.controller.weatherList.get(0).t_2m_C + "\u2109");
+                            weatherImage.setImageDrawable(main.controller.weatherList.get(0).getWeatherSymbol(getContext()));
+                            LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int)(height*0.035),(int)(height * 0.035));
+                            weatherImage.setLayoutParams(parms);
                         }
                         firstUpdate = true;
                         break;

@@ -79,6 +79,43 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
         tabs.addTab(tabs.newTab().setText(R.string.fourteendays));
 
 
+        /*--------------------------------------*
+         *--Status ID-er for vejrikoner       --*
+         *--1 ->Clear sky                     --*
+         *--2 ->Light clouds                  --*
+         *--3 ->Partly cloudy                 --*
+         *--4 ->Cloudy                        --*
+         *--5 ->Rain                          --*
+         *--6 ->Rain and snow / sleet         --*
+         *--7 ->Snow                          --*
+         *--8 ->Rain shower                   --*
+         *--9 ->Snow shower                   --*
+         *--10 ->Sleet shower                 --*
+         *--11 ->Light Fog                    --*
+         *--12 ->Dense fog                    --*
+         *--13 ->Freezing rain                --*
+         *--14 ->Thunderstorms                --*
+         *--15 ->Drizzle                      --*
+         *--16 ->Sandstorm                    --*
+         *--101 ->Clear sky(Night)            --*
+         *--102 ->Light clouds(Night)         --*
+         *--103 ->Partly cloudy(Night)        --*
+         *--104 ->Cloudy(Night)               --*
+         *--104 ->Rain(Night)                 --*
+         *--106 ->Rain and snow / sleet(Night)--*
+         *--107 ->Snow(Night)                 --*
+         *--108 ->Rain shower(Night)          --*
+         *--109 ->Snow shower(Night)          --*
+         *--110 ->Sleet shower(Night)         --*
+         *--111 ->Light Fog(Night)            --*
+         *--112 ->Dense fog(Night)            --*
+         *--113 ->Freezing rain(Night)        --*
+         *--114 ->Thunderstorms(Night)        --*
+         *--115 ->Drizzle(Night)              --*
+         *--116 ->Sandstorm(Night)            --*
+         *--------------------------------------*/
+
+
 
 
 
