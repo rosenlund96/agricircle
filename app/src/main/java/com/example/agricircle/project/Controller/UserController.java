@@ -43,12 +43,15 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okio.Utf8;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
@@ -315,10 +318,16 @@ public class UserController implements Serializable {
 
                         Shape centerpoint = new Shape(typeCenterpoint,coordinateCenterpoint);
                         Shape polygon = new Shape(typePolygon,coordinatePolygon);
+                        String name = "";
+                        try {
+                             name = URLDecoder.decode(fields.get(i).name(), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            name = fields.get(i).name();
+                            e.printStackTrace();
+                        }
 
 
-
-                        fieldsList.add(new Field(fields.get(i).id(),fields.get(i).name(),fields.get(i).__typename(),polygon,fields.get(i).surface(),fields.get(i).name(),fields.get(i).fertilizer_enabled(),centerpoint));
+                        fieldsList.add(new Field(fields.get(i).id(),name,fields.get(i).__typename(),polygon,fields.get(i).surface(),fields.get(i).name(),fields.get(i).fertilizer_enabled(),centerpoint));
                         //System.out.println("Felt hentet: " + fields.get(i));
 
                     }

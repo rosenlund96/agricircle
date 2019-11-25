@@ -13,6 +13,7 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.agricircle.project.Activities.DrawNewFieldActivity;
 import com.example.agricircle.project.Activities.MainActivity;
@@ -20,10 +21,11 @@ import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Field;
 import com.example.agricircle.project.Util.FieldAdaptor;
 import com.example.agricircle.R;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
-public class FieldListFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener{
+public class FieldListFragment extends Fragment implements AdapterView.OnItemClickListener{
     private ListView results;
     private List<Field> fields;
     private Button newField;
@@ -40,7 +42,15 @@ public class FieldListFragment extends Fragment implements AdapterView.OnItemCli
         results.setAdapter(new FieldAdaptor(getContext(),fields));
         results.setOnItemClickListener(this);
         newField = myView.findViewById(R.id.drawnewfield);
-        newField.setOnClickListener(this);
+        newField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getContext(), DrawNewFieldActivity.class);
+
+
+                startActivity(i);
+            }
+        });
         myView.setFocusableInTouchMode(true);
         myView.requestFocus();
         myView.setOnKeyListener( new View.OnKeyListener()
@@ -68,22 +78,27 @@ public class FieldListFragment extends Fragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        MapFragment fragment2 = new MapFragment();
 
+        Bundle bundle = new Bundle();
+        Field obj = fields.get(position);
+        bundle.putSerializable("Field", obj);
+        fragment2.setArguments(bundle);
+        ft.replace(R.id.article_fragment, fragment2);
+        ft.addToBackStack(null);
+        ft.commit();
+
+
+
+
+
+        System.out.println("Field: " + fields.get(position).getDisplay_name() + " Centerpoint: " + fields.get(position).getCenterpoint().getCoordinates().get(0).longitude+","+fields.get(position).getCenterpoint().getCoordinates().get(0).latitude);
     }
 
     public void initialize(){
         fields = MainScreenActivity.getInstance().controller.getUser().getFields();
 
-    }
-
-
-
-
-    @Override
-    public void onClick(View v) {
-        Intent i = new Intent(getContext(), DrawNewFieldActivity.class);
-
-
-        startActivity(i);
     }
 }

@@ -1,6 +1,8 @@
 package com.example.agricircle.project.Entities;
 
-public class Field {
+import java.io.Serializable;
+
+public class Field implements Serializable {
 
     //ToDo: Add soil_data, rotations Add crops from GraphQL
     private int id;

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class ActivitiesList extends Fragment implements AdapterView.OnItemClickListener{
     private ListView results;
-
+    private Button createActivity;
     private List<Activity> activities;
     View myView;
 
@@ -35,6 +36,13 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
         results = (ListView) myView.findViewById(R.id.activitylist);
         results.setAdapter(new ActivityAdaptor(getContext(),activities));
         results.setOnItemClickListener(this);
+        createActivity = myView.findViewById(R.id.newactivity);
+        createActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         myView.setFocusableInTouchMode(true);
         myView.requestFocus();
         myView.setOnKeyListener( new View.OnKeyListener()
@@ -62,7 +70,7 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+        System.out.println("Positions: " + position);
     }
 
     public void initialize(){

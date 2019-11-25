@@ -84,7 +84,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private LinearLayout infoLayout, locationlayout;
     private TextView infoFieldName, infoFieldSurface, productx,producty, activitytypex,activitytypey, locationtext;
     private List<String> parameters;
-    private boolean firstUpdate;
+    private boolean firstUpdate, fieldPresent;
+    private Field field;
     private Display display;
     private LatLng latLng;
     private int width,height;
@@ -97,6 +98,27 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     public void onResume() {
         super.onResume();
         System.out.println("On Resume kaldt");
+
+
+        Bundle bundle = getArguments();
+        try{
+            Field obj= (Field) bundle.getSerializable("Field");
+            if(obj != null){
+                System.out.println(obj.getDisplay_name() + " blev sendt med");
+                fieldPresent = true;
+                field = obj;
+
+
+            }
+        }catch (Exception e){
+            System.out.println("Intet felt sendt med");
+            field = null;
+            fieldPresent = false;
+        }
+
+
+
+
         weather.setText(R.string.loadingWeather);
         //opdaterVejr(latLng);
         if(main.controller.getUser().fields.isEmpty()){
@@ -115,15 +137,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
         clearPolygonColors();
 
-        //String[] latlong =  LoadPreferences("CurrentCameraPosition").split(",");
-        //System.out.println("Hentet: " + latlong.toString());
-        //double latitude = Double.parseDouble(latlong[0].substring(10,26));
-        //double longitude = Double.parseDouble(latlong[1].substring(0,16));
-
-        //LatLng temp = new LatLng(latitude,longitude);
-        //if(mGoogleMap != null){
-         //   mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,15));
-        //}
 
 
 
@@ -138,6 +151,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         heightconstant = 0.0147;
         request = false;
         firstUpdate = false;
+        fieldPresent = false;
+        field = null;
         myView = inflater.inflate(R.layout.mainview, container, false);
         locationbutton = myView.findViewById(R.id.enablelocation);
         locationbutton.setText(getResources().getString(R.string.myLocation));
@@ -324,8 +339,51 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
                 buildGoogleApiClient();
-                mGoogleMap.setMyLocationEnabled(true);
-                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                DrawPolygonsOnMap();
+                if(!fieldPresent){
+                    mGoogleMap.setMyLocationEnabled(true);
+                    mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                }
+                else{
+
+                        //Hvis mapfragment kaldes fra fieldList
+                    System.out.println("Størrelse " + polygons.size());
+                        for(int i = 0; i<polygons.size();i++){
+                            if(polygons.get(i).getPoints().get(0).equals(field.getCoordinates().getCoordinates().get(0))){
+                                polygons.get(i).setStrokeColor(Color.argb(255,255,51,51));
+                                polygons.get(i).setFillColor(Color.argb(160,255,51,51));
+                                System.out.println("Polygon fundet");
+                            }
+                        }
+
+                        LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0020,field.getCenterpoint().getCoordinates().get(0).longitude);
+                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
+                        List<Activity> tempList = sortActivities(field);
+                        infoFieldName.setText(field.getDisplay_name());
+                        infoFieldSurface.setText(field.getSurface() +"ha");
+                        if(!tempList.get(0).getUrl().equals("")){
+                            Picasso.get().load(tempList.get(0).getUrl()).into(imgx);
+                        }
+                        else {
+                            imgx.setImageDrawable(getContext().getDrawable(R.drawable.questionmark));
+                        }
+                        if(!tempList.get(1).getUrl().equals("")){
+                            Picasso.get().load(tempList.get(1).getUrl()).into(imgy);
+                        }
+                        else{
+                            imgy.setImageDrawable(getContext().getDrawable(R.drawable.questionmark));
+                        }
+                        productx.setText(getCropName(tempList.get(0).getCrop_id()));
+                        producty.setText(getCropName(tempList.get(1).getCrop_id()));
+                        activitytypex.setText(tempList.get(0).getActivityType());
+                        activitytypey.setText(tempList.get(1).getActivityType());
+                        infoLayout.setVisibility(View.VISIBLE);
+
+
+
+
+                }
+
 
             } else {
                 //Request Location Permission
@@ -335,14 +393,17 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
         else {
             buildGoogleApiClient();
-            mGoogleMap.setMyLocationEnabled(false);
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mGoogleMap.setMyLocationEnabled(false);
+
+
+
 
 
 
         }
 
-            DrawPolygonsOnMap();
+
             //opdaterVejr(mGoogleMap.getCameraPosition().target);
         //new UpdateWeather().execute(mGoogleMap.getCameraPosition().target);
 
@@ -460,9 +521,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     }
 
     private void DrawPolygonsOnMap(){
-        System.out.println("DrawPolygons Kaldt, tegner " + main.controller.getFields().size());
+        System.out.println("DrawPolygons Kaldt, tegner " + main.controller.getUser().fields.size());
         for(int i = 0; i<main.controller.getUser().getFields().size();i++){
             Polygon polygon = mGoogleMap.addPolygon(DrawPolygon(main.controller.getUser().getFields().get(i)));
+
             polygon.setStrokeColor(Color.argb(255,0,128,255));
             polygon.setFillColor(Color.argb(160,0,128,255));
             polygon.setClickable(true);
