@@ -11,6 +11,7 @@ android {
         useSemanticNaming = true
         customTypeMapping['ISOTime'] = "java.util.Date"
         customTypeMapping['JSON'] = "java.lang.String"
+        customTypeMapping['CropActivityProductType'] = "java.lang.String"
     }
 
     packagingOptions {

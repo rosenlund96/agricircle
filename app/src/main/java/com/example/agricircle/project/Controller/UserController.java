@@ -14,6 +14,9 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 
 import com.example.agricircle.Activities.CheckEmailMutation;
+import com.example.agricircle.Activities.GetCropActivitiesQuery;
+import com.example.agricircle.Activities.GetProductsQuery;
+import com.example.agricircle.Activities.type.CropActivityProductType;
 import com.example.agricircle.project.CreateUserMutation;
 import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Company;
@@ -48,21 +51,23 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okio.Utf8;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class UserController implements Serializable {
     public User user;
-    public boolean fieldsLoaded;
+    public boolean fieldsLoaded, cropactivitites1loaded;
     public List<Crop> cropsList = new ArrayList<>();
     public List<Field> fieldsList = new ArrayList<>();
     public List<Company> companiesList = new ArrayList<>();
     public List<Activity> activities = new ArrayList<>();
     public List<String> activitytypes = new ArrayList<>();
+    public List<String> activitytypes2 = new ArrayList<>();
+    public List<String> activityCategories = new ArrayList<>();
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
     ApolloClient apolloClient;
     int loginStatus;
@@ -282,6 +287,103 @@ public class UserController implements Serializable {
 
         return cropsList;
     }
+    public void getActivityCategories(final String activitytype, int cropid){
+        GetCropActivitiesQuery query = GetCropActivitiesQuery.builder()
+                .cropid(cropid)
+                .build();
+
+        apolloClient.query(query).enqueue(new ApolloCall.Callback<GetCropActivitiesQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<GetCropActivitiesQuery.Data> response) {
+                if(!response.hasErrors()){
+                    JsonParser parser = new JsonParser();
+                    JsonObject activityObject = (JsonObject) parser.parse(response.data().cropActivities().baseActivityTypes());
+                    //System.out.println("Kigger med: " + activitytype);
+                    JsonArray correctActivity = activityObject.getAsJsonObject(activitytype).getAsJsonArray("baseActivities");
+                    //System.out.println("Test " + correctActivity.get(0).getAsJsonObject().get("name"));
+                    //System.out.println("Størrelse på liste: " + correctActivity.get(1).getAsJsonObject().getAsJsonArray("categories"));
+                    for(int i = 0; i<correctActivity.size();i++){
+                        activityCategories.add(correctActivity.get(i).getAsJsonObject().get("name").getAsString());
+                    }
+
+
+                }
+                else{
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+
+    }
+
+
+    public void getCropActivityTypes(int cropid){
+        cropactivitites1loaded = false;
+        GetCropActivitiesQuery query = GetCropActivitiesQuery.builder()
+                .cropid(cropid)
+                .build();
+
+        apolloClient.query(query).enqueue(new ApolloCall.Callback<GetCropActivitiesQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<GetCropActivitiesQuery.Data> response) {
+                if(!response.hasErrors()){
+                    JsonParser parser = new JsonParser();
+                    JsonObject activityObject = (JsonObject) parser.parse(response.data().cropActivities().baseActivityTypes());
+
+                    Set<String> keys = activityObject.keySet();
+                    for(int i = 0; i<keys.size();i++){
+                        activitytypes2.add(String.valueOf(keys.toArray()[i]));
+                    }
+
+                    cropactivitites1loaded = true;
+
+                }
+                else{
+                    System.out.println("Fejl ved hent af cropctivities1 " + response.errors());
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+
+    }
+
+    public void getCropActivityProducts(CropActivityProductType type, String categoryNum, int cropID, List<Integer> fieldStrategyIDS){
+        GetProductsQuery query = GetProductsQuery.builder()
+                .type(type)
+                .categorynum(categoryNum)
+                .cropid(cropID)
+                .fieldStrategyIDS(fieldStrategyIDS)
+                .build();
+
+        apolloClient.query(query).enqueue(new ApolloCall.Callback<GetProductsQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<GetProductsQuery.Data> response) {
+                if(!response.hasErrors()){
+                    System.out.println(response.data().cropActivityProducts());
+                }
+                else {
+                    System.out.println(response.errors());
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
+
+    }
 
     public List<Field> getFields(){
         fieldsLoaded = false;
@@ -306,11 +408,15 @@ public class UserController implements Serializable {
                         String typeCenterpoint = objectCenterpoint.get("type").getAsString();
                         int cropID = 99999;
                         List<Integer> cropslist = new ArrayList<>();
+                        List<Integer> fieldStrategyList = new ArrayList<>();
                         JsonArray rotationarray = objectRotations.getAsJsonArray().getAsJsonArray();
                         if(rotationarray.size()>0){
 
                             for(int c = 0; c<rotationarray.size();c++){
                                 cropslist.add(rotationarray.get(c).getAsJsonObject().get("crop_id").getAsInt());
+                                fieldStrategyList.add(rotationarray.get(c).getAsJsonObject().get("id").getAsInt());
+
+
                             }
                             //System.out.println("CropID: " + rotationarray.get(0).getAsJsonObject().get("crop_id") );
                             cropID = rotationarray.get(0).getAsJsonObject().get("crop_id").getAsInt();

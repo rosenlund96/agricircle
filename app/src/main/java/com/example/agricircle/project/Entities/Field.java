@@ -16,6 +16,7 @@ public class Field implements Serializable {
     private boolean active;
     public int cropid;
     public List<Integer> cropIDS;
+    public List<Integer> fieldStrategyIDS;
 
     private boolean fertilizer_enabled;
     private Shape centerpoint;
@@ -120,5 +121,11 @@ public class Field implements Serializable {
     }
     public List<Integer> getCropsList(){
         return this.cropIDS;
+    }
+    public void setFieldStrategyList(List<Integer> list){
+        this.fieldStrategyIDS = list;
+    }
+    public List<Integer> getFieldStrategyList(){
+        return this.fieldStrategyIDS;
     }
 }

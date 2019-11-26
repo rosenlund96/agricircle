@@ -1,0 +1,11 @@
+query getProducts($type:CropActivityProductType! $categorynum:String! $cropid:Int! $fieldStrategyIDS: [Int!]!){
+cropActivityProducts(options:{type:$type category:$categorynum cropId:$cropid name: "" fieldStrategyIds:$fieldStrategyIDS}){
+products{
+id
+name
+fertilizerElements{
+amount
+symbol}
+}
+}
+}
