@@ -53,6 +53,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.squareup.picasso.Picasso;
@@ -84,6 +86,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private View myView;
     private List<Polygon> polygons;
     private List<Marker> mapMarkers;
+    private List<Polyline> samplingpath;
     private List<Activity> activitites;
     private String activePolygon;
     private LinearLayout infoLayout, locationlayout;
@@ -161,6 +164,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         field = null;
         activeField = null;
         soilzone = null;
+        samplingpath = new ArrayList<>();
         myView = inflater.inflate(R.layout.mainview, container, false);
         soilzones = myView.findViewById(R.id.soilbutton);
         soilzones.setOnClickListener(this);
@@ -276,6 +280,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
         else if(v == locationbutton){
             mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
             removeMarkersFromMap();
             DrawPolygonsOnMap();
             locationlayout.setVisibility(View.INVISIBLE);
@@ -305,9 +310,31 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
 
             }
+            if(samplingpath.isEmpty()){
+                List<LatLng> temp = getSamplingPath(activeField);
+                System.out.println("Antal koordinater: " + temp.size());
+                for(int i = 0; i<temp.size();i++){
+
+
+                    Polyline line = mGoogleMap.addPolyline(new PolylineOptions()
+                            .add(new LatLng(temp.get(i).latitude,temp.get(i).longitude),new LatLng(temp.get(i+1).latitude,temp.get(i+1).longitude))
+                            .width(5)
+                            .color(Color.RED));
+                    i++;
+                    samplingpath.add(line);
+                }
+
+
+            }
             else if(soilzone != null){
                 soilzone.remove();
                 soilzone = null;
+                for(int i = 0; i<samplingpath.size();i++){
+                    samplingpath.get(i).remove();
+
+
+                }
+                samplingpath.clear();
             }
 
 
@@ -340,6 +367,23 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
         return pic;
     }
+    public List<LatLng> getSamplingPath(Field field){
+        List<LatLng> points = new ArrayList<>();
+        if(field.getId() == 30673){
+             points.add(new LatLng(55.73298908,12.39868152));
+            points.add(new LatLng(55.73270313,12.39790451));
+            points.add(new LatLng(55.73260668,12.39759252));
+            points.add(new LatLng(55.73278609,12.39758058));
+
+
+
+
+
+        }
+
+        return points;
+    }
+
 
     public LatLngBounds getCorrectBBox(Field field){
         LatLngBounds bounds = null;
@@ -371,7 +415,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             LatLngBounds newarkBounds = new LatLngBounds(
                     new LatLng(55.73182239238012 ,12.394487857818605),       // South west corner
                     new LatLng( 55.736721380609424,12.400710582733156));      // North east corner
-            
+
             bounds = newarkBounds;
 
 

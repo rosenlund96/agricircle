@@ -1,0 +1,8 @@
+query getCropActivities($cropid: Int!){
+cropActivities(options: {cropId:$cropid}){
+id
+name
+baseActivityTypes
+
+}
+}

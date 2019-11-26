@@ -304,8 +304,20 @@ public class UserController implements Serializable {
                         List<LatLng> coordinateCenterpoint = new ArrayList<>();
                         String typePolygon = objectPolygon.get("type").getAsString();
                         String typeCenterpoint = objectCenterpoint.get("type").getAsString();
-                        //String cropid = objectRotations.getAs;
-                        //System.out.println("CropID: " + objectRotations.getAsJsonArray().size());
+                        int cropID = 99999;
+                        List<Integer> cropslist = new ArrayList<>();
+                        JsonArray rotationarray = objectRotations.getAsJsonArray().getAsJsonArray();
+                        if(rotationarray.size()>0){
+
+                            for(int c = 0; c<rotationarray.size();c++){
+                                cropslist.add(rotationarray.get(c).getAsJsonObject().get("crop_id").getAsInt());
+                            }
+                            //System.out.println("CropID: " + rotationarray.get(0).getAsJsonObject().get("crop_id") );
+                            cropID = rotationarray.get(0).getAsJsonObject().get("crop_id").getAsInt();
+
+                        }
+
+
 
                         for(int x = 0; x < objectPolygon.getAsJsonArray("coordinates").get(0).getAsJsonArray().size();x++){
                             //System.out.println("Coordinate " + x + " :" + object.getAsJsonArray("coordinates").get(0).getAsJsonArray().get(x).getAsJsonArray().get(1));
@@ -326,8 +338,11 @@ public class UserController implements Serializable {
                             e.printStackTrace();
                         }
 
-
-                        fieldsList.add(new Field(fields.get(i).id(),name,fields.get(i).__typename(),polygon,fields.get(i).surface(),fields.get(i).name(),fields.get(i).fertilizer_enabled(),centerpoint));
+                        Field field = new Field(fields.get(i).id(),name,fields.get(i).__typename(),polygon,fields.get(i).surface(),fields.get(i).name(),fields.get(i).fertilizer_enabled(),centerpoint,cropID);
+                        if(!cropslist.isEmpty()){
+                            field.setCropList(cropslist);
+                        }
+                        fieldsList.add(field);
                         //System.out.println("Felt hentet: " + fields.get(i));
 
                     }

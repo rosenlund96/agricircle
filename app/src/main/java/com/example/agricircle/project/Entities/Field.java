@@ -1,6 +1,8 @@
 package com.example.agricircle.project.Entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Field implements Serializable {
 
@@ -12,7 +14,8 @@ public class Field implements Serializable {
     private double surface;
     private String display_name;
     private boolean active;
-    private int cropid;
+    public int cropid;
+    public List<Integer> cropIDS;
 
     private boolean fertilizer_enabled;
     private Shape centerpoint;
@@ -99,7 +102,7 @@ public class Field implements Serializable {
     }
 
 
-    public Field(int id, String name, String typename, Shape coordinates, double surface, String display_name, boolean fertilizer_enabled, Shape centerpoint) {
+    public Field(int id, String name, String typename, Shape coordinates, double surface, String display_name, boolean fertilizer_enabled, Shape centerpoint, int cropid) {
         this.id = id;
         this.name = name;
         this.typename = typename;
@@ -108,5 +111,14 @@ public class Field implements Serializable {
         this.display_name = display_name;
         this.fertilizer_enabled = fertilizer_enabled;
         this.centerpoint = centerpoint;
+        this.cropid = cropid;
+        this.cropIDS = new ArrayList<>();
+    }
+
+    public void setCropList(List<Integer> list){
+        this.cropIDS = list;
+    }
+    public List<Integer> getCropsList(){
+        return this.cropIDS;
     }
 }

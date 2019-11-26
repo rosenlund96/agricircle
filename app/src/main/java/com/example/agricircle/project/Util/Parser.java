@@ -77,9 +77,9 @@ public class Parser {
             //Centerpoint
             Shape centerpoint = new Shape(type_centerpoint, coordinates_centerpoint);
             //Feltobjekt med polygon
-            Field field = new Field(id, name, type, shape, surface, name, fertilizer_enabled, centerpoint);
+            //Field field = new Field(id, name, type, shape, surface, name, fertilizer_enabled, centerpoint);
             //Tilføj felt til liste
-            fieldList.add(field);
+            //fieldList.add(field);
 
 
 

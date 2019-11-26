@@ -40,7 +40,11 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
         createActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                getFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .replace(R.id.article_fragment
+                                , new CreateActivityFragment())
+                        .commit();
             }
         });
         myView.setFocusableInTouchMode(true);
@@ -70,7 +74,7 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        System.out.println("Positions: " + position);
+
     }
 
     public void initialize(){
