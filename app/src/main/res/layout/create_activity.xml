@@ -85,6 +85,74 @@
                         android:textColorHint="#05ab9a"
                         app:met_floatingLabel="normal" />
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:id="@+id/prevButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginBottom="20dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/left_arrow" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.2"
+                                android:orientation="horizontal"></LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/cropStageImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                app:srcCompat="@drawable/button_next" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.2"
+                                android:orientation="horizontal"></LinearLayout>
+
+                            <Button
+                                android:id="@+id/nextButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_marginBottom="20dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/right_arrow" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="5"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/BBCHText"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="TextView"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
                     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                         android:id="@+id/chooseactivitytype"
                         android:layout_width="match_parent"
@@ -101,6 +169,16 @@
                         android:layout_height="match_parent"
                         android:background="@drawable/textedit_custom"
                         android:hint="Category"
+                        android:textColor="@color/white"
+                        android:textColorHint="#05ab9a"
+                        app:met_floatingLabel="normal" />
+
+                    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                        android:id="@+id/chooseactivityproduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/textedit_custom"
+                        android:hint="Product"
                         android:textColor="@color/white"
                         android:textColorHint="#05ab9a"
                         app:met_floatingLabel="normal" />

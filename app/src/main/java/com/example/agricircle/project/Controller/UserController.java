@@ -15,13 +15,18 @@ import com.apollographql.apollo.exception.ApolloException;
 
 import com.example.agricircle.Activities.CheckEmailMutation;
 import com.example.agricircle.Activities.GetCropActivitiesQuery;
+import com.example.agricircle.Activities.GetCropStagesQuery;
 import com.example.agricircle.Activities.GetProductsQuery;
 import com.example.agricircle.Activities.type.CropActivityProductType;
 import com.example.agricircle.project.CreateUserMutation;
 import com.example.agricircle.project.Entities.Activity;
+import com.example.agricircle.project.Entities.BBCH;
+import com.example.agricircle.project.Entities.Category;
 import com.example.agricircle.project.Entities.Company;
 import com.example.agricircle.project.Entities.Crop;
+import com.example.agricircle.project.Entities.FertilizerElements;
 import com.example.agricircle.project.Entities.Field;
+import com.example.agricircle.project.Entities.Product;
 import com.example.agricircle.project.Entities.Shape;
 import com.example.agricircle.project.Entities.User;
 import com.example.agricircle.project.Entities.Weather;
@@ -67,7 +72,11 @@ public class UserController implements Serializable {
     public List<Activity> activities = new ArrayList<>();
     public List<String> activitytypes = new ArrayList<>();
     public List<String> activitytypes2 = new ArrayList<>();
-    public List<String> activityCategories = new ArrayList<>();
+    public List<Category> activityCategories = new ArrayList<>();
+    public List<String> activityCategoriesString = new ArrayList<>();
+    public List<String> activityProductListString = new ArrayList<>();
+    public List<Product> activityProductList = new ArrayList<>();
+    public List<BBCH> BBCHList = new ArrayList<>();
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
     ApolloClient apolloClient;
     int loginStatus;
@@ -288,6 +297,10 @@ public class UserController implements Serializable {
         return cropsList;
     }
     public void getActivityCategories(final String activitytype, int cropid){
+        if(activityCategories.size()>0){
+            activityCategories.clear();
+            activityCategoriesString.clear();
+        }
         GetCropActivitiesQuery query = GetCropActivitiesQuery.builder()
                 .cropid(cropid)
                 .build();
@@ -303,13 +316,14 @@ public class UserController implements Serializable {
                     //System.out.println("Test " + correctActivity.get(0).getAsJsonObject().get("name"));
                     //System.out.println("Størrelse på liste: " + correctActivity.get(1).getAsJsonObject().getAsJsonArray("categories"));
                     for(int i = 0; i<correctActivity.size();i++){
-                        activityCategories.add(correctActivity.get(i).getAsJsonObject().get("name").getAsString());
+                        activityCategories.add(new Category(correctActivity.get(i).getAsJsonObject().get("id").getAsInt(),correctActivity.get(i).getAsJsonObject().get("name").getAsString()));
+                        activityCategoriesString.add(correctActivity.get(i).getAsJsonObject().get("name").getAsString());
                     }
 
 
                 }
                 else{
-
+                        System.out.println(response.errors());
                 }
             }
 
@@ -323,6 +337,9 @@ public class UserController implements Serializable {
 
 
     public void getCropActivityTypes(int cropid){
+        if(activitytypes2.size()>0){
+            activitytypes2.clear();
+        }
         cropactivitites1loaded = false;
         GetCropActivitiesQuery query = GetCropActivitiesQuery.builder()
                 .cropid(cropid)
@@ -368,7 +385,25 @@ public class UserController implements Serializable {
             @Override
             public void onResponse(@NotNull Response<GetProductsQuery.Data> response) {
                 if(!response.hasErrors()){
-                    System.out.println(response.data().cropActivityProducts());
+                    List<GetProductsQuery.Product> products = response.data().cropActivityProducts().products();
+                    List<FertilizerElements> elements = new ArrayList<>();
+                    List<Product> temp = new ArrayList<>();
+                    List<String> names = new ArrayList<>();
+                    JsonParser parser = new JsonParser();
+                    for(int i = 0; i<products.size();i++){
+
+                        for(int f = 0; f<products.get(i).fertilizerElements().size();f++){
+                            elements.add(new FertilizerElements(products.get(i).fertilizerElements().get(f).amount(),products.get(i).fertilizerElements().get(f).symbol()));
+                        }
+                        temp.add(new Product(products.get(i).name(),products.get(i).id(),elements));
+                        names.add(products.get(i).name());
+
+                        elements.clear();
+                    }
+
+                    activityProductList = temp;
+                    activityProductListString = names;
+                    System.out.println("Størrelse af liste: " + activityProductList.size());
                 }
                 else {
                     System.out.println(response.errors());
@@ -379,10 +414,45 @@ public class UserController implements Serializable {
 
             @Override
             public void onFailure(@NotNull ApolloException e) {
+                System.out.println("Fejl opstået: " + e.getMessage());
 
             }
         });
 
+    }
+
+
+    public void getBBCHStages(int cropID){
+
+        GetCropStagesQuery query = GetCropStagesQuery.builder()
+                .cropid(cropID)
+                .build();
+
+
+        apolloClient.query(query).enqueue(new ApolloCall.Callback<GetCropStagesQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<GetCropStagesQuery.Data> response) {
+                if(!response.hasErrors()){
+                    List<GetCropStagesQuery.CropStage> stages = response.data().cropActivities().cropStages();
+                    List<BBCH> temp = new ArrayList<>();
+                    for(int i = 0; i<stages.size();i++){
+                        temp.add(new BBCH(stages.get(i).id(),stages.get(i).bbchFrom(),stages.get(i).bbchTo(),stages.get(i).image()));
+                    }
+                    BBCHList = temp;
+                    System.out.println("Størrelse på liste: " + BBCHList.size());
+
+
+                }
+                else{
+                    System.out.println(response.errors());
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+
+            }
+        });
     }
 
     public List<Field> getFields(){
@@ -447,6 +517,9 @@ public class UserController implements Serializable {
                         Field field = new Field(fields.get(i).id(),name,fields.get(i).__typename(),polygon,fields.get(i).surface(),fields.get(i).name(),fields.get(i).fertilizer_enabled(),centerpoint,cropID);
                         if(!cropslist.isEmpty()){
                             field.setCropList(cropslist);
+                        }
+                        if(!fieldStrategyList.isEmpty()){
+                            field.setFieldStrategyList(fieldStrategyList);
                         }
                         fieldsList.add(field);
                         //System.out.println("Felt hentet: " + fields.get(i));

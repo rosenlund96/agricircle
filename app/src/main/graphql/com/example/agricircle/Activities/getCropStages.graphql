@@ -1,0 +1,13 @@
+query getCropStages($cropid: Int!){
+cropActivities(options: {cropId:$cropid}){
+id
+name
+#baseActivityTypes
+cropStages{
+id
+bbchFrom
+bbchTo
+image
+}
+}
+}

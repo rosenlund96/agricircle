@@ -59,6 +59,8 @@
     <string name="crop">Crop</string>
     <string name="createActivity">Please fill in all needed information, to create a new activity</string>
     <string name="fieldhasnocrop">The selected field has no active crop</string>
+    <string name="bbch01">Pre-seeding</string>
+    <string name="afterharvest">After Harvest</string>
 
     <string-array name="Metric">
 
