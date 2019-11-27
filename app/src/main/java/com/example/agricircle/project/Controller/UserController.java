@@ -26,6 +26,7 @@ import com.example.agricircle.project.Entities.Company;
 import com.example.agricircle.project.Entities.Crop;
 import com.example.agricircle.project.Entities.FertilizerElements;
 import com.example.agricircle.project.Entities.Field;
+import com.example.agricircle.project.Entities.HarvestTypes;
 import com.example.agricircle.project.Entities.Product;
 import com.example.agricircle.project.Entities.Shape;
 import com.example.agricircle.project.Entities.User;
@@ -76,6 +77,8 @@ public class UserController implements Serializable {
     public List<String> activityCategoriesString = new ArrayList<>();
     public List<String> activityProductListString = new ArrayList<>();
     public List<Product> activityProductList = new ArrayList<>();
+    public List<HarvestTypes> harvestTypes3 = new ArrayList<>();
+    public List<String> harvestTypesString = new ArrayList<>();
     public List<BBCH> BBCHList = new ArrayList<>();
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
     ApolloClient apolloClient;
@@ -352,11 +355,16 @@ public class UserController implements Serializable {
                     JsonParser parser = new JsonParser();
                     JsonObject activityObject = (JsonObject) parser.parse(response.data().cropActivities().baseActivityTypes());
 
+
                     Set<String> keys = activityObject.keySet();
                     for(int i = 0; i<keys.size();i++){
                         activitytypes2.add(String.valueOf(keys.toArray()[i]));
                     }
 
+                    for(int x = 0; x<response.data().cropActivities().harvestTypes().size();x++){
+                        harvestTypes3.add(new HarvestTypes(response.data().cropActivities().harvestTypes().get(x).id(),response.data().cropActivities().harvestTypes().get(x).name()));
+                        harvestTypesString.add(response.data().cropActivities().harvestTypes().get(x).name());
+                    }
                     cropactivitites1loaded = true;
 
                 }
@@ -373,8 +381,9 @@ public class UserController implements Serializable {
 
     }
 
-    public void getCropActivityProducts(CropActivityProductType type, String categoryNum, int cropID, List<Integer> fieldStrategyIDS){
+    public void getCropActivityProducts(final CropActivityProductType type, String categoryNum, int cropID, List<Integer> fieldStrategyIDS, int bbch){
         GetProductsQuery query = GetProductsQuery.builder()
+                .bbch(bbch)
                 .type(type)
                 .categorynum(categoryNum)
                 .cropid(cropID)
@@ -389,21 +398,28 @@ public class UserController implements Serializable {
                     List<FertilizerElements> elements = new ArrayList<>();
                     List<Product> temp = new ArrayList<>();
                     List<String> names = new ArrayList<>();
+
                     JsonParser parser = new JsonParser();
-                    for(int i = 0; i<products.size();i++){
 
-                        for(int f = 0; f<products.get(i).fertilizerElements().size();f++){
-                            elements.add(new FertilizerElements(products.get(i).fertilizerElements().get(f).amount(),products.get(i).fertilizerElements().get(f).symbol()));
+
+                        for(int i = 0; i<products.size();i++){
+
+                            for(int f = 0; f<products.get(i).fertilizerElements().size();f++){
+                                elements.add(new FertilizerElements(products.get(i).fertilizerElements().get(f).amount(),products.get(i).fertilizerElements().get(f).symbol()));
+                            }
+                            temp.add(new Product(products.get(i).name(),products.get(i).id(),elements));
+                            names.add(products.get(i).name());
+
+                            elements.clear();
                         }
-                        temp.add(new Product(products.get(i).name(),products.get(i).id(),elements));
-                        names.add(products.get(i).name());
 
-                        elements.clear();
-                    }
 
-                    activityProductList = temp;
-                    activityProductListString = names;
-                    System.out.println("Størrelse af liste: " + activityProductList.size());
+
+                        activityProductList = temp;
+                        activityProductListString = names;
+                        System.out.println("Størrelse af liste: " + activityProductList.size());
+
+
                 }
                 else {
                     System.out.println(response.errors());
@@ -414,7 +430,7 @@ public class UserController implements Serializable {
 
             @Override
             public void onFailure(@NotNull ApolloException e) {
-                System.out.println("Fejl opstået: " + e.getMessage());
+                System.out.println("Fejl opstået: " + e.getMessage() + e.getLocalizedMessage());
 
             }
         });

@@ -1,11 +1,15 @@
-query getProducts($type:CropActivityProductType! $categorynum:String! $cropid:Int! $fieldStrategyIDS: [Int!]!){
-cropActivityProducts(options:{type:$type category:$categorynum cropId:$cropid name: "" fieldStrategyIds:$fieldStrategyIDS}){
+query getProducts($type:CropActivityProductType! $categorynum:String! $cropid:Int! $fieldStrategyIDS: [Int!]! $bbch:Int!){
+cropActivityProducts(options:{bbch:$bbch type:$type category:$categorynum cropId:$cropid name: "" fieldStrategyIds:$fieldStrategyIDS}){
 products{
 id
 name
+imageUrl
 fertilizerElements{
 amount
 symbol}
+
+
 }
+
 }
 }

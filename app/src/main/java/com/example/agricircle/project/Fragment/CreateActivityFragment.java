@@ -6,12 +6,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,9 +25,29 @@ import com.example.agricircle.R;
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Crop;
 import com.example.agricircle.project.Entities.Field;
+import com.example.agricircle.project.Entities.Worker;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.squareup.picasso.Picasso;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,18 +56,24 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
     MainScreenActivity main;
     int currentBBCH;
     private View myView;
-    MaterialBetterSpinner fieldChooser, cropChooser, activityChooser, categoryChooser, productChooser;
+    MaterialBetterSpinner fieldChooser, cropChooser, activityChooser, categoryChooser, productChooser, executorChooser;
     Button prev,next;
     TextView info, BBCHText;
     ImageView cropImg;
-    List<String> crops;
+    List<String> crops, executors;
+    List<Worker> workers;
     Field temp;
+    LinearLayout cropImgLayout;
+    public final String getColleaguesURL= "https://core.agricircle.com/api/v1/filters/options?months=false&colleagues=true&logbook=false&workspace=false";
     int id;
     ProgressDialog progressDialog;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.create_activity, container, false);
+        workers = new ArrayList<>();
+        executors = new ArrayList<>();
+        cropImgLayout = myView.findViewById(R.id.cropimglayout);
         cropImg = myView.findViewById(R.id.cropStageImage);
         BBCHText = myView.findViewById(R.id.BBCHText);
         BBCHText.setText("");
@@ -58,9 +86,12 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
         activityChooser = myView.findViewById(R.id.chooseactivitytype);
         categoryChooser = myView.findViewById(R.id.chooseactivitycategory);
         productChooser = myView.findViewById(R.id.chooseactivityproduct);
+        executorChooser = myView.findViewById(R.id.chooseExecutor);
+
         progressDialog = new ProgressDialog(getContext(),
                 R.style.AppCompatAlertDialogStyle);
         main = MainScreenActivity.getInstance();
+        new JsonTask().execute(getColleaguesURL);
         info = myView.findViewById(R.id.infotextactivity);
         List<String> fields = new ArrayList<>();
         crops = new ArrayList<>();
@@ -69,6 +100,12 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
         activityChooser.setFocusable(false);
         categoryChooser.setFocusable(false);
         productChooser.setFocusable(false);
+        cropChooser.setVisibility(View.GONE);
+        activityChooser.setVisibility(View.GONE);
+        categoryChooser.setVisibility(View.GONE);
+        cropImgLayout.setVisibility(View.GONE);
+        productChooser.setVisibility(View.GONE);
+
         for(int i = 0; i<main.controller.getUser().fields.size();i++){
             fields.add(main.controller.getUser().fields.get(i).getDisplay_name());
         }
@@ -91,7 +128,13 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
                 cropChooser.setFocusable(false);
                 activityChooser.setFocusable(false);
                 categoryChooser.setFocusable(false);
-                categoryChooser.setFocusable(false);
+                productChooser.setFocusable(false);
+                executorChooser.setFocusable(false);
+                activityChooser.setVisibility(View.GONE);
+                categoryChooser.setVisibility(View.GONE);
+                cropImgLayout.setVisibility(View.GONE);
+                productChooser.setVisibility(View.GONE);
+
 
                 if(!checkFieldActiveCrop(fieldChooser.getText().toString())){
                     fieldChooser.setError("Field doesnt have an active crop");
@@ -103,6 +146,7 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
                     info.setText(getContext().getString(R.string.createActivity));
                     info.setTextColor(Color.DKGRAY);
                     buildCropList();
+                    cropChooser.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -128,12 +172,18 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
                 activityChooser.setFocusable(false);
                 categoryChooser.setFocusable(false);
                 productChooser.setFocusable(false);
+
+                categoryChooser.setVisibility(View.GONE);
+
+                productChooser.setVisibility(View.GONE);
                 if(!cropChooser.getText().toString().equals("")){
 
 
                 id = getCropID(cropChooser.getText().toString());
                 new getCropBBCHStages().execute(id);
                 new getCropActivityTypes().execute(id);
+                    cropImgLayout.setVisibility(View.VISIBLE);
+                    activityChooser.setVisibility(View.VISIBLE);
 
                 }
             }
@@ -157,7 +207,16 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
                 categoryChooser.setFocusable(false);
                 productChooser.setFocusable(false);
                 if(!activityChooser.getText().toString().equals("")) {
+                    if(categoryChooser.getText().toString().equals("harvest")){
+                        buildProductList();
+                    }
                     new getActivityCategories().execute(activityChooser.getText().toString());
+                    if(!activityChooser.getText().toString().equals("irrigation")){
+                        categoryChooser.setVisibility(View.VISIBLE);
+                        productChooser.setVisibility(View.VISIBLE);
+                    }
+
+
                 }
             }
 
@@ -178,8 +237,15 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
                 productChooser.setText("");
                 productChooser.setFocusable(false);
                 if(!categoryChooser.getText().toString().equals("")){
-                    new getActivityProducts().execute(activityChooser.getText().toString(),categoryChooser.getText().toString(), cropChooser.getText().toString() );
+                    System.out.println(activityChooser.getText().toString());
+                   if(!activityChooser.getText().toString().equals("harvest")){
+                       new getActivityProducts().execute(activityChooser.getText().toString(),categoryChooser.getText().toString(), cropChooser.getText().toString() );
+                   }
+
+
+
                 }
+
 
             }
 
@@ -219,6 +285,72 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
 
         }
     }
+
+
+    private class JsonTask extends AsyncTask<String, String, String> {
+
+        HttpResponse<String> Httpresponse = null;
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+
+            JsonParser parser = new JsonParser();
+            JsonObject activityObject = (JsonObject) parser.parse(Httpresponse.getBody());
+            JsonArray workerslist = activityObject.getAsJsonArray("workers");
+            JsonArray colleagueslist = activityObject.getAsJsonArray("colleagues");
+
+            System.out.println(workerslist.getAsJsonArray().get(0).getAsJsonObject().get("name"));
+            System.out.println(workerslist.getAsJsonArray().get(0).getAsJsonObject().get("id"));
+            System.out.println(workerslist.getAsJsonArray().get(0).getAsJsonObject().get("photo_url"));
+            System.out.println(workerslist.getAsJsonArray().size());
+            for(int i= 0; i<workerslist.getAsJsonArray().size();i++){
+                String photo = workerslist.getAsJsonArray().get(i).getAsJsonObject().get("photo_url").toString();
+                executors.add(workerslist.getAsJsonArray().get(i).getAsJsonObject().get("name").getAsString());
+               workers.add(new Worker(workerslist.getAsJsonArray().get(i).getAsJsonObject().get("id").getAsInt(),workerslist.getAsJsonArray().get(0).getAsJsonObject().get("name").getAsString(),photo));
+
+            }
+            for(int x= 0; x<colleagueslist.getAsJsonArray().size();x++){
+                String photo = colleagueslist.getAsJsonArray().get(x).getAsJsonObject().get("photo_url").toString();
+                executors.add(colleagueslist.getAsJsonArray().get(x).getAsJsonObject().get("name").getAsString());
+                workers.add(new Worker(colleagueslist.getAsJsonArray().get(x).getAsJsonObject().get("id").getAsInt(),colleagueslist.getAsJsonArray().get(x).getAsJsonObject().get("name").getAsString(),photo));
+            }
+
+            buildExecutorList();
+
+
+
+        }
+
+        protected String doInBackground(String... params) {
+            String cookie = "_ga=GA1.2.1650363209.1570101259; km_ai=1jFFflnLZzj%2FTeCwqgrcXFOwwzA%3D; km_lv=x; signed_in=1; _gid=GA1.2.34756113.1574855966; kvcd=1574856407466; token=eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyNDQ1LCJ0b2tlbiI6bnVsbCwibG9jYWxlIjoiZW4iLCJleHAiOjE1NzQ4ODAyNzd9.VgrefxVTFqzdTJvAX9KOgpOKCTJ4FwyFqSmAKwlhzJk; _AgriCircle_subdomain_session=RURNVS9YTFE0VHowL1FWNEdZRldSdmZRcGNyQ2NBNEdKaEYzcnFmbXFOUnRqdUt1ajJQajArTDIxd3BjQnFZQ1BzUEU4YmhTWmZkQ09qeEptZjd6NkkrOGdvOE94T3FKOUdpcGxreXZGWnlXODUzVHZxam1aYXoxcFJ0RENSVmNNOFZwc3lSTkxUMDUxRHNMZzdCSWZhVEsxYlNQUmVKTHVzQ05OSXJ1a0dXRUU1Z2lKVU9IU0QwNGQ4MUttcTEyWVNFREY1eW1yWnlaYnZZenVlYmR2UjNjeFlYT1U5ZzhZdjJWSERwQnJnMD0tLTZwR2NhVmNzKzhoN3lzdXB6czBXdGc9PQ%3D%3D--1172c69ac85cbe748040c8e280a47a800967afac";
+
+            try {
+                HttpResponse<String> response = Unirest.get(getColleaguesURL)
+                        .header("cookie", cookie)
+                        .header("content-type", "application/json")
+                        .asString();
+                Httpresponse = response;
+            } catch (UnirestException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+    }
+
+public void buildExecutorList(){
+    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(),
+            android.R.layout.simple_dropdown_item_1line, executors );
+    executorChooser.setAdapter(arrayAdapter);
+    executorChooser.setFocusable(true);
+}
+
+
+
 
 
     private class getCropBBCHStages extends AsyncTask<Integer, Void,Void>{
@@ -280,8 +412,10 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
         @Override
         protected Void doInBackground(String... strings) {
 
-
-            main.controller.getCropActivityProducts(CropActivityProductType.safeValueOf(strings[0]),getCategoryNumber(strings[1]),getCropID(strings[2]),temp.fieldStrategyIDS);
+            System.out.println("BBCH: " + currentBBCH);
+            System.out.println("Kategori: " + strings[1]);
+            System.out.println("Aktivitet: " + strings[0]);
+            main.controller.getCropActivityProducts(CropActivityProductType.safeValueOf(strings[0]),getCategoryNumber(strings[1]),getCropID(strings[2]),temp.fieldStrategyIDS, currentBBCH);
             return null;
         }
 
@@ -382,11 +516,24 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
     }
 
     public void buildProductList(){
-        System.out.println("Der er elementer i listen: "+ main.controller.activityProductListString.size());
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(),
-                android.R.layout.simple_dropdown_item_1line, main.controller.activityProductListString);
-        productChooser.setAdapter(arrayAdapter);
-        productChooser.setFocusable(true);
+        ArrayAdapter<String> arrayAdapter;
+        System.out.println(activityChooser.getText().toString());
+        if(activityChooser.getText().toString().equals("harvest")){
+            System.out.println("Activity er harvest");
+            arrayAdapter = new ArrayAdapter<String>(this.getActivity(),
+                    android.R.layout.simple_dropdown_item_1line, main.controller.harvestTypesString);
+            productChooser.setAdapter(arrayAdapter);
+            productChooser.setFocusable(true);
+        }
+        else{
+            arrayAdapter = new ArrayAdapter<String>(this.getActivity(),
+                    android.R.layout.simple_dropdown_item_1line, main.controller.activityProductListString);
+            productChooser.setAdapter(arrayAdapter);
+            productChooser.setFocusable(true);
+        }
+
+
+
     }
 
 
@@ -409,9 +556,14 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
     }
 
     public void buildActivityList(){
+        ArrayAdapter<String> arrayAdapter;
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(),
-                android.R.layout.simple_dropdown_item_1line, main.controller.activitytypes2);
+
+            arrayAdapter = new ArrayAdapter<String>(this.getActivity(),
+                    android.R.layout.simple_dropdown_item_1line, main.controller.activitytypes2);
+
+
+
         activityChooser.setAdapter(arrayAdapter);
         activityChooser.setFocusable(true);
 
