@@ -12,9 +12,11 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Activity;
+import com.example.agricircle.project.Entities.Field;
 import com.example.agricircle.project.Util.ActivityAdaptor;
 import com.example.agricircle.R;
 
@@ -74,7 +76,17 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ActivityRun fragment2 = new ActivityRun();
 
+        Bundle bundle = new Bundle();
+        Activity obj = activities.get(position);
+        bundle.putSerializable("Activity", obj);
+        fragment2.setArguments(bundle);
+        ft.replace(R.id.article_fragment, fragment2);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     public void initialize(){

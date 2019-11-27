@@ -1,6 +1,8 @@
 package com.example.agricircle.project.Entities;
 
-public class Activity {
+import java.io.Serializable;
+
+public class Activity implements Serializable {
     int field_id,crop_id;
     String ActivityType, fieldname, url;
 

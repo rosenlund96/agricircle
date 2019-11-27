@@ -403,11 +403,16 @@ public class UserController implements Serializable {
 
 
                         for(int i = 0; i<products.size();i++){
+                            if(products.get(i).fertilizerElements() != null){
+                                for(int f = 0; f<products.get(i).fertilizerElements().size();f++){
+                                    elements.add(new FertilizerElements(products.get(i).fertilizerElements().get(f).amount(),products.get(i).fertilizerElements().get(f).symbol()));
+                                }
 
-                            for(int f = 0; f<products.get(i).fertilizerElements().size();f++){
-                                elements.add(new FertilizerElements(products.get(i).fertilizerElements().get(f).amount(),products.get(i).fertilizerElements().get(f).symbol()));
                             }
-                            temp.add(new Product(products.get(i).name(),products.get(i).id(),elements));
+                            else{
+                                temp.add(new Product(products.get(i).name(),products.get(i).id(),null));
+                            }
+
                             names.add(products.get(i).name());
 
                             elements.clear();

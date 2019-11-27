@@ -38,16 +38,7 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.nio.charset.Charset;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -208,6 +199,7 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
                 productChooser.setFocusable(false);
                 if(!activityChooser.getText().toString().equals("")) {
                     if(categoryChooser.getText().toString().equals("harvest")){
+                        System.out.println("Harvest");
                         buildProductList();
                     }
                     new getActivityCategories().execute(activityChooser.getText().toString());
@@ -237,7 +229,7 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
                 productChooser.setText("");
                 productChooser.setFocusable(false);
                 if(!categoryChooser.getText().toString().equals("")){
-                    System.out.println(activityChooser.getText().toString());
+
                    if(!activityChooser.getText().toString().equals("harvest")){
                        new getActivityProducts().execute(activityChooser.getText().toString(),categoryChooser.getText().toString(), cropChooser.getText().toString() );
                    }
