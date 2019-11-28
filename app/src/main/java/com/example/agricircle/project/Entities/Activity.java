@@ -1,17 +1,23 @@
 package com.example.agricircle.project.Entities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Activity implements Serializable {
-    int field_id,crop_id;
+    int field_id,crop_id, activity_id;
     String ActivityType, fieldname, url;
+    boolean finished;
+    String currentTimestamp;
+    Date duedate;
 
-    public Activity(int field_id, String activityType, int crop_id, String name, String url) {
+
+    public Activity(int field_id, String activityType, int crop_id, String name, String url, int activity_id) {
         this.field_id = field_id;
         ActivityType = activityType;
         this.crop_id = crop_id;
         this.fieldname = name;
         this.url = url;
+        this.activity_id = activity_id;
     }
 
     public int getField_id() {
@@ -50,5 +56,21 @@ public class Activity implements Serializable {
 
     public void setFieldname(String fieldname) {
         this.fieldname = fieldname;
+    }
+
+    public void setCurrentTimestamp(String timestamp){
+        this.currentTimestamp = timestamp;
+    }
+    public String getCurrentTimestamp(){
+        return this.currentTimestamp;
+    }
+    public void setFinished(boolean status){
+        this.finished = status;
+    }
+    public boolean getFinished(){
+        return this.finished;
+    }
+    public int getActivity_id(){
+        return this.activity_id;
     }
 }

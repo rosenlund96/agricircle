@@ -55,6 +55,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -210,7 +211,7 @@ public class UserController implements Serializable {
     }
 
     public void createDummyData(List<Field> fields, List<Crop> crops){
-
+        System.out.println("CreateDummy kaldt");
         activitytypes.add("Sowing");
         activitytypes.add("Spraying");
         activitytypes.add("Fertilization");
@@ -223,7 +224,9 @@ public class UserController implements Serializable {
             int randomNum = rand.nextInt((3 - 2) + 1) + 2;
             for(int x = 0; x < randomNum;x++){
                 int randomNum2 = rand.nextInt((3 - 1) + 1) + 1;
-                activities.add(new Activity(fields.get(i).getId(),activitytypes.get(randomNum2-1),0,fields.get(i).getDisplay_name(),""));
+                int id = getNextActivityID();
+
+                activities.add(new Activity(fields.get(i).getId(),activitytypes.get(randomNum2-1),0,fields.get(i).getDisplay_name(),"",id));
             }
 
         }
@@ -240,6 +243,34 @@ public class UserController implements Serializable {
         }
         System.out.println("" + activities.size() + " dummy aktiviteter oprettet");
 
+
+
+    }
+
+    public int getNextActivityID(){
+        int id = 0;
+        if(activities.isEmpty()){
+            id = 0;
+        }
+        else{
+            id = activities.get(activities.size()-1).getActivity_id();
+        }
+        System.out.println("Nuværende index: " + (activities.size()-1) + "Nyt index" + (id+1));
+        return  id+1;
+    }
+
+    public void saveCurrentActivity(Activity Activity){
+        int index = 0;
+
+        for(int i = 0; i<activities.size();i++){
+
+            if(activities.get(i).getActivity_id() == Activity.getActivity_id()){
+                //Collections.replaceAll(activities, activities.get(i),Activity);
+                index = i;
+            }
+        }
+        System.out.println("Opdaterer aktivitet med id: " + activities.get(index).getActivity_id() );
+        activities.set(index,Activity);
 
     }
 
