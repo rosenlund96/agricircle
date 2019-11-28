@@ -1,12 +1,20 @@
 package com.example.agricircle.project.Fragment;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +23,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.agricircle.R;
 import com.example.agricircle.project.Activities.DrawNewFieldActivity;
+import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,8 +44,10 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback {
     private DrawNewFieldActivity main;
     private Polygon polygon;
     private TextView toptext;
-
+    private Button createField;
+    private MainScreenActivity mainController;
     private GoogleMap mMap;
+    AutoCompleteTextView cropSearch;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,6 +55,34 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback {
         main = DrawNewFieldActivity.getInstance();
         polygon = main.polygon;
         toptext = myView.findViewById(R.id.surfacetext);
+        createField = myView.findViewById(R.id.createfieldbutton);
+        createField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        mainController = MainScreenActivity.getInstance();
+
+        cropSearch = (AutoCompleteTextView)
+                myView.findViewById(R.id.autocompleteCrop);
+        cropSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                InputMethodManager inputManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                View v = getActivity().getCurrentFocus();
+
+                if (v != null) {
+
+                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+                    inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+                }
+            }
+        });
+        new getAllCrops().execute("");
         final SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -61,6 +100,31 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback {
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getPolygonCenterPoint(polygon), 15));
             drawPolygon(polygon);
+
+        }
+    }
+
+    private class getAllCrops extends AsyncTask<String,Void,Void>{
+
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            mainController.controller.getAllCrops(strings[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            while(true){
+                if(mainController.controller.allCropsFinished){
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                            android.R.layout.simple_dropdown_item_1line, mainController.controller.allCropsList);
+                    System.out.println("Adaptor sættes med " + mainController.controller.allCropsList.size() + " elementer");
+                    cropSearch.setAdapter(adapter);
+                    break;
+                }
+            }
 
         }
     }

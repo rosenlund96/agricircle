@@ -89,7 +89,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private List<Polyline> samplingpath;
     private List<Activity> activitites;
     private String activePolygon;
-    private LinearLayout infoLayout, locationlayout;
+    private LinearLayout infoLayout, locationlayout, infoactivitylayout;
     private TextView infoFieldName, infoFieldSurface, productx,producty, activitytypex,activitytypey, locationtext;
     private List<String> parameters;
     private boolean firstUpdate, fieldPresent;
@@ -179,6 +179,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         fields =  myView.findViewById(R.id.googlemaps_list);
         userprofile =  myView.findViewById(R.id.googlemaps_settings);
         infoLayout =  myView.findViewById(R.id.infolayout);
+        infoactivitylayout = myView.findViewById(R.id.infoactovitylayout);
         infoFieldName =  myView.findViewById(R.id.mapFieldName);
         infoFieldSurface =  myView.findViewById(R.id.mapSurface);
         productx =  myView.findViewById(R.id.productx);
@@ -335,6 +336,12 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
                 }
                 samplingpath.clear();
+                for(int i = 0; i< polygons.size();i++){
+                    if(polygons.get(i).getPoints().get(0).equals(activeField.getCoordinates().getCoordinates().get(0))){
+                        polygons.get(i).setFillColor(Color.argb(160,255,51,51));
+                    }
+                }
+
             }
 
 
@@ -530,23 +537,32 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                         List<Activity> tempList = sortActivities(field);
                         infoFieldName.setText(field.getDisplay_name());
                         infoFieldSurface.setText(field.getSurface() +"ha");
-                        if(!tempList.get(0).getUrl().equals("")){
-                            Picasso.get().load(tempList.get(0).getUrl()).into(imgx);
-                        }
-                        else {
-                            imgx.setImageDrawable(getContext().getDrawable(R.drawable.questionmark));
-                        }
-                        if(!tempList.get(1).getUrl().equals("")){
-                            Picasso.get().load(tempList.get(1).getUrl()).into(imgy);
-                        }
-                        else{
-                            imgy.setImageDrawable(getContext().getDrawable(R.drawable.questionmark));
-                        }
-                        productx.setText(getCropName(tempList.get(0).getCrop_id()));
-                        producty.setText(getCropName(tempList.get(1).getCrop_id()));
-                        activitytypex.setText(tempList.get(0).getActivityType());
-                        activitytypey.setText(tempList.get(1).getActivityType());
-                        infoLayout.setVisibility(View.VISIBLE);
+                        //hvis der er aktiviteter, så vis de to første for feltet.
+                        if(tempList != null &&!tempList.isEmpty()){
+
+
+                            if(!tempList.get(0).getUrl().equals("")){
+                                Picasso.get().load(tempList.get(0).getUrl()).into(imgx);
+                            }
+                            else {
+                                imgx.setImageDrawable(getContext().getDrawable(R.drawable.questionmark));
+                            }
+                            if(!tempList.get(1).getUrl().equals("")){
+                                Picasso.get().load(tempList.get(1).getUrl()).into(imgy);
+                            }
+                            else{
+                                imgy.setImageDrawable(getContext().getDrawable(R.drawable.questionmark));
+                            }
+                            productx.setText(getCropName(tempList.get(0).getCrop_id()));
+                            producty.setText(getCropName(tempList.get(1).getCrop_id()));
+                            activitytypex.setText(tempList.get(0).getActivityType());
+                            activitytypey.setText(tempList.get(1).getActivityType());
+                            }
+                            //Hvis der ingen aktiviteter er, så skjul aktivitetsview
+                            else{
+                                infoactivitylayout.setVisibility(View.INVISIBLE);
+                            }
+                            infoLayout.setVisibility(View.VISIBLE);
 
 
 

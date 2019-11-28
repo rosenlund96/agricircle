@@ -570,7 +570,7 @@ public void buildExecutorList(){
             }
         }
         try {
-            if(temp.cropid != 99999) {
+            if(!temp.getCropsList().isEmpty()) {
                 returnval = true;
             }
         }catch (Exception e){

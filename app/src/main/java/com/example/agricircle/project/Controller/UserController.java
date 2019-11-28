@@ -14,6 +14,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 
 import com.example.agricircle.Activities.CheckEmailMutation;
+import com.example.agricircle.Activities.GetAllCropsQuery;
 import com.example.agricircle.Activities.GetCropActivitiesQuery;
 import com.example.agricircle.Activities.GetCropStagesQuery;
 import com.example.agricircle.Activities.GetProductsQuery;
@@ -31,7 +32,6 @@ import com.example.agricircle.project.Entities.Product;
 import com.example.agricircle.project.Entities.Shape;
 import com.example.agricircle.project.Entities.User;
 import com.example.agricircle.project.Entities.Weather;
-import com.example.agricircle.project.GetAllCropsQuery;
 import com.example.agricircle.project.GetCompaniesQuery;
 import com.example.agricircle.project.GetCropsQuery;
 import com.example.agricircle.project.GetFieldsQuery;
@@ -67,7 +67,7 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class UserController implements Serializable {
     public User user;
-    public boolean fieldsLoaded, cropactivitites1loaded;
+    public boolean fieldsLoaded, cropactivitites1loaded, allCropsFinished;
     public List<Crop> cropsList = new ArrayList<>();
     public List<Field> fieldsList = new ArrayList<>();
     public List<Company> companiesList = new ArrayList<>();
@@ -81,6 +81,7 @@ public class UserController implements Serializable {
     public List<HarvestTypes> harvestTypes3 = new ArrayList<>();
     public List<String> harvestTypesString = new ArrayList<>();
     public List<BBCH> BBCHList = new ArrayList<>();
+    public List<String> allCropsList = new ArrayList<>();
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
     ApolloClient apolloClient;
     int loginStatus;
@@ -181,25 +182,36 @@ public class UserController implements Serializable {
     public boolean getFieldsLoaded() {return this.fieldsLoaded;}
 
 
-    public List<Crop> getAllCrops(){
+    public List<Crop> getAllCrops(String query){
+        allCropsFinished = false;
         cropsList.clear();
-        GetAllCropsQuery query = GetAllCropsQuery.builder().build();
+        com.example.agricircle.Activities.GetAllCropsQuery cropsQuery = com.example.agricircle.Activities.GetAllCropsQuery
+                .builder()
+                .name(query)
+                .build();
 
-        apolloClient.query(query).enqueue(new ApolloCall.Callback<GetAllCropsQuery.Data>() {
+        apolloClient.query(cropsQuery).enqueue(new ApolloCall.Callback<GetAllCropsQuery.Data>() {
             @Override
             public void onResponse(@NotNull Response<GetAllCropsQuery.Data> response) {
-                List<GetAllCropsQuery.Collection> cropdata = response.data().allCrops().collection();
-                System.out.println("Crops hentet fra DB: " + cropdata.size());
-                for (int i = 0; i < cropdata.size();i++){
-                    cropsList.add(new Crop(cropdata.get(i).id(),null,cropdata.get(i).name(),cropdata.get(i).image_url(),cropdata.get(i).__typename()));
-                }
-                System.out.println("Crops hentet:" + cropsList.size());
+                if(!response.hasErrors()){
+                    List<GetAllCropsQuery.Collection> crops = response.data().allCrops().collection();
+                    List<String> temp = new ArrayList<>();
+                    for(int i = 0; i<crops.size();i++){
+                        System.out.println(crops.get(i).name());
+                        temp.add(crops.get(i).name());
+                    }
+                    allCropsList = temp;
+                    allCropsFinished = true;
 
+                }
+                else{
+                    System.out.println("Fejl opstod ved henting af alle crops: "+response.errors());
+                }
             }
 
             @Override
             public void onFailure(@NotNull ApolloException e) {
-                System.out.println("Fejl: " + e.getCause());
+
             }
         });
 

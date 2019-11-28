@@ -1,10 +1,11 @@
-query getAllCrops{
-  allCrops(options: {name: ""}){
-  collection{
-  id
-  name
-  image_url
-  autumn
+query getAllCrops($name:String!){
+allCrops(options: {name:$name}){
+collection{
+id
+name
+image_url
 }
 }
+
+
 }
