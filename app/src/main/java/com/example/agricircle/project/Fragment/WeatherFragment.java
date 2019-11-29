@@ -94,7 +94,7 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
         mChart.setBackgroundColor(Color.TRANSPARENT);
         mChart.setDrawGridBackground(false);
 
-        selectedInterval = "";
+        selectedInterval = "time";
         location = null;
         tabs.addTab(tabs.newTab().setText(R.string.today));
         tabs.addTab(tabs.newTab().setText(R.string.fivedays));
@@ -285,21 +285,26 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
                 xAxis.setValueFormatter(new ValueFormatter() {
                     @Override
                     public String getAxisLabel(float value, AxisBase axis) {
-                        if(selectedInterval.equals("time")){
-                            String oldDate = vejrData.get((int) value).date;
-                            String[] separated = oldDate.split("T");
-
-                            return separated[1].substring(0,5);
-                        }
-
                         String oldDate = vejrData.get((int) value).date;
                         String[] separated = oldDate.split("T");
+                        String returnval;
+                        if(selectedInterval.equals("time")){
 
-                        String date = separated[0].substring(9,11);
-                        String month = separated[0].substring(6,8);
-                        String time = separated[1].substring(0,5);
 
-                        return ""+date+"/"+month+"-"+time;
+                            returnval = separated[1].substring(0,5);
+                        }
+                        else{
+                            String date = separated[0].substring(9,11);
+                            String month = separated[0].substring(6,8);
+                            String time = separated[1].substring(0,5);
+                            returnval = ""+date+"/"+month+"-"+time;
+                        }
+
+
+
+
+
+                        return returnval;
                     }
                 });
                 xAxis.setPosition(XAxis.XAxisPosition.BOTH_SIDED);

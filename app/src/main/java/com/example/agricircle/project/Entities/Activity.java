@@ -9,6 +9,9 @@ public class Activity implements Serializable {
     boolean finished;
     String currentTimestamp;
     Date duedate;
+    String comment;
+    String BBCHname;
+    String BBCHImage;
 
 
     public Activity(int field_id, String activityType, int crop_id, String name, String url, int activity_id) {
