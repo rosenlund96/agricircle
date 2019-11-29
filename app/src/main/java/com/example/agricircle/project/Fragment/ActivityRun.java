@@ -154,25 +154,37 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
         }
     }
 
+    public void saveActivity(boolean status){
+        activity.setCurrentTimestamp(timer.getText().toString());
+        activity.setFinished(status);
+
+
+
+        //main.controller.saveCurrentActivity(activity);
+        FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ActivityRecieptFragment fragment2 = new ActivityRecieptFragment();
+
+        Bundle bundle = new Bundle();
+        Activity obj = activity;
+        bundle.putSerializable("Activity", obj);
+        fragment2.setArguments(bundle);
+
+
+        ft.replace(R.id.article_fragment, fragment2);
+        ft.addToBackStack(null);
+        ft.commit();
+
+    }
+
     @Override
     public void onClick(View v) {
         if(v==finish){
-
+            saveActivity(true);
         }
         else if(v==pause){
             //set time og gem nuværende activity
-
-            activity.setCurrentTimestamp(timer.getText().toString());
-
-
-
-            main.controller.saveCurrentActivity(activity);
-            FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-            MapFragment fragment2 = new MapFragment();
-            ft.replace(R.id.article_fragment, fragment2);
-            ft.addToBackStack(null);
-            ft.commit();
+            saveActivity(false);
 
         }
     }
