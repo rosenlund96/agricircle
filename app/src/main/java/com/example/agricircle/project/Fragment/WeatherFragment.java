@@ -4,10 +4,14 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -16,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.agricircle.project.Activities.MainScreenActivity;
+import com.example.agricircle.project.Entities.Activity;
+import com.example.agricircle.project.Entities.Field;
 import com.example.agricircle.project.Entities.Weather;
 import com.example.agricircle.R;
 import com.github.mikephil.charting.charts.CombinedChart;
@@ -36,7 +42,10 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.tabs.TabLayout;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +57,8 @@ import java.util.Random;
 public class WeatherFragment extends Fragment implements TabLayout.OnTabSelectedListener{
    Button weather1, weather2, weather3;
    TabLayout tabs;
-   TextView offlineText;
+   TextView offlineText, currentTemp;
+   ImageView weatherIcon;
    View myView;
    CombinedChart mChart;
    Random r;
@@ -57,6 +67,9 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
     List<String> parameters;
     private final int count = 12;
     String selectedInterval = "";
+    MaterialBetterSpinner locationChooser;
+    List<String> fields;
+    LatLng location, currentLocation;
 
 
 
@@ -65,18 +78,96 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         myView = inflater.inflate(R.layout.weather_fragment, container, false);
+        fields = new ArrayList<>();
+        main = MainScreenActivity.getInstance();
+
+
         tabs = (TabLayout) myView.findViewById(R.id.tabLayout);
         tabs.setOnTabSelectedListener(this);
         mChart =(CombinedChart) myView.findViewById(R.id.weatherchart);
         offlineText = myView.findViewById(R.id.offlinetext);
         vejrData = new ArrayList<>();
         r = new Random();
+        currentTemp = myView.findViewById(R.id.currentTemp);
+        weatherIcon = myView.findViewById(R.id.currentWeatherImg);
         mChart.getDescription().setEnabled(false);
-        main = MainScreenActivity.getInstance();
+        mChart.setBackgroundColor(Color.TRANSPARENT);
+        mChart.setDrawGridBackground(false);
+
         selectedInterval = "";
+        location = null;
         tabs.addTab(tabs.newTab().setText(R.string.today));
         tabs.addTab(tabs.newTab().setText(R.string.fivedays));
         tabs.addTab(tabs.newTab().setText(R.string.fourteendays));
+        Bundle bundle = getArguments();
+        try{
+            String obj= (String) bundle.getSerializable("Location");
+            if(obj != null){
+                String[] latlong =  obj.split(",");
+                double latitude = Double.parseDouble(latlong[0]);
+                double longitude = Double.parseDouble(latlong[1]);
+                currentLocation = new LatLng(latitude, longitude);
+                location = currentLocation;
+                System.out.println("Lokation hentet" + location);
+                updateWeather(24,2, (24/2));
+
+            }
+        }catch (Exception e){
+
+            System.out.println("Ingen lokation sendt med " + e);
+
+
+        }
+
+
+
+
+
+
+
+        locationChooser = myView.findViewById(R.id.locationChooser);
+
+        fields.add(getContext().getString(R.string.myLocation));
+        for(int i = 0; i<main.controller.getUser().fields.size();i++){
+            fields.add(main.controller.getUser().fields.get(i).getDisplay_name());
+        }
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this.getActivity(),
+                android.R.layout.simple_dropdown_item_1line, fields);
+        locationChooser.setAdapter(arrayAdapter);
+        locationChooser.setFocusable(true);
+        locationChooser.setText(getContext().getString(R.string.myLocation));
+        locationChooser.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                location = getLocation(locationChooser.getText().toString());
+                if(tabs.getSelectedTabPosition() == 0){
+                    selectedInterval = "time";
+                    updateWeather(24,2, (24/2));
+                }
+                if(tabs.getSelectedTabPosition() == 1){
+                    selectedInterval = "date";
+                    updateWeather(120, 8,(120/8));
+                }
+                if(tabs.getSelectedTabPosition() == 2){
+                    selectedInterval = "date";
+                    updateWeather(336,15,(336/15));
+                }
+
+
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
 
         /*--------------------------------------*
@@ -122,6 +213,22 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
 
         return myView;
     }
+
+    private LatLng getLocation(String name){
+        LatLng temp = null;
+        if(!locationChooser.getText().toString().equals(getContext().getString(R.string.myLocation))){
+            for(int i = 0; i<main.controller.user.fields.size();i++){
+                if(main.controller.user.fields.get(i).getDisplay_name().equals(name)){
+                    temp = main.controller.user.getFields().get(i).getCenterpoint().getCoordinates().get(0);
+                }
+            }
+        }
+        else{
+            temp = currentLocation;
+        }
+        return temp;
+
+    }
     private String LoadPreferences(String key) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         String result = sharedPreferences.getString(key, "");
@@ -142,6 +249,13 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
         while(true){
             if(main.controller.weatherList.size() > elementer){
                 vejrData = main.controller.weatherList;
+                if (unit.equals("Metric")) {
+                    currentTemp.setText(vejrData.get(0).t_2m_C + "\u2103");
+                }
+                else if(unit.equals("Imperial")){
+                    currentTemp.setText(vejrData.get(0).t_2m_C + "\u2109");
+                }
+                weatherIcon.setImageDrawable(vejrData.get(0).getWeatherSymbol(getContext()));
                 System.out.println("Printer " + main.controller.weatherList.size() + " elementer");
 
                 // draw bars behind lines
@@ -234,7 +348,6 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
             mChart.setTouchEnabled(true);
 
             mChart.getDescription().setEnabled(false);
-            mChart.setBackgroundColor(Color.WHITE);
             mChart.setDrawGridBackground(false);
             mChart.setDrawBarShadow(false);
             mChart.setHighlightFullBarEnabled(false);
@@ -243,8 +356,8 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
             XAxis xAxis = mChart.getXAxis();
             xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 
-            LatLng temp = new LatLng(55.731659,12.363490);
-            opdaterVejr(temp, hoursrange,hoursinterval, elementer);
+            //LatLng temp = new LatLng(55.731659,12.363490);
+            opdaterVejr(location, hoursrange,hoursinterval, elementer);
         }
         else{
             mChart.setVisibility(View.INVISIBLE);
@@ -391,18 +504,27 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-       if(tab.getText().toString().equals(getResources().getString(R.string.today))){
-            selectedInterval = "time";
-           updateWeather(24,2, (24/2));
-       }
-       if(tab.getText().toString().equals(getResources().getString(R.string.fivedays))){
-            selectedInterval = "date";
-           updateWeather(120, 8,(120/8));
-       }
-       if(tab.getText().toString().equals(getResources().getString(R.string.fourteendays))){
-            selectedInterval = "date";
-           updateWeather(336,15,(336/15));
-       }
+
+        if(location != null){
+            if(tab.getText().toString().equals(getResources().getString(R.string.today))){
+                selectedInterval = "time";
+                updateWeather(24,2, (24/2));
+            }
+            if(tab.getText().toString().equals(getResources().getString(R.string.fivedays))){
+                selectedInterval = "date";
+                updateWeather(120, 8,(120/8));
+            }
+            if(tab.getText().toString().equals(getResources().getString(R.string.fourteendays))){
+                selectedInterval = "date";
+                updateWeather(336,15,(336/15));
+            }
+        }
+
+
+
+
+
+
     }
 
     @Override

@@ -35,6 +35,7 @@ import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Field;
 import com.example.agricircle.R;
 import com.example.agricircle.project.Entities.User;
+import com.example.agricircle.project.Entities.Weather;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -273,11 +274,18 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
         else if(v == weather){
 
-            this.getFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .replace(R.id.article_fragment
-                            , new WeatherFragment())
-                    .commit();
+            this.getFragmentManager().beginTransaction();
+            FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            WeatherFragment fragment2 = new WeatherFragment();
+
+            Bundle bundle = new Bundle();
+            String obj = mGoogleMap.getCameraPosition().target.latitude + ","+mGoogleMap.getCameraPosition().target.longitude;
+            bundle.putSerializable("Location", obj);
+            fragment2.setArguments(bundle);
+            ft.replace(R.id.article_fragment, fragment2);
+            ft.addToBackStack(null);
+            ft.commit();
         }
         else if(v == locationbutton){
             mGoogleMap.setMyLocationEnabled(true);
