@@ -12,15 +12,20 @@ public class Activity implements Serializable {
     String comment;
     String BBCHname;
     String BBCHImage;
+    String Executor;
 
 
-    public Activity(int field_id, String activityType, int crop_id, String name, String url, int activity_id) {
+
+    public Activity(int field_id, String activityType, int crop_id, String name, String url, int activity_id, String executor) {
         this.field_id = field_id;
         ActivityType = activityType;
         this.crop_id = crop_id;
         this.fieldname = name;
         this.url = url;
         this.activity_id = activity_id;
+        this.BBCHname = null;
+        this.BBCHImage = null;
+        this.Executor = executor;
     }
 
     public int getField_id() {
@@ -75,5 +80,26 @@ public class Activity implements Serializable {
     }
     public int getActivity_id(){
         return this.activity_id;
+    }
+    public void setBBCHname(String BBCHname){
+        this.BBCHname = BBCHname;
+    }
+    public String getBBCHname(){
+        return this.BBCHname;
+    }
+    public void setBBCHImage(String image){
+        this.BBCHImage = image;
+    }
+    public String getBBCHImage(){
+        return this.BBCHImage;
+    }
+    public String getExecutor(){
+        return this.Executor;
+    }
+    public String getComment(){
+        return this.comment;
+    }
+    public void setComment(String comment){
+        this.comment = comment;
     }
 }

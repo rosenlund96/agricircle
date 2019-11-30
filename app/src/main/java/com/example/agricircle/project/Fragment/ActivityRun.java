@@ -60,6 +60,7 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
             if(obj != null){
                 activity = obj;
                 activityType.setText(activity.getActivityType());
+                System.out.println("Activity BBCH: " + activity.getBBCHname());
 
             }
         }catch (Exception e){

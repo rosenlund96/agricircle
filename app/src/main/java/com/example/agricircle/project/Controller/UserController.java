@@ -82,6 +82,7 @@ public class UserController implements Serializable {
     public List<String> harvestTypesString = new ArrayList<>();
     public List<BBCH> BBCHList = new ArrayList<>();
     public List<String> allCropsList = new ArrayList<>();
+    public List<Crop> allCropsAsObject = new ArrayList<>();
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
     ApolloClient apolloClient;
     int loginStatus;
@@ -184,7 +185,7 @@ public class UserController implements Serializable {
 
     public List<Crop> getAllCrops(String query){
         allCropsFinished = false;
-        cropsList.clear();
+
         com.example.agricircle.Activities.GetAllCropsQuery cropsQuery = com.example.agricircle.Activities.GetAllCropsQuery
                 .builder()
                 .name(query)
@@ -196,11 +197,14 @@ public class UserController implements Serializable {
                 if(!response.hasErrors()){
                     List<GetAllCropsQuery.Collection> crops = response.data().allCrops().collection();
                     List<String> temp = new ArrayList<>();
+                    List<Crop> temp2 = new ArrayList<>();
                     for(int i = 0; i<crops.size();i++){
-                        System.out.println(crops.get(i).name());
+                        //System.out.println(crops.get(i).name());
                         temp.add(crops.get(i).name());
+                        temp2.add(new Crop(crops.get(i).id(),null,crops.get(i).name(),crops.get(i).image_url(),null));
                     }
                     allCropsList = temp;
+                    allCropsAsObject = temp2;
                     allCropsFinished = true;
 
                 }
@@ -224,9 +228,17 @@ public class UserController implements Serializable {
 
     public void createDummyData(List<Field> fields, List<Crop> crops){
         System.out.println("CreateDummy kaldt");
+        System.out.println("Størrelse på cropsliste: " + crops.size());
+
+
+
+
+
         activitytypes.add("Sowing");
         activitytypes.add("Spraying");
         activitytypes.add("Fertilization");
+
+        List<Activity> temp = new ArrayList<>();
 
 
 
@@ -238,20 +250,42 @@ public class UserController implements Serializable {
                 int randomNum2 = rand.nextInt((3 - 1) + 1) + 1;
                 int id = getNextActivityID();
 
-                activities.add(new Activity(fields.get(i).getId(),activitytypes.get(randomNum2-1),0,fields.get(i).getDisplay_name(),"",id));
+                temp.add(new Activity(fields.get(i).getId(),activitytypes.get(randomNum2-1),9,fields.get(i).getDisplay_name(),"",id, "Jakob Nordfalk"));
             }
 
         }
 
         for(int c = 0;c<crops.size();c++){
             int  id = crops.get(c).getField_ids().get(0);
-            for (int f = 0; f<activities.size();f++){
-                if(activities.get(f).getField_id() == id){
-                    activities.get(f).setCrop_id(crops.get(c).getCrop_id());
-                    activities.get(f).setUrl(crops.get(c).getPhoto_url());
+
+            for (int f = 0; f<temp.size();f++){
+                if(temp.get(f).getField_id() == id){
+                    temp.get(f).setCrop_id(crops.get(c).getCrop_id());
+                    getBBCHStages(crops.get(c).getCrop_id());
+                    while(true){
+                        if(!BBCHList.isEmpty()){
+                            int min = 3;
+                            int max = BBCHList.size()-1;
+                            int randomNum = rand.nextInt((max - min + 1) + min);
+                            //System.out.println("BBCH sættes til: " + BBCHList.get(randomNum).getBbchFrom());
+                            temp.get(f).setBBCHname(""+BBCHList.get(randomNum).getBbchFrom());
+                            temp.get(f).setBBCHImage(BBCHList.get(randomNum).getImage());
+                            break;
+                        }
+
+                    }
+                    temp.get(f).setUrl(crops.get(c).getPhoto_url());
 
                 }
             }
+        }
+
+
+
+
+        activities = temp;
+        for(int i = 0; i<activities.size();i++){
+            System.out.println("BBCH: " + activities.get(i).getBBCHname());
         }
         System.out.println("" + activities.size() + " dummy aktiviteter oprettet");
 
@@ -487,7 +521,7 @@ public class UserController implements Serializable {
 
 
     public void getBBCHStages(int cropID){
-
+        BBCHList.clear();
         GetCropStagesQuery query = GetCropStagesQuery.builder()
                 .cropid(cropID)
                 .build();

@@ -76,17 +76,34 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ActivityRun fragment2 = new ActivityRun();
+        System.out.println("Activity status: " + activities.get(position).getFinished());
+        if(!activities.get(position).getFinished()){
+            FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ActivityRun fragment2 = new ActivityRun();
 
-        Bundle bundle = new Bundle();
-        Activity obj = activities.get(position);
-        bundle.putSerializable("Activity", obj);
-        fragment2.setArguments(bundle);
-        ft.replace(R.id.article_fragment, fragment2);
-        ft.addToBackStack(null);
-        ft.commit();
+            Bundle bundle = new Bundle();
+            Activity obj = activities.get(position);
+            bundle.putSerializable("Activity", obj);
+            fragment2.setArguments(bundle);
+            ft.replace(R.id.article_fragment, fragment2);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+        else{
+            FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ActivityRecieptFragment fragment2 = new ActivityRecieptFragment();
+
+            Bundle bundle = new Bundle();
+            Activity obj = activities.get(position);
+            bundle.putSerializable("Activity", obj);
+            fragment2.setArguments(bundle);
+            ft.replace(R.id.article_fragment, fragment2);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+
     }
 
     public void initialize(){

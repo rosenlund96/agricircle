@@ -1,6 +1,7 @@
 package com.example.agricircle.project.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -15,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,9 @@ import androidx.fragment.app.Fragment;
 import com.example.agricircle.R;
 import com.example.agricircle.project.Activities.DrawNewFieldActivity;
 import com.example.agricircle.project.Activities.MainScreenActivity;
+import com.example.agricircle.project.Entities.Crop;
+import com.example.agricircle.project.Entities.Field;
+import com.example.agricircle.project.Entities.Shape;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,16 +38,20 @@ import com.google.android.gms.maps.model.LatLngBounds;
 
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.gson.Gson;
 import com.google.maps.android.SphericalUtil;
 
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class CreateFieldDetail extends Fragment implements OnMapReadyCallback {
+public class CreateFieldDetail extends Fragment implements OnMapReadyCallback, View.OnClickListener {
     private View myView;
     private DrawNewFieldActivity main;
     private Polygon polygon;
+    private EditText fieldName;
     private TextView toptext;
     private Button createField;
     private MainScreenActivity mainController;
@@ -54,14 +63,10 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback {
         myView = inflater.inflate(R.layout.create_new_field_detail, container, false);
         main = DrawNewFieldActivity.getInstance();
         polygon = main.polygon;
+        fieldName = myView.findViewById(R.id.fieldNameCreate);
         toptext = myView.findViewById(R.id.surfacetext);
         createField = myView.findViewById(R.id.createfieldbutton);
-        createField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        createField.setOnClickListener(this);
         mainController = MainScreenActivity.getInstance();
 
         cropSearch = (AutoCompleteTextView)
@@ -103,6 +108,56 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback {
 
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        System.out.println("Størrelse: " + mainController.controller.getUser().fields.size());
+        Crop crop = getCorrectCrop(cropSearch.getText().toString());
+        System.out.println("Korrekt crop er: " + crop.getName());
+        Shape newPolygon = new Shape(null,polygon.getPoints());
+        List<LatLng> center = new ArrayList<>();
+        center.add(getPolygonCenterPoint(polygon));
+        Shape centerPoint = new Shape(null, center);
+        String area = getPolygonArea(polygon);
+        Double surface = Double.valueOf(area.substring(0,area.length()-2));
+        Field newField = new Field(0,fieldName.getText().toString(),null,newPolygon,surface,fieldName.getText().toString(),false, centerPoint,crop.getCrop_id());
+        
+        mainController.controller.getUser().fields.add(newField);
+
+        System.out.println("Størrelse: " + mainController.controller.getUser().fields.size());
+
+        Gson gson = new Gson();
+
+        String json = gson.toJson(mainController.controller.getUser());
+        SavePreferences("User",json);
+
+
+
+        Intent intent = new Intent(this.getContext(), MainScreenActivity.class);
+        startActivity(intent);
+
+
+
+    }
+    private void SavePreferences(String key, String value) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+
+
+    public Crop getCorrectCrop(String name){
+        Crop crop = null;
+        for(int i= 0; i<mainController.controller.allCropsAsObject.size();i++){
+            if(mainController.controller.allCropsAsObject.get(i).getName().equals(name)){
+                crop = mainController.controller.allCropsAsObject.get(i);
+            }
+        }
+        return crop;
+    }
+
 
     private class getAllCrops extends AsyncTask<String,Void,Void>{
 
