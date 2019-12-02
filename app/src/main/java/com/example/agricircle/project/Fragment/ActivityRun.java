@@ -60,6 +60,7 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
             if(obj != null){
                 activity = obj;
                 activityType.setText(activity.getActivityType());
+                System.out.println("Activityid: " + activity.getActivity_id());
                 System.out.println("Activity BBCH: " + activity.getBBCHname());
 
             }
@@ -168,6 +169,7 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
 
         Bundle bundle = new Bundle();
         Activity obj = activity;
+        System.out.println("Aktivitet med id sendes: " + activity.getActivity_id());
         bundle.putSerializable("Activity", obj);
         fragment2.setArguments(bundle);
 

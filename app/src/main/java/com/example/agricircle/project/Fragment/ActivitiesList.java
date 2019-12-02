@@ -76,9 +76,7 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
             activities = MainScreenActivity.getInstance().controller.getActivities();
 
         }
-        for(int i = 0; i< activities.size();i++){
-            System.out.println("url: " + activities.get(i).getUrl());
-        }
+
         results.setAdapter(new ActivityAdaptor(getContext(),activities));
         results.setOnItemClickListener(this);
         createActivity = myView.findViewById(R.id.newactivity);

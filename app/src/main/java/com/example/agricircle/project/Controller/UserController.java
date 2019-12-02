@@ -250,7 +250,12 @@ public class UserController implements Serializable {
             int randomNum = rand.nextInt((3 - 2) + 1) + 2;
             for(int x = 0; x < randomNum;x++){
                 int randomNum2 = rand.nextInt((3 - 1) + 1) + 1;
-                int id = getNextActivityID();
+                int id = 0;
+                if(!temp.isEmpty()){
+                     id = temp.get(temp.size()-1).getActivity_id()+1;
+                }
+
+                System.out.println("Nyt id: " + id);
 
                 temp.add(new Activity(fields.get(i).getId(),activitytypes.get(randomNum2-1),9,fields.get(i).getDisplay_name(),"",id, "Jakob Nordfalk"));
             }
@@ -287,7 +292,7 @@ public class UserController implements Serializable {
 
         activities = temp;
         for(int i = 0; i<activities.size();i++){
-            System.out.println("BBCH: " + activities.get(i).getBBCHname());
+            System.out.println("activity id: " + activities.get(i).getActivity_id());
         }
         System.out.println("" + activities.size() + " dummy aktiviteter oprettet");
 
@@ -307,18 +312,18 @@ public class UserController implements Serializable {
         return  id+1;
     }
 
-    public void saveCurrentActivity(Activity Activity){
+    public void saveCurrentActivity(Activity activity){
         int index = 0;
-
+        System.out.println("Gemmer aktivitet med id: " +activity.getActivity_id() );
         for(int i = 0; i<activities.size();i++){
 
-            if(activities.get(i).getActivity_id() == Activity.getActivity_id()){
+            if(activities.get(i).getActivity_id() == activity.getActivity_id()){
                 //Collections.replaceAll(activities, activities.get(i),Activity);
                 index = i;
             }
         }
         System.out.println("Opdaterer aktivitet med id: " + activities.get(index).getActivity_id() );
-        activities.set(index,Activity);
+        activities.set(index,activity);
 
     }
 

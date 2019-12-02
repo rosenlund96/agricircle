@@ -578,6 +578,9 @@ public void buildExecutorList(){
         }
 
 
+
+
+
         System.out.println("Field har aktiv crop: " + returnval);
         return returnval;
     }

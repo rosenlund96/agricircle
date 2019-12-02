@@ -21,7 +21,10 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.agricircle.R;
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Activity;
+import com.example.agricircle.project.Entities.Crop;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 public class ActivityRecieptFragment extends Fragment implements View.OnClickListener{
 
@@ -36,6 +39,7 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        System.out.println("Kvitteringsside vises");
         myView = inflater.inflate(R.layout.activity_reciept_view, container, false);
         main = MainScreenActivity.getInstance();
         save = myView.findViewById(R.id.logButton);
@@ -48,71 +52,65 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
         activityType = myView.findViewById(R.id.activityTypeReciept);
         executor = myView.findViewById(R.id.activityExecutor);
         commentBox = myView.findViewById(R.id.commentBox);
-        new getAllCrops().execute("");
+
         Bundle bundle = getArguments();
         try{
-            com.example.agricircle.project.Entities.Activity obj= (com.example.agricircle.project.Entities.Activity) bundle.getSerializable("Activity");
+            Activity obj = (Activity) bundle.getSerializable("Activity");
             if(obj != null){
                 activity = obj;
-                fieldName.setText(activity.getFieldname());
-                BBCHText.setText("BBCH0");
-                Picasso.get().load("https://core.agricircle.com/static/images/ac-vorsaat-nachsaat.png").into(BBCHImage);
-                if(activity.getBBCHname() != null){
-                    BBCHText.setText("BBCH"+activity.getBBCHname());
-                    Picasso.get().load(activity.getBBCHImage()).into(BBCHImage);
-                }
-                if(!activity.getComment().isEmpty()){
-                    commentBox.setText(activity.getComment());
-                }
-                executor.setText(activity.getExecutor());
-                System.out.println("Sætter information med BBCH: " + activity.getBBCHname());
-                setCropInfo(activity.getCrop_id());
-                activityType.setText(activity.getActivityType());
+
 
 
             }
         }catch (Exception e){
             System.out.println("Intet felt sendt med");
-            activity = null;
 
+
+        }
+        if(activity != null){
+            setInformations();
         }
 
         return myView;
     }
 
-    public void setCropInfo(int id){
+    public void setInformations(){
+        System.out.println("Activityid: " + activity.getActivity_id());
+        fieldName.setText(activity.getFieldname());
 
-        while (true){
-            if(main.controller.allCropsFinished){
-                for(int i = 0; i<main.controller.allCropsList.size();i++){
-                    if(main.controller.allCropsAsObject.get(i).getCrop_id() == id){
-                        cropname.setText(main.controller.allCropsAsObject.get(i).getName());
-                        Picasso.get().load(main.controller.allCropsAsObject.get(i).getPhoto_url()).into(cropImage);
-                        System.out.println("Crop: " + main.controller.allCropsAsObject.get(i).getName() + " Img: " +main.controller.allCropsAsObject.get(i).getPhoto_url() );
-                    }
-                }
-                break;
+        BBCHText.setText("BBCH0");
+        Picasso.get().load("https://core.agricircle.com/static/images/ac-vorsaat-nachsaat.png").into(BBCHImage);
+        if(activity.getBBCHname() != null){
+            BBCHText.setText("BBCH"+activity.getBBCHname());
+            Picasso.get().load(activity.getBBCHImage()).into(BBCHImage);
+        }
+        if(!activity.getComment().isEmpty()){
+            commentBox.setText(activity.getComment());
+        }
+        System.out.println("Executor sættes til: " + activity.getExecutor());
+        executor.setText(activity.getExecutor());
+        System.out.println("Sætter information med BBCH: " + activity.getBBCHname());
+
+        cropname.setText(getCropName(activity.getCrop_id()));
+        activityType.setText(activity.getActivityType());
+    }
+
+
+    private String getCropName(int id){
+        String temp = "";
+        String url = "";
+        List<Crop> crops = MainScreenActivity.getInstance().controller.getUser().cropsList;
+        for(int i = 0; i<crops.size(); i++){
+            if(crops.get(i).getCrop_id() == id){
+                temp = crops.get(i).getName();
+                url = crops.get(i).getPhoto_url();
             }
         }
+
+        Picasso.get().load(url).into(cropImage);
+        return temp;
     }
 
-
-    private class getAllCrops extends AsyncTask<String,Void,Void>{
-
-
-        @Override
-        protected Void doInBackground(String... strings) {
-            main.controller.getAllCrops(strings[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-
-        }
-    }
 
 
 

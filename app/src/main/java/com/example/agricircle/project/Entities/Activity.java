@@ -26,6 +26,7 @@ public class Activity implements Serializable {
         this.BBCHname = null;
         this.BBCHImage = null;
         this.Executor = executor;
+        this.comment = "";
     }
 
     public int getField_id() {

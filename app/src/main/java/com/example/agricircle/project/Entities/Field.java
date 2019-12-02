@@ -17,9 +17,17 @@ public class Field implements Serializable {
     public int cropid;
     public List<Integer> cropIDS;
     public List<Integer> fieldStrategyIDS;
+    public boolean createdLocally;
 
     private boolean fertilizer_enabled;
     private Shape centerpoint;
+
+    public boolean getCreatedLocally(){
+        return this.createdLocally;
+    }
+    public void setCreatedLocally(boolean status){
+        this.createdLocally = status;
+    }
 
 
     public int getId() {
@@ -114,6 +122,7 @@ public class Field implements Serializable {
         this.centerpoint = centerpoint;
         this.cropid = cropid;
         this.cropIDS = new ArrayList<>();
+        this.createdLocally = false;
     }
 
     public void setCropList(List<Integer> list){
