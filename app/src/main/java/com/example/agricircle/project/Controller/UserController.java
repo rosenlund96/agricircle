@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
@@ -67,6 +68,7 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class UserController implements Serializable {
     public User user;
+
     public boolean fieldsLoaded, cropactivitites1loaded, allCropsFinished;
     public List<Crop> cropsList = new ArrayList<>();
     public List<Field> fieldsList = new ArrayList<>();
@@ -888,7 +890,8 @@ public class UserController implements Serializable {
             @Override
             public void onResponse(@NotNull Response<LoginInputMutation.Data> response) {
                 if(!response.hasErrors()){
-                    cookie = response.data().login().cookie().get(2);
+                    System.out.println(response.data().login().cookie());
+                    cookie = response.data().login().cookie().get(1);
                     //cookie="_AgriCircle_subdomain_session=SmlEZzEzMlR0YitqSnVkMndHem9Ddlhmb0drR3g5Q0pwdGJVUnBMWGZtRzdiNFRtcE5vdXp2b2J2ZkFkRlVDVStHTlg1ZlZUdVM0cTZGOXRxKy9mMEdjMG04MkVUZGczK2dRK3JsOTdKYjRGVm1JNDlNVFRHTzVrcWRRcmtJc1J0NWR6bmdXM2VxcVVacVpCS1VrYWNZK2VXR2NidXpEbUdzNDNnamhnVnhVPS0tVStNbDFqblZ5U1EzYzkwSTN6UnFiZz09--15f97196700b3eeab76d6e1a18517790c3798152;";
                     loginStatus = 2;
                     System.out.println("Cookie: " + cookie);

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/field"
+                android:textStyle="bold" />
+
+            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                android:id="@+id/fieldChooser"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner>
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/crop"
+                android:textStyle="bold" />
+
+            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                android:id="@+id/cropChooserFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:background="@color/colorPrimaryDark"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/applyButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="60dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/weather_button"
+                android:text="APPLY"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

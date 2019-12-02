@@ -121,7 +121,7 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback, V
         String area = getPolygonArea(polygon);
         Double surface = Double.valueOf(area.substring(0,area.length()-2));
         Field newField = new Field(0,fieldName.getText().toString(),null,newPolygon,surface,fieldName.getText().toString(),false, centerPoint,crop.getCrop_id());
-        
+
         mainController.controller.getUser().fields.add(newField);
 
         System.out.println("Størrelse: " + mainController.controller.getUser().fields.size());

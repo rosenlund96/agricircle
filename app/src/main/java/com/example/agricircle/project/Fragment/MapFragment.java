@@ -78,6 +78,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private SupportMapFragment mapFrag;
     private LocationRequest mLocationRequest;
     private boolean request;
+    private Button play1, play2;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Marker mCurrLocationMarker;
@@ -96,6 +97,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private boolean firstUpdate, fieldPresent;
     private Field field, activeField;
     private Display display;
+    List<Activity> tempList;
     private LatLng latLng;
     private int width,height;
     GroundOverlay soilzone;
@@ -159,6 +161,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         activePolygon = "";
         widthconstant = 0.4;
         heightconstant = 0.0147;
+        tempList = new ArrayList<>();
         request = false;
         firstUpdate = false;
         fieldPresent = false;
@@ -189,6 +192,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         activitytypey =  myView.findViewById(R.id.activitytypey);
         imgx =  myView.findViewById(R.id.imgx);
         imgy =  myView.findViewById(R.id.imgy);
+        play1 = myView.findViewById(R.id.playx);
+        play2 = myView.findViewById(R.id.playy);
         fields.setOnClickListener(this);
         weatherImage =  myView.findViewById(R.id.weatherimage);
         weather =  myView.findViewById(R.id.weatherbutton);
@@ -354,6 +359,66 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
 
 
+        }
+
+        if(v == play1){
+            System.out.println("Der blev trykket på knappen");
+            Activity activity = tempList.get(0);
+            FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            if(activity.getFinished()){
+
+                ActivityRecieptFragment fragment2 = new ActivityRecieptFragment();
+
+                Bundle bundle = new Bundle();
+                Activity obj = activity;
+                bundle.putSerializable("Activity", obj);
+                fragment2.setArguments(bundle);
+                ft.replace(R.id.article_fragment, fragment2);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+            else{
+                ActivityRun fragment2 = new ActivityRun();
+
+                Bundle bundle = new Bundle();
+                Activity obj = activity;
+                bundle.putSerializable("Activity", obj);
+                fragment2.setArguments(bundle);
+                ft.replace(R.id.article_fragment, fragment2);
+                ft.addToBackStack(null);
+                ft.commit();
+
+            }
+        }
+        if(v == play2){
+            Activity activity = tempList.get(1);
+            FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            if(activity.getFinished()){
+
+                ActivityRecieptFragment fragment2 = new ActivityRecieptFragment();
+
+                Bundle bundle = new Bundle();
+                Activity obj = activity;
+                bundle.putSerializable("Activity", obj);
+                fragment2.setArguments(bundle);
+                ft.replace(R.id.article_fragment, fragment2);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+            else{
+                ActivityRun fragment2 = new ActivityRun();
+
+                Bundle bundle = new Bundle();
+                Activity obj = activity;
+                bundle.putSerializable("Activity", obj);
+                fragment2.setArguments(bundle);
+                ft.replace(R.id.article_fragment, fragment2);
+                ft.addToBackStack(null);
+                ft.commit();
+
+            }
         }
     }
 
@@ -542,7 +607,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                         activeField = field;
                         LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0020,field.getCenterpoint().getCoordinates().get(0).longitude);
                         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
-                        List<Activity> tempList = sortActivities(field);
+                        tempList = sortActivities(field);
                         infoFieldName.setText(field.getDisplay_name());
                         infoFieldSurface.setText(field.getSurface() +"ha");
                         //hvis der er aktiviteter, så vis de to første for feltet.
@@ -565,6 +630,38 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                             producty.setText(getCropName(tempList.get(1).getCrop_id()));
                             activitytypex.setText(tempList.get(0).getActivityType());
                             activitytypey.setText(tempList.get(1).getActivityType());
+
+                            play2.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Activity activity = tempList.get(1);
+                                    FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+                                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                    if(activity.getFinished()){
+                                        ActivityRecieptFragment fragment2 = new ActivityRecieptFragment();
+
+                                        Bundle bundle = new Bundle();
+                                        Activity obj = activity;
+                                        bundle.putSerializable("Activity", obj);
+                                        fragment2.setArguments(bundle);
+                                        ft.replace(R.id.article_fragment, fragment2);
+                                        ft.addToBackStack(null);
+                                        ft.commit();
+                                    }
+                                    else{
+                                        ActivityRun fragment2 = new ActivityRun();
+
+                                        Bundle bundle = new Bundle();
+                                        Activity obj = activity;
+                                        bundle.putSerializable("Activity", obj);
+                                        fragment2.setArguments(bundle);
+                                        ft.replace(R.id.article_fragment, fragment2);
+                                        ft.addToBackStack(null);
+                                        ft.commit();
+                                    }
+                                }
+                            });
+
                             }
                             //Hvis der ingen aktiviteter er, så skjul aktivitetsview
                             else{
@@ -690,6 +787,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 activitytypex.setText(tempList.get(0).getActivityType());
                 activitytypey.setText(tempList.get(1).getActivityType());
                 infoLayout.setVisibility(View.VISIBLE);
+                play1.setFocusable(true);
+                play2.setFocusable(true);
 
 
 

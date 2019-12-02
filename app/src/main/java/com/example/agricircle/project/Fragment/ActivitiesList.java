@@ -16,10 +16,13 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Activity;
+import com.example.agricircle.project.Entities.Crop;
 import com.example.agricircle.project.Entities.Field;
+import com.example.agricircle.project.Entities.SearchItem;
 import com.example.agricircle.project.Util.ActivityAdaptor;
 import com.example.agricircle.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ActivitiesList extends Fragment implements AdapterView.OnItemClickListener{
@@ -36,6 +39,46 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.activity_list, container, false);
         results = (ListView) myView.findViewById(R.id.activitylist);
+        Bundle bundle = getArguments();
+        try{
+            SearchItem obj= (SearchItem) bundle.getSerializable("Search");
+            if(obj != null){
+                List<Activity> temp = MainScreenActivity.getInstance().controller.getActivities();
+                List<Activity> temp2 = new ArrayList<>();
+                List<Activity> temp3 = new ArrayList<>();
+                if(!obj.field.equals("All fields")){
+                    for(int i = 0; i<temp.size();i++){
+                        if(temp.get(i).getFieldname().equals(obj.field)){
+                            temp2.add(temp.get(i));
+                        }
+                    }
+                }
+                else{
+                    temp2 = temp;
+                }
+                if(!obj.crops.equals("All crops")){
+                    for(int i = 0 ; i<temp2.size();i++){
+                        if(getCropName(temp2.get(i).getCrop_id()).equals(obj.crops)){
+                            temp3.add(temp2.get(i));
+                        }
+                    }
+                }
+                else{
+                    temp3 = temp2;
+                }
+
+
+                activities = temp3;
+
+            }
+        }catch (Exception e){
+            System.out.println("Ingen data sendt med");
+            activities = MainScreenActivity.getInstance().controller.getActivities();
+
+        }
+        for(int i = 0; i< activities.size();i++){
+            System.out.println("url: " + activities.get(i).getUrl());
+        }
         results.setAdapter(new ActivityAdaptor(getContext(),activities));
         results.setOnItemClickListener(this);
         createActivity = myView.findViewById(R.id.newactivity);
@@ -107,12 +150,28 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
     }
 
     public void initialize(){
-        activities = MainScreenActivity.getInstance().controller.getActivities();
 
 
 
 
 
+
+
+
+
+
+
+    }
+
+    private String getCropName(int id){
+        String temp = "";
+        List<Crop> crops = MainScreenActivity.getInstance().controller.getUser().cropsList;
+        for(int i = 0; i<crops.size(); i++){
+            if(crops.get(i).getCrop_id() == id){
+                temp = crops.get(i).getName();
+            }
+        }
+        return temp;
     }
 
 }
