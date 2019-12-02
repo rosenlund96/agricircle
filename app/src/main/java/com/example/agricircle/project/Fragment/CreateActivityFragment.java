@@ -26,6 +26,7 @@ import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Crop;
 import com.example.agricircle.project.Entities.Field;
 import com.example.agricircle.project.Entities.Worker;
+import com.github.badoualy.datepicker.DatePickerTimeline;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -49,12 +50,13 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
     private View myView;
     MaterialBetterSpinner fieldChooser, cropChooser, activityChooser, categoryChooser, productChooser, executorChooser;
     Button prev,next;
-    TextView info, BBCHText;
+    TextView info, BBCHText, duedate;
     ImageView cropImg;
     List<String> crops, executors;
     List<Worker> workers;
     Field temp;
     LinearLayout cropImgLayout;
+    DatePickerTimeline date;
     public final String getColleaguesURL= "https://core.agricircle.com/api/v1/filters/options?months=false&colleagues=true&logbook=false&workspace=false";
     int id;
     ProgressDialog progressDialog;
@@ -96,6 +98,15 @@ public class CreateActivityFragment extends Fragment implements View.OnClickList
         categoryChooser.setVisibility(View.GONE);
         cropImgLayout.setVisibility(View.GONE);
         productChooser.setVisibility(View.GONE);
+        duedate = myView.findViewById(R.id.duedaytextcreate);
+        date = myView.findViewById(R.id.datepickerCreateActivity);
+        date.setOnDateSelectedListener(new DatePickerTimeline.OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(int year, int month, int day, int index) {
+                duedate.setText("Due date: " + day+"/"+month+"/"+year);
+            }
+        });
+
 
         for(int i = 0; i<main.controller.getUser().fields.size();i++){
             fields.add(main.controller.getUser().fields.get(i).getDisplay_name());

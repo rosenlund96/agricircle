@@ -22,8 +22,13 @@ import com.example.agricircle.R;
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Crop;
+import com.github.badoualy.datepicker.DatePickerTimeline;
 import com.squareup.picasso.Picasso;
 
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class ActivityRecieptFragment extends Fragment implements View.OnClickListener{
@@ -31,10 +36,11 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
     private View myView;
     private Button save;
     private Activity activity;
-    private TextView fieldName, BBCHText, cropname, activityType, executor;
+    private TextView fieldName, BBCHText, cropname, activityType, executor, duedate;
     private EditText commentBox;
     private ImageView BBCHImage, cropImage;
     private MainScreenActivity main;
+    private DatePickerTimeline date;
 
     @Nullable
     @Override
@@ -52,6 +58,14 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
         activityType = myView.findViewById(R.id.activityTypeReciept);
         executor = myView.findViewById(R.id.activityExecutor);
         commentBox = myView.findViewById(R.id.commentBox);
+        duedate = myView.findViewById(R.id.duedatetext);
+        date = myView.findViewById(R.id.datepicker);
+        date.setOnDateSelectedListener(new DatePickerTimeline.OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(int year, int month, int day, int index) {
+                duedate.setText("Due date: " + day+"/"+month+"/"+year);
+            }
+        });
 
         Bundle bundle = getArguments();
         try{
@@ -73,6 +87,8 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
 
         return myView;
     }
+
+
 
     public void setInformations(){
         System.out.println("Activityid: " + activity.getActivity_id());

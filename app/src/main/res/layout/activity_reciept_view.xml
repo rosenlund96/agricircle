@@ -92,6 +92,8 @@
 
                     </LinearLayout>
 
+
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -210,6 +212,25 @@
                                 android:orientation="horizontal"></LinearLayout>
 
                         </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/duedatetext"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Due date:"
+                            android:textStyle="bold" />
+
+                        <com.github.badoualy.datepicker.DatePickerTimeline
+                            android:id="@+id/datepicker"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
                     </LinearLayout>
 
