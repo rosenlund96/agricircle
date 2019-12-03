@@ -2,6 +2,8 @@ package com.example.agricircle.project.Fragment;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -32,14 +34,14 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityRun extends Fragment implements OnMapReadyCallback, View.OnClickListener {
+public class ActivityRun extends Fragment implements OnMapReadyCallback, View.OnClickListener, LocationListener {
 
 
     private View myView;
     private Chronometer timer;
     private Activity activity;
     private GoogleMap mMap;
-    private TextView fieldName, activityType;
+    private TextView fieldName, activityType, yourSpeed;
     private MainScreenActivity main;
     private Button finish, pause;
     @Nullable
@@ -54,6 +56,8 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
         main = MainScreenActivity.getInstance();
         fieldName = myView.findViewById(R.id.fieldnameRun);
         activityType = myView.findViewById(R.id.RunType);
+        yourSpeed = myView.findViewById(R.id.yourSpeed);
+        yourSpeed.setText("00 KM/H");
         Bundle bundle = getArguments();
         try{
             Activity obj= (Activity) bundle.getSerializable("Activity");
@@ -180,6 +184,8 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
 
     }
 
+
+
     @Override
     public void onClick(View v) {
         if(v==finish){
@@ -190,5 +196,36 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
             saveActivity(false);
 
         }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        if (location==null){
+            // if you can't get speed because reasons :)
+            yourSpeed.setText("00 km/h");
+        }
+        else{
+            //int speed=(int) ((location.getSpeed()) is the standard which returns meters per second.
+
+            int speed=(int) ((location.getSpeed()*3600)/1000);
+
+            yourSpeed.setText(speed+" km/h");
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
