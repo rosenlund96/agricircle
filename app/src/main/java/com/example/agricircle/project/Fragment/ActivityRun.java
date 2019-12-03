@@ -1,9 +1,10 @@
 package com.example.agricircle.project.Fragment;
 
+import android.Manifest;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -23,41 +25,60 @@ import com.example.agricircle.R;
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Field;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+
 import com.google.android.gms.maps.model.LatLng;
+
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityRun extends Fragment implements OnMapReadyCallback, View.OnClickListener, LocationListener {
+public class ActivityRun extends Fragment implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
 
     private View myView;
+    private boolean locationEnabled;
     private Chronometer timer;
     private Activity activity;
     private GoogleMap mMap;
     private TextView fieldName, activityType, yourSpeed;
     private MainScreenActivity main;
-    private Button finish, pause;
+    private Button finish, pause, location;
+    Field field = null;
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.activity_run, container, false);
         timer = myView.findViewById(R.id.timer);
+        locationEnabled = false;
         finish = myView.findViewById(R.id.finishButton);
         pause = myView.findViewById(R.id.pauseButton);
+        location = myView.findViewById(R.id.locationButtonActivityRun);
         finish.setOnClickListener(this);
         pause.setOnClickListener(this);
+        location.setOnClickListener(this);
         main = MainScreenActivity.getInstance();
         fieldName = myView.findViewById(R.id.fieldnameRun);
         activityType = myView.findViewById(R.id.RunType);
         yourSpeed = myView.findViewById(R.id.yourSpeed);
-        yourSpeed.setText("00 KM/H");
+        yourSpeed.setText("0.0 KM/H");
         Bundle bundle = getArguments();
         try{
             Activity obj= (Activity) bundle.getSerializable("Activity");
@@ -123,7 +144,7 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
     }
 
     public void init(){
-        Field field = null;
+
         List<Field> Fields = main.controller.user.getFields();
         for(int i= 0; i<Fields.size();i++ ){
             if(Fields.get(i).getId() == activity.getField_id()){
@@ -157,7 +178,11 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
 
             timer.setBase(SystemClock.elapsedRealtime() - (nr_of_min * 60000 + nr_of_sec * 1000));
             timer.start();
+
         }
+        buildGoogleApiClient();
+
+        mMap.getUiSettings().setAllGesturesEnabled(false);
     }
 
     public void saveActivity(boolean status){
@@ -196,36 +221,84 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
             saveActivity(false);
 
         }
+        else if(v == location){
+            if(!locationEnabled){
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                locationEnabled = true;
+            }
+            else{
+                mMap.setMyLocationEnabled(false);
+                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                locationEnabled = false;
+            }
+        }
+    }
+
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
+
+    }
+
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        System.out.println("OnConnected kaldt");
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            System.out.println("Spørg efter lokalitetsopdteringer");
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     @Override
     public void onLocationChanged(Location location) {
-
+        if(field != null && location != null){
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(field.getCenterpoint().getCoordinates().get(0), 16.5F));
+        }
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        System.out.println("Locationchange kaldt");
         if (location==null){
+
             // if you can't get speed because reasons :)
-            yourSpeed.setText("00 km/h");
+            yourSpeed.setText("0,00 km/h");
         }
         else{
             //int speed=(int) ((location.getSpeed()) is the standard which returns meters per second.
 
-            int speed=(int) ((location.getSpeed()*3600)/1000);
+            double speed=(double) ((location.getSpeed()*3600)/1000);
 
-            yourSpeed.setText(speed+" km/h");
+            yourSpeed.setText(formatter.format(speed)+" km/h");
         }
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 }
