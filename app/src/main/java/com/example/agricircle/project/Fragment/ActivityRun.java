@@ -13,7 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +42,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.maps.android.PolyUtil;
 
 
 import java.text.DecimalFormat;
@@ -56,24 +59,31 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
     private Chronometer timer;
     private Activity activity;
     private GoogleMap mMap;
-    private TextView fieldName, activityType, yourSpeed;
+    private TextView fieldName, activityType, yourSpeed, statusText;
     private MainScreenActivity main;
     private Button finish, pause, location;
+    private LinearLayout GPSLAY;
     Field field = null;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
+    private List<LatLng> path;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.activity_run, container, false);
         timer = myView.findViewById(R.id.timer);
         locationEnabled = false;
+        path = new ArrayList<>();
         finish = myView.findViewById(R.id.finishButton);
         pause = myView.findViewById(R.id.pauseButton);
         location = myView.findViewById(R.id.locationButtonActivityRun);
         finish.setOnClickListener(this);
         pause.setOnClickListener(this);
         location.setOnClickListener(this);
+        statusText = myView.findViewById(R.id.activityStatusText);
+        statusText.setVisibility(View.INVISIBLE);
+        GPSLAY = myView.findViewById(R.id.GPSLayout);
+        GPSLAY.setVisibility(View.INVISIBLE);
         main = MainScreenActivity.getInstance();
         fieldName = myView.findViewById(R.id.fieldnameRun);
         activityType = myView.findViewById(R.id.RunType);
@@ -188,6 +198,7 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
     public void saveActivity(boolean status){
         activity.setCurrentTimestamp(timer.getText().toString());
         activity.setFinished(status);
+        activity.setPath(path);
 
 
 
@@ -222,16 +233,26 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
 
         }
         else if(v == location){
+
+
+
             if(!locationEnabled){
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
                 locationEnabled = true;
+                statusText.setText(getContext().getString(R.string.GPSStarting));
+                statusText.setTextColor(Color.RED);
+                statusText.setVisibility(View.VISIBLE);
+                GPSLAY.setVisibility(View.VISIBLE);
             }
             else{
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
                 locationEnabled = false;
+                statusText.setVisibility(View.INVISIBLE);
+                GPSLAY.setVisibility(View.INVISIBLE);
             }
+
         }
     }
 
@@ -271,6 +292,25 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
         }
     }
 
+    private boolean isInsidePolygon(LatLng point){
+        return PolyUtil.containsLocation (point,field.getCoordinates().getCoordinates() , true);
+    }
+    public float distance (double lat_a, double lng_a, double lat_b, double lng_b )
+    {
+        double earthRadius = 3958.75;
+        double latDiff = Math.toRadians(lat_b-lat_a);
+        double lngDiff = Math.toRadians(lng_b-lng_a);
+        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+                Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
+                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double distance = earthRadius * c;
+
+        int meterConversion = 1609;
+
+        return new Float(distance * meterConversion).floatValue();
+    }
+
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -287,7 +327,7 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(field.getCenterpoint().getCoordinates().get(0), 16.5F));
         }
         NumberFormat formatter = new DecimalFormat("#0.00");
-        System.out.println("Locationchange kaldt");
+        //System.out.println("Locationchange kaldt");
         if (location==null){
 
             // if you can't get speed because reasons :)
@@ -299,6 +339,26 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
             double speed=(double) ((location.getSpeed()*3600)/1000);
 
             yourSpeed.setText(formatter.format(speed)+" km/h");
+        }
+        if(isInsidePolygon(new LatLng(location.getLatitude(),location.getLongitude()))){
+            statusText.setText(getContext().getString(R.string.GPSActive));
+            statusText.setTextColor(Color.GREEN);
+            if(path.isEmpty()){
+                path.add(new LatLng(location.getLatitude(),location.getLongitude()));
+            }
+            else{
+                Float distance = distance(path.get(path.size()-1).latitude,path.get(path.size()-1).longitude,location.getLatitude(),location.getLongitude());
+                if(distance > 2 ){
+                    path.add(new LatLng(location.getLatitude(),location.getLongitude()));
+                    Toast.makeText(getContext(),"Distance: " + distance,Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+        }
+        else{
+            statusText.setTextColor(Color.RED);
+            statusText.setText(getContext().getString(R.string.notOnField));
         }
     }
 }

@@ -77,7 +77,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="visible"
+                    tools:visibility="visible">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -98,15 +100,17 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="visible">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="2"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            tools:visibility="visible">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -175,7 +179,7 @@
                                             android:layout_height="match_parent"
                                             android:layout_weight="1"
                                             android:gravity="center"
-                                            android:text="Suggested:"
+                                            android:text="@string/sugestedspeed"
                                             android:textColor="@color/white"
                                             android:textStyle="bold" />
 
@@ -197,7 +201,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            tools:visibility="visible">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -282,7 +287,6 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
-            android:layout_marginBottom="40dp"
             android:layout_weight="5"
             android:orientation="horizontal">
 
@@ -308,6 +312,29 @@
                 android:background="@drawable/weather_button"
                 android:text="Pause"
                 android:textColor="@color/white"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/GPSLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_weight="5.3"
+            android:alpha="0.8"
+            android:background="@color/colorPrimaryDark">
+
+            <TextView
+                android:id="@+id/activityStatusText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/notOnField"
+                android:textColor="@color/white"
+                android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>

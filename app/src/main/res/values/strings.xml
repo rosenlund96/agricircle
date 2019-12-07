@@ -70,8 +70,15 @@
     <string name="unitPref">Unit preferences</string>
     <string name="apply">Apply</string>
     <string name="filter">Filter</string>
-    <string name="yourspeed">Your speed</string>
-    <string name="sugestedspeed">Suggested</string>
+    <string name="sugestedspeed">Suggested:</string>
+    <string name="soilzones">Soil zones</string>
+    <string name="yourspeed">Your speed:</string>
+    <string name="dark">Dark</string>
+    <string name="speed">Speed</string>
+    <string name="nozzle">Nozzle %</string>
+    <string name="notOnField">You are currently not in the marked field. GPS tracking not active</string>
+    <string name="GPSActive">GPS Tracking active</string>
+    <string name="GPSStarting">GPS Tracking starting</string>
 
     <string-array name="Metric">
 

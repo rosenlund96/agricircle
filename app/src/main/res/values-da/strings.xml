@@ -59,4 +59,13 @@
     <string name="permissiontextnetwork">Appen har brug for internetforbindelse for at logge ind</string>
     <string name="ferMode">Gødningsmetode</string>
     <string name="unitPref">Enhedsindstilling</string>
+    <string name="soilzones">Jordzoner</string>
+    <string name="sugestedspeed">Foreslået:</string>
+    <string name="yourspeed">Din hastighed:</string>
+    <string name="networkrequired">Denne funktion kræver netværk</string>
+    <string name="filter">Filtrer</string>
+    <string name="apply">Anvend</string>
+    <string name="dark">Mørk</string>
+    <string name="nozzle">Dyse %</string>
+    <string name="speed">Hastighed</string>
 </resources>

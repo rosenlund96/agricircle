@@ -46,7 +46,10 @@
     <string name="afterharvest">nach der Ernte</string>
     <string name="createField">Feld erstellen</string>
     <string name="crop">Frucht</string>
-    <string name="darkmode">Dunkel</string>
+    <string name="darkmode">Dunkelmodus</string>
     <string name="ferMode">Düngung modus</string>
     <string name="unitPref">Einheit Präferenzen</string>
+    <string name="dark">Dunkel</string>
+    <string name="nozzle">Düse %</string>
+    <string name="offline">Offlinemodus</string>
 </resources>

@@ -1,7 +1,11 @@
 package com.example.agricircle.project.Entities;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Activity implements Serializable {
     int field_id,crop_id, activity_id;
@@ -13,6 +17,7 @@ public class Activity implements Serializable {
     String BBCHname;
     String BBCHImage;
     String Executor;
+    List<LatLng> PATH;
 
 
 
@@ -27,6 +32,14 @@ public class Activity implements Serializable {
         this.BBCHImage = null;
         this.Executor = executor;
         this.comment = "";
+        PATH = new ArrayList<>();
+    }
+
+    public void setPath(List<LatLng> path){
+        this.PATH = path;
+    }
+    public List<LatLng> getPath(){
+        return this.PATH;
     }
 
     public int getField_id() {
