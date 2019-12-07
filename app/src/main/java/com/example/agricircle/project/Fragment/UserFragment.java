@@ -30,6 +30,7 @@ import androidx.fragment.app.Fragment;
 import com.example.agricircle.project.Activities.MainActivity;
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.R;
+import com.llollox.androidtoggleswitch.widgets.ToggleSwitch;
 import com.squareup.picasso.Picasso;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -37,16 +38,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-public class UserFragment extends Fragment implements View.OnClickListener, Switch.OnCheckedChangeListener {
+public class UserFragment extends Fragment implements View.OnClickListener {
     View myView;
-    Switch units,setting2,darkmode;
-    Button logout;
-    TextView profileName;
-    ImageView profilePic;
-    Dialog myDialog;
-    MaterialBetterSpinner language, mapType;
+    private ToggleSwitch units,fertilizationmode,darkmode;
+    private Button logout;
+    private TextView profileName, unitstext, ferText, darkText;
+    private ImageView profilePic;
+    private Dialog myDialog;
+    private MaterialBetterSpinner language, mapType;
     MainScreenActivity main;
-    String profilePlaceholder = "https://core.agricircle.com/static/images/agricircle/profile_photo_placeholder.svg";
+    private String profilePlaceholder = "https://core.agricircle.com/static/images/agricircle/profile_photo_placeholder.svg";
 
 
     public UserFragment() {
@@ -58,9 +59,14 @@ public class UserFragment extends Fragment implements View.OnClickListener, Swit
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.usersettings, container, false);
         myDialog = new Dialog(getContext());
-        darkmode = (Switch) myView.findViewById(R.id.darkmode);
-        units = (Switch) myView.findViewById(R.id.Unit);
-        units.setOnCheckedChangeListener(this);
+        darkmode =  myView.findViewById(R.id.darkmode);
+        units =  myView.findViewById(R.id.units);
+        unitstext = myView.findViewById(R.id.unitPrefText);
+        ferText = myView.findViewById(R.id.fertilizationmodetext);
+        darkText = myView.findViewById(R.id.darkmodetext);
+
+        fertilizationmode = myView.findViewById(R.id.fertilizationmode);
+        //units.setOnCheckedChangeListener(this);
         logout = (Button) myView.findViewById(R.id.logout);
         logout.setOnClickListener(this);
         String[] languageData = getResources().getStringArray(R.array.languages);
@@ -82,7 +88,7 @@ public class UserFragment extends Fragment implements View.OnClickListener, Swit
         mapType.setHintTextColor(ContextCompat.getColor(this.getContext(), R.color.colorPrimary));
         language.setHintTextColor(ContextCompat.getColor(this.getContext(), R.color.colorPrimary));
 
-
+        initialize();
         mapType.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -130,21 +136,83 @@ public class UserFragment extends Fragment implements View.OnClickListener, Swit
 
             Picasso.get().load(MainScreenActivity.getInstance().controller.getUser().avatarUrl).into(profilePic);
         }
-        initialize();
+
+        units.setOnChangeListener(new ToggleSwitch.OnChangeListener() {
+            @Override
+            public void onToggleSwitchChanged(int i) {
+                System.out.println("Position: " + i);
+                if(i == 1){
+                    SavePreferences("unit","Metric");
+
+                }
+                else if(i == 0){
+                    SavePreferences("unit", "Imperial");
+
+                }
+            }
+        });
+        darkmode.setOnChangeListener(new ToggleSwitch.OnChangeListener() {
+            @Override
+            public void onToggleSwitchChanged(int i) {
+                if(i == 0){
+                    SavePreferences("darkmode","OFF");
+                }
+                else if(i  == 1){
+                    SavePreferences("darkmode","ON");
+                }
+            }
+        });
+        fertilizationmode.setOnChangeListener(new ToggleSwitch.OnChangeListener() {
+            @Override
+            public void onToggleSwitchChanged(int i) {
+                if(i == 0){
+                    SavePreferences("ferMode","OFF");
+                }
+                else if(i  == 1){
+                    SavePreferences("ferMode","ON");
+                }
+            }
+        });
         return myView;
     }
 
     public void initialize(){
         //Hent nuværende indstillinger ind og sæt profilfillede
         String unit = LoadPreferences("unit");
+        String dark = LoadPreferences("darkmode");
+        String ferMode = LoadPreferences("ferMode");
         if(unit.equals("Metric")){
-            units.setChecked(true);
+            units.setCheckedPosition(1);
+            //units.setChecked(true);
         }
         else if (unit.equals("Imperial")){
-            units.setChecked(false);
+            units.setCheckedPosition(0);
+            //units.setChecked(false);
+        }
+
+        if(dark.equals("OFF")){
+            darkmode.setCheckedPosition(0);
+        }
+        else if(dark.equals("ON")){
+            darkmode.setCheckedPosition(1);
+        }
+        if(ferMode.equals("OFF")){
+            fertilizationmode.setCheckedPosition(0);
+        }
+        else if(ferMode.equals("ON")){
+            fertilizationmode.setCheckedPosition(1);
         }
         mapType.setText(LoadPreferences("Map"));
         language.setText(LoadPreferences("Language"));
+        unitstext.setText(getContext().getString(R.string.unitPref));
+        ferText.setText(getContext().getString(R.string.ferMode));
+        darkText.setText(getContext().getString(R.string.darkmode));
+        logout.setText(getContext().getString(R.string.buttonLogout));
+        language.setHint(getContext().getString(R.string.language));
+        //language.setCompletionHint(getContext().getString(R.string.language));
+        mapType.setHint(getContext().getString(R.string.maptype));
+
+        //mapType.setCompletionHint(getContext().getString(R.string.maptype));
 
     }
 
@@ -180,6 +248,9 @@ public class UserFragment extends Fragment implements View.OnClickListener, Swit
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this.getActivity(),
                 android.R.layout.simple_dropdown_item_1line, languageData);
         language.setAdapter(arrayAdapter2);
+        unitstext.setText(getContext().getString(R.string.unitPref));
+        ferText.setText(getContext().getString(R.string.ferMode));
+        darkText.setText(getContext().getString(R.string.darkmode));
     }
 
 
@@ -235,17 +306,5 @@ public void logout(){
     }
 
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(isChecked){
-            SavePreferences("unit","Metric");
-            Toast.makeText(getActivity(), "Metric",
-                    Toast.LENGTH_LONG).show();
-        }
-        else{
-            SavePreferences("unit", "Imperial");
-            Toast.makeText(getActivity(), "Imperial",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
+
 }

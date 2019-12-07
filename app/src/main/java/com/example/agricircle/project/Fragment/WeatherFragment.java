@@ -57,7 +57,7 @@ import java.util.Random;
 public class WeatherFragment extends Fragment implements TabLayout.OnTabSelectedListener{
    Button weather1, weather2, weather3;
    TabLayout tabs;
-   TextView offlineText, currentTemp;
+   TextView offlineText, currentTemp, toptext;
    ImageView weatherIcon;
    View myView;
    CombinedChart mChart;
@@ -81,7 +81,8 @@ public class WeatherFragment extends Fragment implements TabLayout.OnTabSelected
         fields = new ArrayList<>();
         main = MainScreenActivity.getInstance();
 
-
+        toptext = myView.findViewById(R.id.weatherToPText);
+        toptext.setText(getContext().getString(R.string.weatherdata));
         tabs = (TabLayout) myView.findViewById(R.id.tabLayout);
         tabs.setOnTabSelectedListener(this);
         mChart =(CombinedChart) myView.findViewById(R.id.weatherchart);

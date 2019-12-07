@@ -80,7 +80,7 @@
                     android:id="@+id/mapstyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Maptype"
+                    android:hint="@string/maptype"
                     android:textColorHint="#05ab9a"
                     app:met_floatingLabel="normal" />
 
@@ -100,7 +100,7 @@
                     android:id="@+id/language"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Language"
+                    android:hint="@string/language"
                     android:textColorHint="#05ab9a"
                     app:met_floatingLabel="normal" />
             </LinearLayout>
@@ -113,23 +113,102 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <Switch
-                    android:id="@+id/Unit"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Unit preferences" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                <Switch
-                    android:id="@+id/switch3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Fertilizationmode" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                <Switch
-                    android:id="@+id/darkmode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Darkmode" />
+                        <TextView
+                            android:id="@+id/unitPrefText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="2"
+                            android:gravity="center_vertical"
+                            android:text="Unit preferences" />
+
+                        <TextView
+                            android:id="@+id/fertilizationmodetext"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="2"
+                            android:gravity="center_vertical"
+                            android:text="Fertilizationmode" />
+
+                        <TextView
+                            android:id="@+id/darkmodetext"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="2"
+                            android:gravity="center_vertical"
+                            android:text="DarkMode" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical"></LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+                            android:id="@+id/units"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:layout_weight="2"
+                            android:text="Fertilizationmode"
+                            android:textSize="12sp"
+                            app:checkedBackgroundColor="@color/colorPrimary"
+                            app:textToggleLeft="Imperial"
+                            app:textToggleRight="Metric" />
+
+                        <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+                            android:id="@+id/fertilizationmode"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:layout_weight="2"
+                            android:text="Fertilizationmode"
+                            android:textSize="12sp"
+                            app:checkedBackgroundColor="@color/colorPrimary"
+                            app:textToggleLeft="Nozzle %"
+                            app:textToggleRight="Speed" />
+
+                        <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+                            android:id="@+id/darkmode"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:layout_weight="2"
+                            android:text="Fertilizationmode"
+                            android:textSize="12sp"
+                            app:checkedBackgroundColor="@color/colorPrimary"
+                            app:textToggleLeft="Normal"
+                            app:textToggleRight="Dark" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical"></LinearLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
 

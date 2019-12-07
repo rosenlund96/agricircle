@@ -1,12 +1,15 @@
 package com.example.agricircle.project.Fragment;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -351,7 +354,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 samplingpath.clear();
                 for(int i = 0; i< polygons.size();i++){
                     if(polygons.get(i).getPoints().get(0).equals(activeField.getCoordinates().getCoordinates().get(0))){
-                        polygons.get(i).setFillColor(Color.argb(160,255,51,51));
+                        polygons.get(i).setFillColor(Color.argb(160,66,245,66));
                     }
                 }
 
@@ -600,7 +603,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                         for(int i = 0; i<polygons.size();i++){
                             if(polygons.get(i).getPoints().get(0).equals(field.getCoordinates().getCoordinates().get(0))){
                                 polygons.get(i).setStrokeColor(Color.argb(255,255,51,51));
-                                polygons.get(i).setFillColor(Color.argb(160,255,51,51));
+                                polygons.get(i).setFillColor(Color.argb(160,66,245,66));
                                 System.out.println("Polygon fundet");
                             }
                         }
@@ -733,7 +736,13 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             @Override
             public void onCameraIdle() {
 
-                new UpdateWeather().execute(mGoogleMap.getCameraPosition().target);
+                if(checkNetwork()){
+                    new UpdateWeather().execute(mGoogleMap.getCameraPosition().target);
+                }
+                else{
+                    weather.setText(getContext().getString(R.string.offline));
+                }
+
 
                 if(mGoogleMap.getCameraPosition().zoom < 12.5){
 
@@ -764,7 +773,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 locationlayout.setVisibility(View.INVISIBLE);
 
                 polygon.setStrokeColor(Color.argb(255,255,51,51));
-                polygon.setFillColor(Color.argb(160,255,51,51));
+                polygon.setFillColor(Color.argb(160,66,245,66));
                 mGoogleMap.setMyLocationEnabled(false);
                 LatLng temp = new LatLng(activeField.getCenterpoint().getCoordinates().get(0).latitude-0.0020,activeField.getCenterpoint().getCoordinates().get(0).longitude);
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
@@ -807,6 +816,16 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             }
         }
         return temp;
+    }
+
+    private boolean checkNetwork(){
+        ConnectivityManager cm =
+                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
     }
 
     private String getCropName(int id){
@@ -857,19 +876,6 @@ if(main.controller.getFields().size()> mapMarkers.size()){
 
     }
 
-    private class testsoilsampling extends AsyncTask<Void,Void,Void>{
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                main.controller.createSoilSampling();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            } catch (UnirestException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
 
     private class UpdateWeather extends AsyncTask<LatLng, Void, Void> {
 

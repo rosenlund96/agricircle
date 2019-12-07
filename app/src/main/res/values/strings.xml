@@ -27,7 +27,7 @@
     <string name="modalText">Are you sure, you want to logout from Agricircle?</string>
     <string name="buttonLogout">Logout</string>
     <string name="buttonCancel">Cancel</string>
-    <string name="buttonOK">OK</string>
+    <string name="buttonOK" translatable="false">OK</string>
     <string name="languageUpdated">Language Updated</string>
     <string name="today">Today</string>
     <string name="fivedays">5 Days</string>
@@ -61,6 +61,17 @@
     <string name="fieldhasnocrop">The selected field has no croprotations</string>
     <string name="bbch01">Pre-seeding</string>
     <string name="afterharvest">After Harvest</string>
+    <string name="weatherdata">Weatherdata</string>
+    <string name="offline">Offlinemode</string>
+    <string name="permissiontextnetwork">This app needs internet to be able to login</string>
+    <string name="networkrequired">This operation requires network</string>
+    <string name="darkmode">Darkmode</string>
+    <string name="ferMode">Fertilization mode</string>
+    <string name="unitPref">Unit preferences</string>
+    <string name="apply">Apply</string>
+    <string name="filter">Filter</string>
+    <string name="yourspeed">Your speed</string>
+    <string name="sugestedspeed">Suggested</string>
 
     <string-array name="Metric">
 

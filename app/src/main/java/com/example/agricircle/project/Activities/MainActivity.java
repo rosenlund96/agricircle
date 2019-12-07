@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -23,11 +24,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.os.ConfigurationCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.agricircle.project.Controller.UserController;
 import com.example.agricircle.project.Entities.User;
-import com.example.agricircle.project.GraphQL.ClientBackEnd;
+
 import com.example.agricircle.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String cookie = null;
     boolean permission;
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
-    ClientBackEnd graphql;
+
     UserController UsrController;
     Locale currentLocale;
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -66,7 +68,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         login.setOnClickListener(this);
         mail = findViewById(R.id.email);
         pass =  findViewById(R.id.pass);
-
+        String lang =  ConfigurationCompat.getLocales(Resources.getSystem().getConfiguration()).get(0).getDisplayLanguage();
+        //System.out.println("Sprog på telefon: " + lang);
+        //SavePreferences("Language",lang);
 
         currentLocale = getResources().getConfiguration().locale;
 
@@ -149,8 +153,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 public void init(){
     if(!checkNetwork()){
         new AlertDialog.Builder(this)
-                .setTitle("No Internet")
-                .setMessage(getResources().getString(R.string.permissiontext))
+                .setTitle(this.getResources().getString(R.string.offline))
+                .setMessage(getResources().getString(R.string.permissiontextnetwork))
                 .setPositiveButton(getResources().getText(R.string.buttonOK), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

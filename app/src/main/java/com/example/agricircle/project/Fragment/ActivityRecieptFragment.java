@@ -63,7 +63,7 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
         date.setOnDateSelectedListener(new DatePickerTimeline.OnDateSelectedListener() {
             @Override
             public void onDateSelected(int year, int month, int day, int index) {
-                duedate.setText("Due date: " + day+"/"+month+"/"+year);
+                duedate.setText("Due date: " + day+"/"+(month+1)+"/"+year);
             }
         });
 

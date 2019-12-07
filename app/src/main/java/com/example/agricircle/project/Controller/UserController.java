@@ -38,7 +38,7 @@ import com.example.agricircle.project.GetCropsQuery;
 import com.example.agricircle.project.GetFieldsQuery;
 import com.example.agricircle.project.GetUserQuery;
 import com.example.agricircle.project.GetWeatherQuery;
-import com.example.agricircle.project.GraphQL.ClientBackEnd;
+
 import com.example.agricircle.project.LoginInputMutation;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -681,10 +681,7 @@ public class UserController implements Serializable {
 
     }
 
-    public void createSoilSampling() throws JSONException, UnirestException {
-        ClientBackEnd test = new ClientBackEnd(this.cookie);
-        test.createSoilSamplingPath();
-    }
+
 
 
 

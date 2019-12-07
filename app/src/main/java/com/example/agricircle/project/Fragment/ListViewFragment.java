@@ -1,5 +1,8 @@
 package com.example.agricircle.project.Fragment;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +31,8 @@ public class ListViewFragment extends Fragment implements TabLayout.OnTabSelecte
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 getFragmentManager().beginTransaction()
                         .addToBackStack(null)
                         .replace(R.id.listfragment
@@ -49,6 +54,15 @@ public class ListViewFragment extends Fragment implements TabLayout.OnTabSelecte
         return myView;
     }
 
+    private boolean checkNetwork(){
+        ConnectivityManager cm =
+                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
 
 
     @Override

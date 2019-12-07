@@ -250,8 +250,10 @@ public class MainScreenActivity extends AppCompatActivity
         if(LoadPreferences("FirstLogin").equals("")){
             SavePreferences("FirstLogin","true");
             SavePreferences("Map","Normal");
-            SavePreferences("Language","English");
+            //SavePreferences("Language","English");
             SavePreferences("unit","Metric");
+            SavePreferences("darkmode", "OFF");
+            SavePreferences("ferMode", "OFF");
         }
         else{
             SavePreferences("FirstLogin","false");

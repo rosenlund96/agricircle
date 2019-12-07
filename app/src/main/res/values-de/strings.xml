@@ -20,11 +20,33 @@
     <string name="wronglogin">Unbekannte Mail oder falsches Passwort</string>
     <string name="buttonOK">OK</string>
     <string name="email" translatable="false">E-mailadressen</string>
-    <string name="myLocation">Mein Standort</string>
+    <string name="myLocation">Mein Platzierung</string>
     <string name="usercreatedTitle">Konto erstellt</string>
     <string name="locationtext">Free roam aktiv</string>
     <string name="activities">Aktivitäten</string>
     <string name="permissiontext">Diese App benötigt die Standorterlaubnis. Akzeptieren Sie diese, um die Standortfunktionalität nutzen zu können</string>
     <string name="usercreated">Ihr Benutzerkonto wurde erstellt. Bitte besuchen Sie die Website von agricircle, um Ihr Passwort zurückzusetzen und sich anzumelden.</string>
     <string name="permissiontitle">Standortgenehmigung erforderlich</string>
+    <string name="weatherdata">Wetterdaten</string>
+    <string name="required">Erforderlich</string>
+    <string name="modalDrawButton">Zeichen Polygon</string>
+    <string name="modalDrawDelete">markierungen löschen</string>
+    <string name="modalDrawText">Gefundene Marker, möchten Sie ein Polygon daraus zeichnen oder neu beginnen?</string>
+    <string name="modalDrawTitle">Gefundene Marker!</string>
+    <string name="notEnoughMarkers">nicht genug Marker</string>
+    <string name="notEnoughMarkersText">Es wurden nur zwei Marker gefunden, bitte zeichnen Sie mindestens 3.</string>
+    <string name="field">Mark</string>
+    <string name="fieldhasnocrop">Das ausgewählte Feld hast nicht eine Fruchtfolge</string>
+    <string name="emailregex">Bitte geben Sie eine E-Mail-Adresse ein</string>
+    <string name="emailalreadypresent">E-Mail existiert bereits</string>
+    <string name="drawMode">Zeichnungsbedingung aktiv!</string>
+    <string name="createActivity">Bitte geben Sie alle erforderlichen Informationen ein, um eine neue Aktivität zu erstellen</string>
+    <string name="Draw">zeichnen</string>
+    <string name="bbch01">Voreinstellung</string>
+    <string name="afterharvest">nach der Ernte</string>
+    <string name="createField">Feld erstellen</string>
+    <string name="crop">Frucht</string>
+    <string name="darkmode">Dunkel</string>
+    <string name="ferMode">Düngung modus</string>
+    <string name="unitPref">Einheit Präferenzen</string>
 </resources>

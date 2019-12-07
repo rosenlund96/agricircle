@@ -27,15 +27,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="2.2"
             android:background="@color/colorPrimary"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/weatherToPText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:gravity="center"
                 android:text="Weatherdata"
                 android:textColor="@color/white"
@@ -46,7 +46,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1.5"
+            android:layout_weight="1.8"
             android:background="@color/colorPrimaryDark"
             android:orientation="vertical">
 
@@ -56,7 +56,7 @@
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="40dp"
-                android:layout_weight="2"
+                android:layout_weight="1.3"
                 android:background="@color/white"
                 android:orientation="vertical">
 
@@ -65,6 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:background="@drawable/textedit_custom"
                     android:hint="Location"
                     android:textColorHint="#05ab9a"></com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner>
             </LinearLayout>
@@ -81,7 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/currentTemp"
@@ -98,6 +99,9 @@
                         android:id="@+id/currentWeatherImg"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="80dp"
+                        android:layout_marginBottom="20dp"
                         android:layout_weight="1.2"
                         app:srcCompat="@drawable/night" />
 
@@ -129,7 +133,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            android:layout_weight="2"
+            android:layout_weight="2.2"
             android:background="@color/colorPrimary"
             android:orientation="vertical">
 

@@ -42,4 +42,21 @@
     <string name="createField">Opret Mark</string>
     <string name="drawMode">Tegnetilstand aktiv!</string>
     <string name="Draw">Tegn</string>
+    <string name="emailalreadypresent">Email eksisterer allerede</string>
+    <string name="emailregex">Indtast venligst en emailadresse</string>
+    <string name="field">Mark</string>
+    <string name="fieldhasnocrop">Det markerede felt har ingen afgrødscyklus</string>
+    <string name="notEnoughMarkers">Ikke nok markeringer</string>
+    <string name="notEnoughMarkersText">Der blev kun fundet to markører, tegn venligst mindst 3.</string>
+    <string name="required">Påkrævet</string>
+    <string name="weatherdata">Vejrdata</string>
+    <string name="crop">Afgrøde</string>
+    <string name="createActivity">Udfyld alle nødvendige oplysninger, for at oprette en ny aktivitet</string>
+    <string name="bbch01">Før såning</string>
+    <string name="afterharvest">Efter høst</string>
+    <string name="offline">Offline tilstand</string>
+    <string name="darkmode">Mørk tilstand</string>
+    <string name="permissiontextnetwork">Appen har brug for internetforbindelse for at logge ind</string>
+    <string name="ferMode">Gødningsmetode</string>
+    <string name="unitPref">Enhedsindstilling</string>
 </resources>

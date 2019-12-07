@@ -1,5 +1,9 @@
 package com.example.agricircle.project.Fragment;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -11,9 +15,12 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.agricircle.project.Activities.MainActivity;
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Crop;
@@ -24,6 +31,8 @@ import com.example.agricircle.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.agricircle.project.Activities.MainActivity.MY_PERMISSIONS_REQUEST_LOCATION;
 
 public class ActivitiesList extends Fragment implements AdapterView.OnItemClickListener{
     private ListView results;
@@ -83,11 +92,30 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
         createActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().beginTransaction()
-                        .addToBackStack(null)
-                        .replace(R.id.article_fragment
-                                , new CreateActivityFragment())
-                        .commit();
+                if(checkNetwork()){
+                    getFragmentManager().beginTransaction()
+                            .addToBackStack(null)
+                            .replace(R.id.article_fragment
+                                    , new CreateActivityFragment())
+                            .commit();
+                }
+                else{
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(getContext().getResources().getString(R.string.offline))
+                            .setMessage(getResources().getString(R.string.networkrequired))
+                            .setPositiveButton(getResources().getText(R.string.buttonOK), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //Prompt the user once explanation has been shown
+                                    ActivityCompat.requestPermissions(getActivity(),
+                                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                            MY_PERMISSIONS_REQUEST_LOCATION );
+                                }
+                            })
+                            .create()
+                            .show();
+                }
+
             }
         });
         myView.setFocusableInTouchMode(true);
@@ -145,6 +173,16 @@ public class ActivitiesList extends Fragment implements AdapterView.OnItemClickL
             ft.commit();
         }
 
+    }
+
+    private boolean checkNetwork(){
+        ConnectivityManager cm =
+                (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
     }
 
     public void initialize(){
