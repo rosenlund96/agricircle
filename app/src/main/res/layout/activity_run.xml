@@ -139,7 +139,7 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="wrap_content"
                                             android:gravity="center"
-                                            android:text="Your speed:"
+                                            android:text="@string/yourspeed"
                                             android:textColor="@color/white"
                                             android:textStyle="bold" />
 
@@ -155,7 +155,7 @@
                                 </LinearLayout>
 
                                 <LinearLayout
-                                    android:id="@+id/imageView6"
+                                    android:id="@+id/suggestedView"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_marginLeft="5dp"
@@ -207,32 +207,88 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                tools:visibility="visible">
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="1"
+                                    android:layout_weight="1.5"
                                     android:orientation="horizontal"></LinearLayout>
 
-                                <ImageView
-                                    android:id="@+id/imageView4"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                <LinearLayout
+                                    android:id="@+id/nozzleLay"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginBottom="5dp"
                                     android:layout_weight="1"
-                                    app:srcCompat="@drawable/tractor_yellow" />
+                                    android:orientation="horizontal">
 
-                                <ImageView
-                                    android:id="@+id/imageView5"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical"
+                                        tools:visibility="visible">
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_weight="1"
+                                            android:orientation="vertical"></LinearLayout>
+
+                                        <TextView
+                                            android:id="@+id/textView11"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="Nozzle output:"
+                                            android:textColor="@color/white"
+                                            android:textStyle="bold" />
+
+                                        <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+                                            android:id="@+id/nozzleoutput"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginTop="2dp"
+                                            android:layout_marginBottom="2dp"
+                                            android:layout_weight="1"
+
+                                            android:textSize="12sp"
+                                            app:checkedBackgroundColor="@color/colorPrimary"
+                                            app:textToggleLeft="5%"
+                                            app:textToggleRight="10%" />
+
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/speedLay"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    app:srcCompat="@drawable/tractor_green" />
+                                    android:orientation="horizontal"
+                                    tools:visibility="gone">
+
+                                    <ImageView
+                                        android:id="@+id/imageView5"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        app:srcCompat="@drawable/tractor_green" />
+
+                                    <ImageView
+                                        android:id="@+id/imageView4"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        app:srcCompat="@drawable/tractor_yellow" />
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
-                                    android:layout_weight="1"
+                                    android:layout_weight="1.5"
                                     android:orientation="vertical">
 
                                     <Button
@@ -258,6 +314,7 @@
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

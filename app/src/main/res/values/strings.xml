@@ -79,6 +79,8 @@
     <string name="notOnField">You are currently not in the marked field. GPS tracking not active</string>
     <string name="GPSActive">GPS Tracking active</string>
     <string name="GPSStarting">GPS Tracking starting</string>
+    <string name="newActivity">Create new Activity</string>
+    <string name="nozzleOutput">Nozzle output:</string>
 
     <string-array name="Metric">
 

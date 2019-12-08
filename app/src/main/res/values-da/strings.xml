@@ -68,4 +68,9 @@
     <string name="dark">Mørk</string>
     <string name="nozzle">Dyse %</string>
     <string name="speed">Hastighed</string>
+    <string name="notOnField">Du er ikke inde for den markerede mark. GPS tracking ikke aktiv</string>
+    <string name="newActivity">Opret ny aktivitet</string>
+    <string name="GPSActive">GPS Tracking aktiv</string>
+    <string name="GPSStarting">GPS Tracking starter</string>
+    <string name="nozzleOutput">Dyse output:</string>
 </resources>

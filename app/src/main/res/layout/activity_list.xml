@@ -25,7 +25,7 @@
             android:layout_marginRight="60dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/weather_button"
-            android:text="Create new activity"
+            android:text="@string/newActivity"
             android:textColor="@color/white" />
     </LinearLayout>
 </LinearLayout>

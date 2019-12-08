@@ -43,6 +43,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.maps.android.PolyUtil;
+import com.llollox.androidtoggleswitch.widgets.ToggleSwitch;
 
 
 import java.text.DecimalFormat;
@@ -62,8 +63,9 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
     private TextView fieldName, activityType, yourSpeed, statusText;
     private MainScreenActivity main;
     private Button finish, pause, location;
-    private LinearLayout GPSLAY;
+    private LinearLayout GPSLAY, fertLay, NozzleLay, suggestedView;
     Field field = null;
+    private ToggleSwitch fertSetting;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private List<LatLng> path;
@@ -84,11 +86,19 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
         statusText.setVisibility(View.INVISIBLE);
         GPSLAY = myView.findViewById(R.id.GPSLayout);
         GPSLAY.setVisibility(View.INVISIBLE);
+        fertLay = myView.findViewById(R.id.speedLay);
+        NozzleLay = myView.findViewById(R.id.nozzleLay);
+        fertLay.setVisibility(View.GONE);
+        NozzleLay.setVisibility(View.GONE);
+        suggestedView = myView.findViewById(R.id.suggestedView);
+        suggestedView.setVisibility(View.GONE);
         main = MainScreenActivity.getInstance();
         fieldName = myView.findViewById(R.id.fieldnameRun);
         activityType = myView.findViewById(R.id.RunType);
         yourSpeed = myView.findViewById(R.id.yourSpeed);
         yourSpeed.setText("0.0 KM/H");
+        fertSetting = myView.findViewById(R.id.nozzleoutput);
+        fertSetting.setCheckedPosition(0);
         Bundle bundle = getArguments();
         try{
             Activity obj= (Activity) bundle.getSerializable("Activity");
@@ -193,6 +203,16 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
         buildGoogleApiClient();
 
         mMap.getUiSettings().setAllGesturesEnabled(false);
+        String fertSetting = LoadPreferences("ferMode");
+        if(fertSetting.equals("OFF")){
+            NozzleLay.setVisibility(View.VISIBLE);
+
+        }
+        else if(fertSetting.equals("ON")){
+
+            fertLay.setVisibility(View.VISIBLE);
+            suggestedView.setVisibility(View.VISIBLE);
+        }
     }
 
     public void saveActivity(boolean status){
@@ -266,6 +286,8 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
         mGoogleApiClient.connect();
 
     }
+
+
 
 
 
