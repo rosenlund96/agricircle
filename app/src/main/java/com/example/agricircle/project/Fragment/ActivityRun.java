@@ -63,7 +63,7 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
     private TextView fieldName, activityType, yourSpeed, statusText;
     private MainScreenActivity main;
     private Button finish, pause, location;
-    private LinearLayout GPSLAY, fertLay, NozzleLay, suggestedView;
+    private LinearLayout GPSLAY, fertLay, NozzleLay, suggestedView, percentSetting;
     Field field = null;
     private ToggleSwitch fertSetting;
     private LocationRequest mLocationRequest;
@@ -88,6 +88,8 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
         GPSLAY.setVisibility(View.INVISIBLE);
         fertLay = myView.findViewById(R.id.speedLay);
         NozzleLay = myView.findViewById(R.id.nozzleLay);
+        percentSetting = myView.findViewById(R.id.percentLayout);
+        percentSetting.setVisibility(View.INVISIBLE);
         fertLay.setVisibility(View.GONE);
         NozzleLay.setVisibility(View.GONE);
         suggestedView = myView.findViewById(R.id.suggestedView);
@@ -206,11 +208,14 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
         String fertSetting = LoadPreferences("ferMode");
         if(fertSetting.equals("OFF")){
             NozzleLay.setVisibility(View.VISIBLE);
+            percentSetting.setVisibility(View.VISIBLE);
+
 
         }
         else if(fertSetting.equals("ON")){
 
             fertLay.setVisibility(View.VISIBLE);
+            percentSetting.setVisibility(View.INVISIBLE);
             suggestedView.setVisibility(View.VISIBLE);
         }
     }

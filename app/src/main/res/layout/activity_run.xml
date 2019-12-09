@@ -214,7 +214,30 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="1.5"
-                                    android:orientation="horizontal"></LinearLayout>
+                                    android:orientation="horizontal">
+
+                                    <LinearLayout
+                                        android:id="@+id/percentLayout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_weight="2"
+                                        android:orientation="vertical">
+
+                                        <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
+                                            android:id="@+id/nozzleoutput"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="5dp"
+
+                                            android:layout_weight="2"
+                                            android:gravity="center"
+                                            android:textSize="12sp"
+                                            app:checkedBackgroundColor="#ffa400"
+                                            app:textToggleLeft="5%"
+                                            app:textToggleRight="10%" />
+                                    </LinearLayout>
+
+                                </LinearLayout>
 
                                 <LinearLayout
                                     android:id="@+id/nozzleLay"
@@ -234,30 +257,61 @@
                                         <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
-                                            android:layout_weight="1"
-                                            android:orientation="vertical"></LinearLayout>
+                                            android:layout_weight="2"
+                                            android:orientation="horizontal">
 
-                                        <TextView
-                                            android:id="@+id/textView11"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="Nozzle output:"
-                                            android:textColor="@color/white"
-                                            android:textStyle="bold" />
+                                            <TextView
+                                                android:id="@+id/textView11"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:layout_weight="1"
+                                                android:gravity="right|center_vertical"
+                                                android:text="Nozzle output(%):"
+                                                android:textColor="@color/white"
+                                                android:textStyle="bold" />
 
-                                        <com.llollox.androidtoggleswitch.widgets.ToggleSwitch
-                                            android:id="@+id/nozzleoutput"
+                                            <TextView
+                                                android:id="@+id/textView4"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:layout_marginLeft="2dp"
+                                                android:layout_weight="2"
+                                                android:gravity="left|center_vertical"
+                                                android:text="2"
+                                                android:textColor="@color/white"
+                                                android:textStyle="bold" />
+
+                                        </LinearLayout>
+
+                                        <LinearLayout
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
-                                            android:layout_marginTop="2dp"
-                                            android:layout_marginBottom="2dp"
                                             android:layout_weight="1"
+                                            android:orientation="horizontal">
 
-                                            android:textSize="12sp"
-                                            app:checkedBackgroundColor="@color/colorPrimary"
-                                            app:textToggleLeft="5%"
-                                            app:textToggleRight="10%" />
+                                            <Button
+                                                android:id="@+id/button4"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:layout_marginLeft="15dp"
+                                                android:layout_marginRight="5dp"
+                                                android:layout_marginBottom="5dp"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/minus_icon"
+                                                android:backgroundTint="#ffa400" />
+
+                                            <Button
+                                                android:id="@+id/button3"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:layout_marginLeft="5dp"
+                                                android:layout_marginRight="15dp"
+                                                android:layout_marginBottom="5dp"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/plus_icon"
+                                                android:backgroundTint="#ffa400" />
+
+                                        </LinearLayout>
 
                                     </LinearLayout>
                                 </LinearLayout>
@@ -355,6 +409,7 @@
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/weather_button_yellow"
+                android:backgroundTint="#ffa400"
                 android:text="Finish"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
