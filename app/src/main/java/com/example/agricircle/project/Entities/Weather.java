@@ -5,7 +5,9 @@ import android.graphics.drawable.Drawable;
 
 import com.example.agricircle.R;
 
-public class Weather {
+import java.io.Serializable;
+
+public class Weather implements Serializable {
     public double t_2m_C, t_max_2m_3h_C, t_min_2m_3h_C, precip_6h_mm, wind_speed_10m_kmh, wind_dir_10m_d;
     public String date;
     public int weatherSymbol;

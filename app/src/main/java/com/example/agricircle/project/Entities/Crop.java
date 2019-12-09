@@ -1,8 +1,9 @@
 package com.example.agricircle.project.Entities;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Crop {
+public class Crop implements Serializable {
     private int crop_id;
     private List<Integer> field_ids;
     private String name;

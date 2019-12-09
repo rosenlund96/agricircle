@@ -2,9 +2,10 @@ package com.example.agricircle.project.Entities;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Shape {
+public class Shape implements Serializable {
     private String type;
     private List<LatLng> coordinates;
 

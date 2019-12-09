@@ -65,9 +65,9 @@ public class FieldAdaptor extends BaseAdapter {
 
         holder.owner.setText(results.get(position).getDisplay_name());
         holder.size.setText("" +Double.toString(results.get(position).getSurface()) + " HA");
+        String url = "https://s3-eu-central-1.amazonaws.com/agricircle-giscockpit-api-production-eu/uploads/crop/image/121/thumb_buchweizen.JPG?X-Amz-Expires=7200&X-Amz-Date=20191209T140756Z&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIV3SDBJFY2AELLWA%2F20191209%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-SignedHeaders=host&X-Amz-Signature=5d9454c67c4a0631801aa39a250cf3d522077b728afeeef9156d7860cba1ac57";
 
-
-        Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.image);
+        Picasso.get().load(url).into(holder.image);
         return convertView;
     }
 

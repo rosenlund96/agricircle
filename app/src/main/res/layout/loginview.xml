@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="2.5"
             android:orientation="vertical">
 
             <LinearLayout
@@ -111,14 +111,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="4"
+            android:layout_weight="4.7"
             android:orientation="vertical">
 
             <EditText
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/textedit_custom"
                 android:ems="10"
@@ -130,7 +132,10 @@
                 android:id="@+id/pass"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/textedit_custom"
                 android:ems="10"
@@ -142,7 +147,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="5"
+            android:layout_weight="5.3"
             android:orientation="vertical">
 
             <Button
@@ -155,6 +160,7 @@
 
                 android:layout_weight="1"
                 android:background="@drawable/button_next"
+                android:backgroundTint="#ffa400"
                 android:text="Log ind"
                 android:textColor="@color/white"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark"
@@ -164,8 +170,13 @@
                 android:id="@+id/createUserText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:gravity="center_horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1.1"
+                android:background="@drawable/button_next"
+                android:gravity="center"
                 android:text="Click here to create new user"
                 android:textColor="@color/white"
                 android:textStyle="bold" />

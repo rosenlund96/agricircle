@@ -290,14 +290,14 @@ public class MainScreenActivity extends AppCompatActivity implements Serializabl
 
              private void SavePreferences(String key, String value) {
 
-                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
                  SharedPreferences.Editor editor = sharedPreferences.edit();
                  editor.putString(key, value);
                  editor.commit();
              }
 
              private String LoadPreferences(String key) {
-                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
                  String result = sharedPreferences.getString(key, "");
                  return result;
 
