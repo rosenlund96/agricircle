@@ -19,17 +19,19 @@
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
         <activity
             android:name="com.example.agricircle.project.Activities.MainActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:screenOrientation="locked">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.agricircle.project.Activities.MainScreenActivity" />
-        <activity android:name="com.example.agricircle.project.Activities.RegisterActivity" />
-        <activity android:name="com.example.agricircle.project.Entities.PopUp" />
-        <activity android:name="com.example.agricircle.project.Activities.DrawNewFieldActivity" />
+        <activity android:name="com.example.agricircle.project.Activities.MainScreenActivity" android:screenOrientation="locked" />
+        <activity android:name="com.example.agricircle.project.Activities.RegisterActivity" android:screenOrientation="locked" />
+        <activity android:name="com.example.agricircle.project.Entities.PopUp"  android:screenOrientation="locked"/>
+        <activity android:name="com.example.agricircle.project.Activities.DrawNewFieldActivity" android:screenOrientation="locked" />
 
 
         <meta-data
