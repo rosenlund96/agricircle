@@ -28,13 +28,9 @@
     <string name="locationtext">"Free roam er aktiv. "</string>
     <string name="permissiontext">Denne App kræver lokalitetstjenester. Giv venligst adgang, for at bruge appen.</string>
 
-    <string-array name="languages">
 
-        <item>Engelsk</item>
-        <item>Tysk</item>
-        <item>Dansk</item>
 
-    </string-array>
+  
     <string name="modalDrawButton">Tegn polygon</string>
     <string name="modalDrawDelete">Slet markører</string>
     <string name="modalDrawText">Markører fundet, ønsker du at tegne en polygon ud fra disse, eller at starte forfra?</string>

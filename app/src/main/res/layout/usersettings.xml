@@ -226,12 +226,20 @@
                 android:layout_marginLeft="60dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="60dp"
-                android:layout_marginBottom="20dp"
+                android:layout_weight="1"
                 android:background="@drawable/weather_button"
                 android:backgroundTint="#ffa400"
                 android:text="Logout"
                 android:textColor="#FFFFFF"
                 android:textColorLink="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:text="Version: 1.0.1 Beta" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
