@@ -34,6 +34,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -91,6 +92,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Marker mCurrLocationMarker;
+    private boolean moveCamera;
     private MainScreenActivity main;
     private Button userprofile,fields, weather,locationbutton, soilzones;
     private ImageView weatherImage;
@@ -178,12 +180,15 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         activeField = null;
         soilzone = null;
         samplingpath = new ArrayList<>();
-
+        moveCamera = false;
         myView = inflater.inflate(R.layout.mainview, container, false);
         activityScroller = myView.findViewById(R.id.activityScroller);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
         activityScroller.setLayoutManager(llm);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(),
+                llm.getOrientation());
+        activityScroller.addItemDecoration(dividerItemDecoration);
 
         soilzones = myView.findViewById(R.id.soilbutton);
         soilzones.setOnClickListener(this);
@@ -211,7 +216,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         height = display.getHeight();
         weather.setWidth((int) (width * widthconstant));
         weather.setHeight((int) (height * heightconstant));
-        locationbutton.setWidth((int)(height * 0.5));
+        locationbutton.setWidth((int)(height * 0.3));
         //LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams((int)(height*0.04),(int)(height * 0.04));
         //weatherImage.setLayoutParams(parms);
         userprofile.setOnClickListener(this);
@@ -301,8 +306,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             ft.commit();
         }
         else if(v == locationbutton){
+            moveCamera = true;
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
+
             removeMarkersFromMap();
             DrawPolygonsOnMap();
             locationlayout.setVisibility(View.INVISIBLE);
@@ -510,7 +517,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
 
         //move map camera
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+       if(moveCamera){
+           mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+       }
+
 
     }
 
@@ -540,7 +550,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 buildGoogleApiClient();
                 DrawPolygonsOnMap();
                 if(!fieldPresent){
+                    moveCamera = true;
                     mGoogleMap.setMyLocationEnabled(true);
+
                     mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
                 }
                 else{
@@ -556,6 +568,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                         }
                         activeField = field;
                         LatLng temp = new LatLng(field.getCenterpoint().getCoordinates().get(0).latitude-0.0020,field.getCenterpoint().getCoordinates().get(0).longitude);
+                        moveCamera = false;
                         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
                         tempList = sortActivities(field);
                         infoFieldName.setText(field.getDisplay_name());
@@ -590,8 +603,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
         else {
             buildGoogleApiClient();
+            moveCamera = false;
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
             mGoogleMap.setMyLocationEnabled(false);
+
 
 
 
@@ -627,8 +642,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             @Override
             public void onCameraMoveStarted(int i) {
                 if(i == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE){
-
+                    moveCamera = false;
                     mGoogleMap.setMyLocationEnabled(false);
+
                     infoLayout.setVisibility(View.INVISIBLE);
                     locationlayout.setVisibility(View.VISIBLE);
                     clearPolygonColors();
@@ -678,7 +694,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
                 polygon.setStrokeColor(Color.argb(255,255,51,51));
                 polygon.setFillColor(Color.argb(160,66,245,66));
+                moveCamera = false;
                 mGoogleMap.setMyLocationEnabled(false);
+
                 LatLng temp = new LatLng(activeField.getCenterpoint().getCoordinates().get(0).latitude-0.0020,activeField.getCenterpoint().getCoordinates().get(0).longitude);
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
                 infoFieldName.setText(activeField.getDisplay_name());
@@ -882,7 +900,9 @@ if(main.controller.getFields().size()> mapMarkers.size()){
         System.out.println("OnRequestPermissionResult kaldt");
 
         buildGoogleApiClient();
+        moveCamera = true;
         mGoogleMap.setMyLocationEnabled(true);
+
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
         request = true;
     }

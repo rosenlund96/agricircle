@@ -46,7 +46,7 @@ public class MapActivityAdaptor extends RecyclerView.Adapter<MapActivityAdaptor.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Activity temp = mData.get(position);
-        holder.fieldname.setText(temp.getFieldname());
+        //holder.fieldname.setText(temp.getFieldname());
         holder.fieldactivity.setText(temp.getActivityType());
         if(temp.getActivityType().equals("Sowing")){
             holder.fieldactivity.setBackground(holder.fieldactivity.getContext().getDrawable(R.drawable.activity_background_sowing));
@@ -79,7 +79,7 @@ public class MapActivityAdaptor extends RecyclerView.Adapter<MapActivityAdaptor.
 
         ViewHolder(View itemView) {
             super(itemView);
-            fieldname = itemView.findViewById(R.id.fieldNameActivity);
+            //fieldname = itemView.findViewById(R.id.fieldNameActivity);
             fieldactivity = itemView.findViewById(R.id.typeOfActivity);
             cropPic = itemView.findViewById(R.id.pictureActivity);
             play = itemView.findViewById(R.id.activityImg);

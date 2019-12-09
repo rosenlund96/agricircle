@@ -103,7 +103,7 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback, V
 
     private void init(){
         if(polygon != null){
-            toptext.setText("Area: "+ getPolygonArea(polygon));
+            toptext.setText("Area: "+ getPolygonArea(polygon)+"ha");
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getPolygonCenterPoint(polygon), 15));
             drawPolygon(polygon);
@@ -121,7 +121,7 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback, V
         center.add(getPolygonCenterPoint(polygon));
         Shape centerPoint = new Shape(null, center);
         String area = getPolygonArea(polygon);
-        Double surface = Double.valueOf(area.substring(0,area.length()-2));
+        Double surface = Double.valueOf(area);
         Field newField = new Field(0,fieldName.getText().toString(),null,newPolygon,surface,fieldName.getText().toString(),false, centerPoint,crop.getCrop_id());
         newField.setCreatedLocally(true);
         mainController.controller.getUser().fields.add(newField);
@@ -198,7 +198,7 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback, V
     private String  getPolygonArea(Polygon polygon){
         DecimalFormat df2 = new DecimalFormat("#.##");
         double area = SphericalUtil.computeArea(polygon.getPoints());
-        return df2.format(area/10000)+"ha";
+        return df2.format(area/10000);
     }
 
     private void drawPolygon(Polygon polygon){

@@ -64,7 +64,7 @@ public class FieldAdaptor extends BaseAdapter {
         }
 
         holder.owner.setText(results.get(position).getDisplay_name());
-        holder.size.setText("Surface: " +Double.toString(results.get(position).getSurface()) + " HA");
+        holder.size.setText("" +Double.toString(results.get(position).getSurface()) + " HA");
 
 
         Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(holder.image);

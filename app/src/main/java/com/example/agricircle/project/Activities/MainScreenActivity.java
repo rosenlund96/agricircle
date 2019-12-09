@@ -2,6 +2,7 @@ package com.example.agricircle.project.Activities;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
@@ -21,10 +22,11 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainScreenActivity extends AppCompatActivity
+public class MainScreenActivity extends AppCompatActivity implements Serializable
          {
 
 
@@ -39,6 +41,7 @@ public class MainScreenActivity extends AppCompatActivity
     Intent i;
     ProgressDialog progressDialog;
     Boolean polygonsDrawed;
+    public transient Context mContext;
     public PlacesClient placesClient;
     private static MainScreenActivity sMainScreenActivity;
     private FragmentManager fragmentManager;
@@ -53,7 +56,7 @@ public class MainScreenActivity extends AppCompatActivity
         polygonsDrawed = false;
         fragmentManager = getSupportFragmentManager();
         sMainScreenActivity = this;
-
+        mContext = this;
 
 
 
@@ -94,6 +97,7 @@ public class MainScreenActivity extends AppCompatActivity
              protected void onResume() {
                  super.onResume();
                  Gson gson = new Gson();
+                 mContext = this;
                  String json = LoadPreferences("User");
                  User user = gson.fromJson(json, User.class);
                  String cookie = LoadPreferences("Cookie");
@@ -239,6 +243,7 @@ public class MainScreenActivity extends AppCompatActivity
                      super.onPreExecute();
                      //progressDialog.setIndeterminate(true);
                      progressDialog.setMessage("Henter informationer fra server");
+
                      progressDialog.show();
                  }
              }
@@ -284,6 +289,7 @@ public class MainScreenActivity extends AppCompatActivity
 
 
              private void SavePreferences(String key, String value) {
+
                  SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
                  SharedPreferences.Editor editor = sharedPreferences.edit();
                  editor.putString(key, value);

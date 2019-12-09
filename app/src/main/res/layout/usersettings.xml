@@ -63,6 +63,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
             android:layout_weight="2"
             android:orientation="vertical">
 
@@ -151,7 +152,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_weight="1.2"
                             android:orientation="vertical"></LinearLayout>
                     </LinearLayout>
 
@@ -203,7 +204,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
+                            android:layout_weight="1.2"
                             android:orientation="vertical"></LinearLayout>
 
                     </LinearLayout>
@@ -222,11 +223,12 @@
                 android:id="@+id/logout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="80dp"
+                android:layout_marginLeft="60dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginRight="80dp"
+                android:layout_marginRight="60dp"
                 android:layout_marginBottom="20dp"
-                android:background="@drawable/button_primary"
+                android:background="@drawable/weather_button"
+                android:backgroundTint="#ffa400"
                 android:text="Logout"
                 android:textColor="#FFFFFF"
                 android:textColorLink="#FFFFFF" />
