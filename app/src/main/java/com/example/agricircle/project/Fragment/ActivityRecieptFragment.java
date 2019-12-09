@@ -22,6 +22,7 @@ import com.example.agricircle.R;
 import com.example.agricircle.project.Activities.MainScreenActivity;
 import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Crop;
+import com.example.agricircle.project.Entities.Field;
 import com.github.badoualy.datepicker.DatePickerTimeline;
 import com.squareup.picasso.Picasso;
 
@@ -127,18 +128,48 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
         return temp;
     }
 
+    public Field getRightField(int fieldID){
+        List<Field> fields = MainScreenActivity.getInstance().controller.user.getFields();
+        Field field = null;
+        for(int i = 0; i<fields.size();i++){
+            if(fields.get(i).getId() == fieldID){
+                field = fields.get(i);
+            }
+
+        }
+        return field;
+    }
+
 
 
 
 
     @Override
     public void onClick(View v) {
-        main.controller.saveCurrentActivity(activity);
-        FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ListViewFragment fragment2 = new ListViewFragment();
-        ft.replace(R.id.article_fragment, fragment2);
-        ft.addToBackStack(null);
-        ft.commit();
+        if(activity.getCameFromMap()){
+            activity.setCameFromMap(false);
+            main.controller.saveCurrentActivity(activity);
+            FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            MapFragment fragment2 = new MapFragment();
+
+            Bundle bundle = new Bundle();
+            Field obj = getRightField(activity.getField_id());
+            bundle.putSerializable("Field", obj);
+            fragment2.setArguments(bundle);
+            ft.replace(R.id.article_fragment, fragment2);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+        else{
+
+            FragmentTransaction ft =  getActivity().getSupportFragmentManager().beginTransaction();
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ListViewFragment fragment2 = new ListViewFragment();
+            ft.replace(R.id.article_fragment, fragment2);
+            ft.addToBackStack(null);
+            ft.commit();
+        }
+
     }
 }

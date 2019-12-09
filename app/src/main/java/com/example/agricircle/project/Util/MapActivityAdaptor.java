@@ -97,6 +97,7 @@ public class MapActivityAdaptor extends RecyclerView.Adapter<MapActivityAdaptor.
 
                 Bundle bundle = new Bundle();
                 Activity obj = temp;
+                obj.setCameFromMap(true);
                 bundle.putSerializable("Activity", obj);
                 fragment2.setArguments(bundle);
                 ft.replace(R.id.article_fragment, fragment2);
@@ -110,6 +111,7 @@ public class MapActivityAdaptor extends RecyclerView.Adapter<MapActivityAdaptor.
 
                 Bundle bundle = new Bundle();
                 Activity obj = temp;
+                obj.setCameFromMap(true);
                 bundle.putSerializable("Activity", obj);
                 fragment2.setArguments(bundle);
                 ft.replace(R.id.article_fragment, fragment2);

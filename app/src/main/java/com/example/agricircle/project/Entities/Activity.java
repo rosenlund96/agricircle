@@ -18,6 +18,8 @@ public class Activity implements Serializable {
     String BBCHImage;
     String Executor;
     List<LatLng> PATH;
+    private boolean cameFromMap;
+
 
 
 
@@ -33,6 +35,15 @@ public class Activity implements Serializable {
         this.Executor = executor;
         this.comment = "";
         PATH = new ArrayList<>();
+        cameFromMap = false;
+    }
+
+    public void setCameFromMap(boolean status){
+        this.cameFromMap = status;
+    }
+
+    public boolean getCameFromMap(){
+        return this.cameFromMap;
     }
 
     public void setPath(List<LatLng> path){

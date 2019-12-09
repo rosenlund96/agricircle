@@ -54,10 +54,10 @@
             android:layout_height="match_parent"
 
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="25dp"
             android:layout_marginRight="10dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/right_arrow"
+            android:layout_marginBottom="25dp"
+            android:background="@drawable/play"
             android:visibility="visible"
             app:civ_border_color="#EEEEEE"
             app:civ_border_width="4dp"
