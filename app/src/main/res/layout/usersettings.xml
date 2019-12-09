@@ -239,7 +239,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:text="Version: 1.0.1 Beta" />
+                android:text="Version: 0.1.4" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
