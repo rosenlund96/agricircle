@@ -60,7 +60,7 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
     private Chronometer timer;
     private Activity activity;
     private GoogleMap mMap;
-    private TextView fieldName, activityType, yourSpeed, statusText;
+    private TextView fieldName, activityType, yourSpeed, statusText, percentText;
     private MainScreenActivity main;
     private Button finish, pause, location;
     private LinearLayout GPSLAY, fertLay, NozzleLay, suggestedView, percentSetting;
@@ -69,11 +69,20 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private List<LatLng> path;
+    private Button minus,plus;
+    private int interval;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.activity_run, container, false);
         timer = myView.findViewById(R.id.timer);
+        interval = 5;
+        plus = myView.findViewById(R.id.plusButton);
+        minus = myView.findViewById(R.id.minusButton);
+        percentText = myView.findViewById(R.id.nozzleCountActivity);
+        plus.setOnClickListener(this);
+        minus.setOnClickListener(this);
         locationEnabled = false;
         path = new ArrayList<>();
         finish = myView.findViewById(R.id.finishButton);
@@ -101,6 +110,17 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
         yourSpeed.setText("0.0 KM/H");
         fertSetting = myView.findViewById(R.id.nozzleoutput);
         fertSetting.setCheckedPosition(0);
+        fertSetting.setOnChangeListener(new ToggleSwitch.OnChangeListener() {
+            @Override
+            public void onToggleSwitchChanged(int i) {
+                if(i == 0){
+                    interval = 5;
+                }
+                else{
+                    interval = 10;
+                }
+            }
+        });
         Bundle bundle = getArguments();
         try{
             Activity obj= (Activity) bundle.getSerializable("Activity");
@@ -245,6 +265,29 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
 
     }
 
+    public void setNozzlePercent(boolean status){
+       int current = Integer.valueOf(percentText.getText().toString());
+
+        if(status == true){
+         int newValue = current + interval;
+         if(newValue<101){
+             percentText.setText(newValue+"");
+         }
+            //PLUS
+
+        }
+        else {
+            int newValue = current - interval;
+            if(newValue>0){
+                percentText.setText(newValue+"");
+            }
+            //MINUS
+
+
+        }
+
+    }
+
 
 
     @Override
@@ -277,6 +320,14 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
                 statusText.setVisibility(View.INVISIBLE);
                 GPSLAY.setVisibility(View.INVISIBLE);
             }
+
+        }
+
+        else if( v == plus){
+            setNozzlePercent(true);
+        }
+        else if(v == minus){
+            setNozzlePercent(false);
 
         }
     }

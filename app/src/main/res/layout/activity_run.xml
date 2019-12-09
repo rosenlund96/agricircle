@@ -229,8 +229,9 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginLeft="5dp"
 
+                                            android:layout_marginBottom="5dp"
                                             android:layout_weight="2"
-                                            android:gravity="center"
+                                            android:gravity="bottom"
                                             android:textSize="12sp"
                                             app:checkedBackgroundColor="#ffa400"
                                             app:textToggleLeft="5%"
@@ -271,13 +272,13 @@
                                                 android:textStyle="bold" />
 
                                             <TextView
-                                                android:id="@+id/textView4"
+                                                android:id="@+id/nozzleCountActivity"
                                                 android:layout_width="match_parent"
                                                 android:layout_height="match_parent"
                                                 android:layout_marginLeft="2dp"
                                                 android:layout_weight="2"
                                                 android:gravity="left|center_vertical"
-                                                android:text="2"
+                                                android:text="5"
                                                 android:textColor="@color/white"
                                                 android:textStyle="bold" />
 
@@ -290,10 +291,10 @@
                                             android:orientation="horizontal">
 
                                             <Button
-                                                android:id="@+id/button4"
+                                                android:id="@+id/minusButton"
                                                 android:layout_width="match_parent"
                                                 android:layout_height="match_parent"
-                                                android:layout_marginLeft="15dp"
+                                                android:layout_marginLeft="20dp"
                                                 android:layout_marginRight="5dp"
                                                 android:layout_marginBottom="5dp"
                                                 android:layout_weight="1"
@@ -301,11 +302,11 @@
                                                 android:backgroundTint="#ffa400" />
 
                                             <Button
-                                                android:id="@+id/button3"
+                                                android:id="@+id/plusButton"
                                                 android:layout_width="match_parent"
                                                 android:layout_height="match_parent"
                                                 android:layout_marginLeft="5dp"
-                                                android:layout_marginRight="15dp"
+                                                android:layout_marginRight="20dp"
                                                 android:layout_marginBottom="5dp"
                                                 android:layout_weight="1"
                                                 android:background="@drawable/plus_icon"
@@ -361,7 +362,7 @@
                                         android:layout_height="match_parent"
                                         android:layout_weight="3"
                                         android:gravity="center"
-                                        android:text="@string/myLocation"
+                                        android:text="@string/tracking"
                                         android:textColor="@color/white" />
                                 </LinearLayout>
 

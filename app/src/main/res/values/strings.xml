@@ -81,6 +81,7 @@
     <string name="GPSStarting">GPS Tracking starting</string>
     <string name="newActivity">Create new Activity</string>
     <string name="nozzleOutput">Nozzle output:</string>
+    <string name="tracking">GPS Tracking</string>
 
     <string-array name="Metric">
 
