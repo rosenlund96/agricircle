@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -33,6 +34,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
@@ -59,9 +62,10 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
     String apiKey = "AIzaSyAR8qicDS4pzB17PyiIs5Ms41HNHxrVsmw";
     TextView placeText;
     boolean drawmode;
-    Button Draw;
+    Button add, delete, next, crosshair;
     String placeString = "";
     private List<Marker> mapMarkers;
+    private List<Polyline> mapLines;
     AutocompleteSupportFragment autocompleteFragment;
     private FragmentManager fragmentManager;
     private LinearLayout userinput;
@@ -74,6 +78,7 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
         setContentView(R.layout.map_draw_new_field);
         drawmode = false;
         mapMarkers = new ArrayList<>();
+        mapLines = new ArrayList<>();
         myDialog = new Dialog(this);
         sDrawNewFieldActivity = this;
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -82,41 +87,116 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
         mapFragment.getMapAsync(this);
         fragmentManager = this.getSupportFragmentManager();
         placeText = findViewById(R.id.placetext);
-        Draw = findViewById(R.id.draw);
-        Draw.setText(R.string.Draw);
+        delete = findViewById(R.id.deleteButton);
+        next = findViewById(R.id.nextButton);
+        add = findViewById(R.id.addButton);
+        crosshair = findViewById(R.id.crosshair);
+        //delete.setText(R.string.Draw);
         userinput = findViewById(R.id.userinputhandle);
-        Draw.setOnClickListener(new View.OnClickListener() {
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(polygon != null){
                     autocompleteFragment.getView().setVisibility(View.GONE);
                     mapFragment.getView().setVisibility(View.GONE);
                     userinput.setVisibility(View.GONE);
+                    crosshair.setVisibility(View.GONE);
+
                     fragmentManager.beginTransaction()
                             .addToBackStack(null)
                             .replace(R.id.article_fragment
                                     , new CreateFieldDetail())
                             .commit();
                 }
-                else if(polygon == null){
-                    if(drawmode){
-                        drawmode = false;
-                        placeText.setText(placeString);
-                        if(!mapMarkers.isEmpty()){
-                            checkPoints();
-                        }
-                        //check om der er markers og spørg om valg
+                else{
+                    Button okay,cancel;
+                    TextView overskrift, tekst;
+                    myDialog.setContentView(R.layout.popup_modal);
+                    overskrift = (TextView) myDialog.findViewById(R.id.modaloverskrift);
+                    tekst = (TextView) myDialog.findViewById(R.id.modaltekst);
+                    okay = (Button) myDialog.findViewById(R.id.alert_btn_okay);
+                    cancel = (Button) myDialog.findViewById(R.id.alert_btn_cancel);
+                    overskrift.setText(R.string.modalDrawTitle);
+                    tekst.setText(R.string.modalDrawText);
+                    okay.setText(R.string.modalDrawButton);
+                    cancel.setText(R.string.modalDrawDelete);
+                    okay.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                    }
-                    else{
-                        drawmode = true;
-                        placeText.setText("Draw Mode Active");
-                    }
+
+                            myDialog.dismiss();
+                        }
+                    });
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            myDialog.dismiss();
+                        }
+                    });
+                    myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    DisplayMetrics dm = new DisplayMetrics();
+                    getWindowManager().getDefaultDisplay().getMetrics(dm);
+                    int width = dm.widthPixels;
+                    int height = dm.heightPixels;
+                    myDialog.getWindow().setLayout((int)(width ),(int)(height * 0.45 ));
+                    myDialog.show();
                 }
 
 
 
 
+
+            }
+        });
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Marker marker = mMap.addMarker(new MarkerOptions()
+                        .position(
+                                new LatLng(mMap.getCameraPosition().target.latitude,
+                                        mMap.getCameraPosition().target.longitude-0.00005))
+                        .draggable(true));
+                mapMarkers.add(marker);
+                DrawLines();
+                if(mapMarkers.size()> 2){
+                    Float distance = distance(mMap.getCameraPosition().target.latitude,mMap.getCameraPosition().target.longitude,mapMarkers.get(0).getPosition().latitude,mapMarkers.get(0).getPosition().longitude);
+                    Toast.makeText(v.getContext(),"Distance: " + distance,Toast.LENGTH_LONG).show();
+                    if( distance< 15f ){
+                        drawPolygon();
+                        for(int i = 0; i<mapMarkers.size();i++){
+                            mapMarkers.get(i).remove();
+                        }
+                        for(int x = 0; x<mapLines.size();x++){
+                            mapLines.get(x).remove();
+                        }
+                        mapMarkers.clear();
+                        mapLines.clear();
+
+                    }
+
+                }
+
+
+
+
+
+
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mapMarkers.size() > 0){
+                    mapMarkers.get(mapMarkers.size()-1).remove();
+                    mapMarkers.remove(mapMarkers.size()-1);
+                }
+                if(mapLines.size()> 0){
+                    mapLines.get(mapLines.size()-1).remove();
+                    mapLines.remove(mapLines.size()-1);
+                }
             }
         });
 
@@ -148,6 +228,38 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
+    }
+
+    public void DrawLines(){
+
+
+        if(mapMarkers.size()> 1){
+            Polyline polyline = mMap.addPolyline(new PolylineOptions()
+                    .clickable(true)
+                    .color(Color.argb(100,255,164,0))
+                    .add(mapMarkers.get(mapMarkers.size()-1).getPosition(), mapMarkers.get(mapMarkers.size()-2).getPosition()
+
+                    ));
+            mapLines.add(polyline);
+
+        }
+
+    }
+
+    public float distance (double lat_a, double lng_a, double lat_b, double lng_b )
+    {
+        double earthRadius = 3958.75;
+        double latDiff = Math.toRadians(lat_b-lat_a);
+        double lngDiff = Math.toRadians(lng_b-lng_a);
+        double a = Math.sin(latDiff /2) * Math.sin(latDiff /2) +
+                Math.cos(Math.toRadians(lat_a)) * Math.cos(Math.toRadians(lat_b)) *
+                        Math.sin(lngDiff /2) * Math.sin(lngDiff /2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double distance = earthRadius * c;
+
+        int meterConversion = 1609;
+
+        return new Float(distance * meterConversion).floatValue();
     }
 
     public static DrawNewFieldActivity getInstance() {
@@ -187,7 +299,7 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
                 public void onClick(View v) {
                     drawPolygon();
                     removeMarkersFromMap();
-                    Draw.setText(R.string.createField);
+
                     myDialog.dismiss();
                 }
             });
@@ -225,7 +337,7 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
                 public void onClick(View v) {
                     drawPolygon();
                     removeMarkersFromMap();
-                    Draw.setText(R.string.createField);
+
                     myDialog.dismiss();
                 }
             });

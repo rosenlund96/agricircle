@@ -8,16 +8,29 @@
     tools:context="com.example.agricircle.project.Activities.MainScreenActivity">
 
 
+    <Button
+        android:id="@+id/crosshair"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_centerInParent="true"
+
+        android:layout_marginRight="2dp"
+        android:background="@drawable/crosshair" />
+
     <FrameLayout
         android:id="@+id/article_fragment"
         android:name="com.example.agricircle.Activities.Activities.MainScreenActivity"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:visibility="visible">
 
         <fragment
             android:id="@+id/autocomplete_fragment"
@@ -29,7 +42,8 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="40dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -61,19 +75,53 @@
                 android:text="TextView"
                 android:textColor="@color/white" />
 
-            <Button
-                android:id="@+id/draw"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/weather_button"
-                android:text="draw"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:layout_weight="2"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/addButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/weather_button"
+                    android:backgroundTint="#ffa400"
+                    android:text="Add"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/deleteButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/weather_button"
+                    android:backgroundTint="#F44336"
+                    android:text="Delete"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/nextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/weather_button"
+                    android:text="Next"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
