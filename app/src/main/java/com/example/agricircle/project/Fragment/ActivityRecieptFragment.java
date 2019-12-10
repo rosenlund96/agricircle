@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,6 +52,7 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
     private Activity activity;
     private TextView fieldName, BBCHText, cropname, activityType, executor, duedate;
     private EditText commentBox;
+    private LinearLayout mapLay;
     private ImageView BBCHImage, cropImage;
     private MainScreenActivity main;
     private DatePickerTimeline date;
@@ -64,6 +66,8 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
         main = MainScreenActivity.getInstance();
         save = myView.findViewById(R.id.logButton);
         save.setOnClickListener(this);
+        mapLay = myView.findViewById(R.id.mapFragReciept);
+        mapLay.setVisibility(View.GONE);
         fieldName = myView.findViewById(R.id.fieldNameReciept);
         BBCHText = myView.findViewById(R.id.BBCHText);
         BBCHImage = myView.findViewById(R.id.BBCHImage);
@@ -223,6 +227,7 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
         drawPolygon(field.getCoordinates().getCoordinates());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(field.getCenterpoint().getCoordinates().get(0), 15.3F));
         if(activity.getPath().size() >0){
+            mapLay.setVisibility(View.VISIBLE);
             for(int i = 1; i<activity.getPath().size();i++){
                 Polyline polyline = mMap.addPolyline(new PolylineOptions()
                         .clickable(true)
