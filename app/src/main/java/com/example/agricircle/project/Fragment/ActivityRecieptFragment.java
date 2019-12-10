@@ -1,9 +1,12 @@
 package com.example.agricircle.project.Fragment;
 
 
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,15 @@ import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Crop;
 import com.example.agricircle.project.Entities.Field;
 import com.github.badoualy.datepicker.DatePickerTimeline;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.squareup.picasso.Picasso;
 
 
@@ -32,7 +44,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class ActivityRecieptFragment extends Fragment implements View.OnClickListener{
+public class ActivityRecieptFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback {
 
     private View myView;
     private Button save;
@@ -42,6 +54,7 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
     private ImageView BBCHImage, cropImage;
     private MainScreenActivity main;
     private DatePickerTimeline date;
+    private GoogleMap mMap;
 
     @Nullable
     @Override
@@ -86,9 +99,28 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
             setInformations();
         }
 
+
+        final SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.activityRecieptMap);
+        mapFragment.getMapAsync(this);
         return myView;
     }
 
+
+    private void drawPolygon(List<LatLng> points){
+        PolygonOptions rectOptions = new PolygonOptions();
+        for(int i = 0; i<points.size(); i++){
+            rectOptions.add(points.get(i));
+
+        }
+        rectOptions.add(points.get(0));
+
+        rectOptions.strokeColor(Color.argb(255,0,128,255));
+        rectOptions.fillColor(Color.argb(160,0,128,255));
+
+        Polygon polygon = mMap.addPolygon(rectOptions);
+        polygon.setClickable(false);
+    }
 
 
     public void setInformations(){
@@ -170,6 +202,54 @@ public class ActivityRecieptFragment extends Fragment implements View.OnClickLis
             ft.addToBackStack(null);
             ft.commit();
         }
+
+    }
+
+    private String LoadPreferences(String key) {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String result = sharedPreferences.getString(key, "");
+        return result;
+
+    }
+    public void init(){
+        Field field = null;
+        List<Field> Fields = main.controller.user.getFields();
+        for(int i= 0; i<Fields.size();i++ ){
+            if(Fields.get(i).getId() == activity.getField_id()){
+                field = Fields.get(i);
+            }
+        }
+        drawPolygon(field.getCoordinates().getCoordinates());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(field.getCenterpoint().getCoordinates().get(0), 15.3F));
+        if(activity.getPath().size() >0){
+            for(int i = 1; i<activity.getPath().size();i++){
+                Polyline polyline = mMap.addPolyline(new PolylineOptions()
+                        .clickable(true)
+                        .width(2)
+                        .color(Color.argb(255,255,0,0))
+                        .add(activity.getPath().get(i-1),activity.getPath().get(i)
+
+                        ));
+            }
+
+        }
+    }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.getUiSettings().setScrollGesturesEnabled(false);
+        String map = LoadPreferences("Map");
+        if(map.equals("Normal")){
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        }
+        else if(map.equals("Sattelite")){
+            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        }
+        else if(map.equals("Hybrid")){
+            mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        }
+        init();
 
     }
 }
