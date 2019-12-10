@@ -18,7 +18,7 @@ public class Field implements Serializable {
     public List<Integer> cropIDS;
     public List<Integer> fieldStrategyIDS;
     public boolean createdLocally;
-
+    public String imageURL;
     private boolean fertilizer_enabled;
     private Shape centerpoint;
 
@@ -29,6 +29,14 @@ public class Field implements Serializable {
         this.createdLocally = status;
     }
 
+
+    public String getImageURL(){
+        return this.imageURL;
+    }
+
+    public void setImageURL(String url){
+        this.imageURL = url;
+    }
 
     public int getId() {
         return id;

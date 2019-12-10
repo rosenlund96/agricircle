@@ -15,6 +15,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 
 import com.example.agricircle.Activities.CheckEmailMutation;
+import com.example.agricircle.Activities.FetchCropImageQuery;
 import com.example.agricircle.Activities.GetAllCropsQuery;
 import com.example.agricircle.Activities.GetCropActivitiesQuery;
 import com.example.agricircle.Activities.GetCropStagesQuery;
@@ -85,6 +86,7 @@ public class UserController implements Serializable {
     public List<BBCH> BBCHList = new ArrayList<>();
     public List<String> allCropsList = new ArrayList<>();
     public List<Crop> allCropsAsObject = new ArrayList<>();
+    public boolean cropURLLoaded = false;
     private static final String BASE_URL = "https://graphql.agricircle.com/graphql";
     ApolloClient apolloClient;
     int loginStatus;
@@ -560,6 +562,34 @@ public class UserController implements Serializable {
         });
     }
 
+    public String getFieldCropURL(String name){
+        cropURLLoaded = false;
+        final String[] url = {""};
+        FetchCropImageQuery query = FetchCropImageQuery.builder()
+                .name(name)
+                .build();
+
+        apolloClient.query(query).enqueue(new ApolloCall.Callback<FetchCropImageQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<FetchCropImageQuery.Data> response) {
+                if(!response.hasErrors()){
+                    url[0] = response.data().allCrops().collection().get(0).image_url();
+                    cropURLLoaded = true;
+                }
+                else{
+                    System.out.println("Fejl ved hentning af CropURL");
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+                System.out.println("Fejl ved hentning af CropURL: " + e.getLocalizedMessage());
+            }
+        });
+
+        return url[0];
+    }
+
     public List<Field> getFields(){
         fieldsLoaded = false;
         GetFieldsQuery fields = GetFieldsQuery.builder().build();
@@ -625,6 +655,11 @@ public class UserController implements Serializable {
                         }
                         if(!fieldStrategyList.isEmpty()){
                             field.setFieldStrategyList(fieldStrategyList);
+                        }
+                        for(int p = 0; p<allCropsAsObject.size();p++){
+                            if(allCropsAsObject.get(p).getCrop_id() == field.getCropid()){
+                                field.setImageURL(allCropsAsObject.get(p).getPhoto_url());
+                            }
                         }
                         fieldsList.add(field);
                         //System.out.println("Felt hentet: " + fields.get(i));

@@ -165,6 +165,7 @@ public class MainScreenActivity extends AppCompatActivity implements Serializabl
                                  progressDialog.setMessage("Henter Bruger");
                                  while(true){
                                      user = controller.getUser();
+                                     controller.getAllCrops("");
                                      if(user != null){
                                          controller.setUser(user);
                                          //controller.getCompanies();

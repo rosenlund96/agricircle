@@ -1,0 +1,11 @@
+query fetchCropImage($name:String!){
+allCrops(options: {name:$name}){
+collection{
+id
+name
+image_url
+}
+}
+
+
+}

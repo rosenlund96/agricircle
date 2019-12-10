@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.agricircle.project.Activities.MainScreenActivity;
+import com.example.agricircle.project.Entities.Activity;
 import com.example.agricircle.project.Entities.Field;
 import com.example.agricircle.R;
 import com.squareup.picasso.Picasso;
@@ -65,9 +67,10 @@ public class FieldAdaptor extends BaseAdapter {
 
         holder.owner.setText(results.get(position).getDisplay_name());
         holder.size.setText("" +Double.toString(results.get(position).getSurface()) + " HA");
-        String url = "https://s3-eu-central-1.amazonaws.com/agricircle-giscockpit-api-production-eu/uploads/crop/image/121/thumb_buchweizen.JPG?X-Amz-Expires=7200&X-Amz-Date=20191209T140756Z&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIV3SDBJFY2AELLWA%2F20191209%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-SignedHeaders=host&X-Amz-Signature=5d9454c67c4a0631801aa39a250cf3d522077b728afeeef9156d7860cba1ac57";
+        //holder.image.setBackgroundResource(R.drawable.thumb_buchweizen);
+        System.out.println("Sætter adaptor med: " + results.get(position).imageURL);
+        Picasso.get().load(results.get(position).imageURL).into(holder.image);
 
-        Picasso.get().load(url).into(holder.image);
         return convertView;
     }
 
