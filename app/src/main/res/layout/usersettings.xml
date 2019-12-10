@@ -81,6 +81,7 @@
                     android:id="@+id/mapstyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:hint="@string/maptype"
                     android:textColorHint="#05ab9a"
                     app:met_floatingLabel="normal" />
