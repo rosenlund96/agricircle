@@ -156,7 +156,7 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
                 Marker marker = mMap.addMarker(new MarkerOptions()
                         .position(
                                 new LatLng(mMap.getCameraPosition().target.latitude,
-                                        mMap.getCameraPosition().target.longitude-0.00005))
+                                        mMap.getCameraPosition().target.longitude))
                         .draggable(true));
                 mapMarkers.add(marker);
                 DrawLines();
