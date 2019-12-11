@@ -521,7 +521,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
        }
 
-
     }
 
 
@@ -691,33 +690,19 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 List<Activity> tempList = sortActivities(activeField);
                 clearPolygonColors();
                 locationlayout.setVisibility(View.INVISIBLE);
-
                 polygon.setStrokeColor(Color.argb(255,255,51,51));
                 polygon.setFillColor(Color.argb(160,66,245,66));
                 moveCamera = false;
                 mGoogleMap.setMyLocationEnabled(false);
-
-                LatLng temp = new LatLng(activeField.getCenterpoint().getCoordinates().get(0).latitude-0.0020,activeField.getCenterpoint().getCoordinates().get(0).longitude);
+                LatLng temp = new LatLng(activeField.getCenterpoint().getCoordinates().get(0).latitude-0.0020
+                        ,activeField.getCenterpoint().getCoordinates().get(0).longitude);
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp,16));
                 infoFieldName.setText(activeField.getDisplay_name());
                 infoFieldSurface.setText(activeField.getSurface() +"ha");
                 if(tempList != null &&!tempList.isEmpty()){
-
                     activityScroller.setAdapter(new MapActivityAdaptor(getActivity(),tempList));
-
-
-
                 }
-
-
                 infoLayout.setVisibility(View.VISIBLE);
-
-
-
-
-
-                //Toast.makeText(getActivity(), "Polygon: " + field.getDisplay_name(), Toast.LENGTH_LONG).show();
-
             }
         });
     }
@@ -742,14 +727,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         return isConnected;
     }
 
-    private String getCropName(int id){
-        for (int i = 0; i<main.controller.cropsList.size();i++){
-            if(main.controller.cropsList.get(i).getCrop_id() == id){
-                return main.controller.cropsList.get(i).getName();
-            }
-        }
-        return "N/A";
-    }
 
     private void DrawPolygonsOnMap(){
         System.out.println("DrawPolygons Kaldt, tegner " + main.controller.getUser().fields.size());
@@ -760,8 +737,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             polygon.setFillColor(Color.argb(160,0,128,255));
             polygon.setClickable(true);
             polygons.add(polygon);
-
-            //System.out.println("Polygon "+polygon.getPoints());
 
         }
     }
@@ -792,13 +767,10 @@ if(main.controller.getFields().size()> mapMarkers.size()){
 
 
     private class UpdateWeather extends AsyncTask<LatLng, Void, Void> {
-
         String unit = LoadPreferences("unit");
-
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
                 while(true) {
                     if (main.controller.weatherList.size() > 0) {
 
@@ -817,27 +789,23 @@ if(main.controller.getFields().size()> mapMarkers.size()){
                         break;
                     }
                 }
-
-
-
         }
 
         @Override
         protected Void doInBackground(LatLng... latLngs) {
             LatLng location = latLngs[0];
-
-
-
-
-
             if(unit.equals("Metric")){
-                main.controller.getWeather(location,"mix",getCurrentTime("yyyy-MM-ddTHH:mm"),0,1, Arrays.asList(getResources().getStringArray(R.array.Metric)));
+                main.controller.getWeather(location,"mix",
+                        getCurrentTime("yyyy-MM-ddTHH:mm"),
+                        0,1,
+                        Arrays.asList(getResources().getStringArray(R.array.Metric)));
             }
             else if(unit.equals("Imperial")){
-                main.controller.getWeather(location,"mix",getCurrentTime("yyyy-MM-ddTHH:mm"),0,1, Arrays.asList(getResources().getStringArray(R.array.Imperial)));
+                main.controller.getWeather(location,
+                        "mix",getCurrentTime("yyyy-MM-ddTHH:mm"),
+                        0,1,
+                        Arrays.asList(getResources().getStringArray(R.array.Imperial)));
             }
-
-
 
             return null;
         }

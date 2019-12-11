@@ -171,14 +171,11 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback, V
 
 
     private class getAllCrops extends AsyncTask<String,Void,Void>{
-
-
         @Override
         protected Void doInBackground(String... strings) {
             mainController.controller.getAllCrops(strings[0]);
             return null;
         }
-
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
@@ -191,7 +188,6 @@ public class CreateFieldDetail extends Fragment implements OnMapReadyCallback, V
                     break;
                 }
             }
-
         }
     }
 

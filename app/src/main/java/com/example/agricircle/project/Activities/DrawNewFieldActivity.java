@@ -161,8 +161,9 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
                 mapMarkers.add(marker);
                 DrawLines();
                 if(mapMarkers.size()> 2){
-                    Float distance = distance(mMap.getCameraPosition().target.latitude,mMap.getCameraPosition().target.longitude,mapMarkers.get(0).getPosition().latitude,mapMarkers.get(0).getPosition().longitude);
-                    Toast.makeText(v.getContext(),"Distance: " + distance,Toast.LENGTH_LONG).show();
+                    Float distance = distance(mMap.getCameraPosition().target.latitude,
+                            mMap.getCameraPosition().target.longitude,
+                            mapMarkers.get(0).getPosition().latitude,mapMarkers.get(0).getPosition().longitude);
                     if( distance< 15f ){
                         drawPolygon();
                         for(int i = 0; i<mapMarkers.size();i++){
@@ -173,16 +174,8 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
                         }
                         mapMarkers.clear();
                         mapLines.clear();
-
                     }
-
                 }
-
-
-
-
-
-
             }
         });
 
@@ -231,19 +224,14 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
     }
 
     public void DrawLines(){
-
-
         if(mapMarkers.size()> 1){
             Polyline polyline = mMap.addPolyline(new PolylineOptions()
                     .clickable(true)
                     .color(Color.argb(100,255,164,0))
                     .add(mapMarkers.get(mapMarkers.size()-1).getPosition(), mapMarkers.get(mapMarkers.size()-2).getPosition()
-
                     ));
             mapLines.add(polyline);
-
         }
-
     }
 
     public float distance (double lat_a, double lng_a, double lat_b, double lng_b )

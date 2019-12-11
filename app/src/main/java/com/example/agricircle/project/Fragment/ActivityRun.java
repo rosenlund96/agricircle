@@ -405,7 +405,6 @@ public class ActivityRun extends Fragment implements OnMapReadyCallback, View.On
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(field.getCenterpoint().getCoordinates().get(0), 16.5F));
         }
         NumberFormat formatter = new DecimalFormat("#0.00");
-        //System.out.println("Locationchange kaldt");
         if (location==null){
 
             // if you can't get speed because reasons :)
