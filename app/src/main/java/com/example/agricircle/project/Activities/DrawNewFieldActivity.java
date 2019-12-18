@@ -153,29 +153,32 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .position(
-                                new LatLng(mMap.getCameraPosition().target.latitude,
-                                        mMap.getCameraPosition().target.longitude))
-                        .draggable(true));
-                mapMarkers.add(marker);
-                DrawLines();
-                if(mapMarkers.size()> 2){
-                    Float distance = distance(mMap.getCameraPosition().target.latitude,
-                            mMap.getCameraPosition().target.longitude,
-                            mapMarkers.get(0).getPosition().latitude,mapMarkers.get(0).getPosition().longitude);
-                    if( distance< 15f ){
-                        drawPolygon();
-                        for(int i = 0; i<mapMarkers.size();i++){
-                            mapMarkers.get(i).remove();
+                if(polygon == null){
+                    Marker marker = mMap.addMarker(new MarkerOptions()
+                            .position(
+                                    new LatLng(mMap.getCameraPosition().target.latitude,
+                                            mMap.getCameraPosition().target.longitude))
+                            .draggable(true));
+                    mapMarkers.add(marker);
+                    DrawLines();
+                    if(mapMarkers.size()> 2){
+                        Float distance = distance(mMap.getCameraPosition().target.latitude,
+                                mMap.getCameraPosition().target.longitude,
+                                mapMarkers.get(0).getPosition().latitude,mapMarkers.get(0).getPosition().longitude);
+                        if( distance< 15f ){
+                            drawPolygon();
+                            for(int i = 0; i<mapMarkers.size();i++){
+                                mapMarkers.get(i).remove();
+                            }
+                            for(int x = 0; x<mapLines.size();x++){
+                                mapLines.get(x).remove();
+                            }
+                            mapMarkers.clear();
+                            mapLines.clear();
                         }
-                        for(int x = 0; x<mapLines.size();x++){
-                            mapLines.get(x).remove();
-                        }
-                        mapMarkers.clear();
-                        mapLines.clear();
                     }
                 }
+
             }
         });
 
@@ -190,6 +193,11 @@ public class DrawNewFieldActivity extends FragmentActivity implements OnMapReady
                     mapLines.get(mapLines.size()-1).remove();
                     mapLines.remove(mapLines.size()-1);
                 }
+                if(polygon != null){
+                    polygon.remove();
+                    polygon = null;
+                }
+
             }
         });
 
